@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/styles/styles.css" rel="stylesheet">
+</head>
+<body id="user-page">
+
+    <nav class="navbar navbar-light px-5 fixed-top" style="background-color: #a21c39;">
+        <a class="navbar-brand">IntelliSched</a>
+        <form class="d-flex align-items-center">
+            <!-- Dropdown button -->
+            <div class="dropdown dropdown-nav me-3">
+                <button class="btn dropdown-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Account
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                    <li><a class="dropdown-item" href="#">Help</a></li>
+                </ul>
+            </div>
+            <!-- Logout button -->
+            <a href="/" class="btn logout-btn btn-lg rounded-pill">Logout</a>
+        </form>
+    </nav>
+    
+    <div id="top-container" class="container g-2" style="margin-top: 100px;">
+        <div class="row align-items-center">
+            <!-- Logo Column -->
+            <div class="col-lg-4">
+                <img src="/assets/images/lpulogo.png" alt="Lyceum of the Philippines University Logo" style="height: 200px;">
+            </div>
+            <!-- Text Column -->
+            <div class="col-lg-8">
+                <h1 class="mb-0">Text Here</h1>          
+            </div>
+        </div>
+    </div>
+
+
+    <div id="bottom-container" class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-lg-12 mt-5 mx-3">
+            <div class="form-text">
+                <p>Select Year and Section</p>
+            </div>
+            <div class="d-flex">
+                <div class="dropdown dropdown-sec me-3">
+                    <button class="btn dropdown-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Year and Section
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#">Profile</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li><a class="dropdown-item" href="#">Help</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="btn approve-btn btn-lg rounded-pill me-3">Approve</a>
+                <a href="#" class="btn download-btn btn-lg rounded-pill">Download</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- bottom container-->
+    <div id="schedule" class="container-fluid mt-4">
+        <div class="d-flex justify-content-center align-items-center gap-4">
+          <div class="box-1 shadow-sm rounded-4 p-4 " style="width: 40%;">
+            1
+          </div>
+          <div class="box-2 shadow-sm rounded-4 p-4" style="width: 70%;">
+            2
+          </div>
+        </div>
+      </div>
+</div>
+
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+</body>
+</html>

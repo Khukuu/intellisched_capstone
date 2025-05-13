@@ -1,0 +1,391 @@
+.footer {
+    background-color: #f8f9fa;
+    text-align: left ;
+    padding: 1rem 0;
+    font-size: 1rem;
+    color: #6c757d;
+    width: 100%;
+    position: absolute;
+    position:fixed;
+    padding-left: 5%;
+    bottom: 0;
+  }
+
+.logo-img{
+    max-width: 400px;
+    width: 100%;
+    height: auto;
+    margin-bottom: -50px;
+    margin-top: -60px;
+}
+#front-page .bg-image {
+  background-image: url('/assets/images/lpu_bg.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; 
+  height: 92vh;
+}
+#front-page .custom-container {
+  position: relative;
+  z-index: 2; /* Ensure the container is above the background */
+}
+/* Background image for the Sign In page */
+#signin-page .bg-image {
+  background-image: url('/public/assets/images/lpu_bg.png');
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  height: 92vh;
+}
+
+/* Container styles for the Sign In page */
+#signin-container {
+  position: relative;
+  z-index: 2; /* Ensure the container is above the background */
+  background-color: white; /* White background */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 2rem; /* Add padding */
+}
+/* Navbar styles */
+
+.navbar {
+    padding: 1rem;
+    text-align: center;
+    height: 80px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.navbar-brand {
+  color: #ffffff !important; 
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.logout-btn {
+  background-color: #ffffff; /* Button background color */
+  color: #090909; /* Text color */
+  border: 2px solid #a21c39; /* Border color */
+  padding: 0.5rem 1.5rem; /* Padding for the button */
+  font-size: 20px; /* Font size */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  width: 200px;
+}
+
+.logout-btn:hover {
+  background-color: #a21c39; /* Background color on hover */
+  color: #ffffff; /* Text color on hover */
+  border-color: #ffffff; /* Border color on hover */
+}
+.approve-btn{
+  background-color: #a21c39;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  font-size: 20px;
+  width: 200px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+
+}
+.approve-btn:hover{
+  background-color: #ffffff;
+  color: #a21c39;
+  border: 2px solid #a21c39;
+  
+}
+
+.download-btn{
+  background-color: #a21c39;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  font-size: 20px;
+  width: 200px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.download-btn:hover{
+  background-color: #ffffff;
+  color: #a21c39;
+  border: 2px solid #a21c39;
+}
+
+/* Dropdown button styles */
+
+.dropdown-nav .dropdown-btn {
+  color: rgb(255, 255, 255); /* Text color */
+  border: 2px solid #a21c39; /* Border color */
+  padding: 0.5rem 1.5rem; /* Padding for the button */
+  font-size: 20px; /* Font size */
+  border-radius: 25px; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  border:hidden ;
+}
+
+.dropdown-nav  .dropdown-menu {
+  background-color: #ffffff; /* Background color of the dropdown menu */
+  border: 1px solid #a21c39; /* Border color of the dropdown menu */
+  border-radius: 10px; /* Rounded corners for the dropdown menu */
+  z-index: 1050 !important; /* Ensure the dropdown appears above other elements */
+
+}
+
+.dropdown-nav  .dropdown-item {
+  color: #a21c39; /* Text color for dropdown items */
+  font-size: 1rem; /* Font size for dropdown items */
+  padding: 0.5rem 1rem; /* Padding for dropdown items */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Dropdown item for sections (Dean) */
+
+/* Dropdown button styles for dropdown-sec */
+.dropdown-sec .dropdown-btn {
+  color: rgb(11, 10, 10); /* Text color */
+  border: 2px solid #a21c39; /* Border color */
+  padding: 0.5rem 1.5rem; /* Padding for the button */
+  font-size: 20px; /* Font size */
+  border-radius: 25px; /* Rounded corners */
+  width: 400px; /* Fixed width */
+  background-color: #ffffff; /* Background color */
+  transition: all 0.3s ease; /* Smooth transition for hover effects */
+  height: auto;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+.dropdown-sec .dropdown-btn:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+}
+
+
+/* Dropdown menu styles for dropdown-sec */
+.dropdown-sec .dropdown-menu {
+  background-color: #ffffff; /* Same background color as the button */
+  border: 2px solid #a21c39; /* Same border color as the button */
+  border-radius: 10px; /* Rounded corners */
+  padding: 0.5rem; /* Add padding inside the dropdown */
+  width: 300px; /* Match the width of the button */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  z-index: 1050 !important; /* Ensure the dropdown appears above other elements */
+}
+
+/* Dropdown item styles for dropdown-sec */
+.dropdown-sec .dropdown-item {
+  color: #a21c39; /* Text color for dropdown items */
+  font-size: 1rem; /* Font size for dropdown items */
+  padding: 0.5rem 1rem; /* Padding for dropdown items */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for dropdown items */
+.dropdown-sec .dropdown-item:hover {
+  background-color: #a21c39; /* Background color on hover */
+  color: #ffffff; /* Text color on hover */
+}
+
+/* Card header styles */
+
+.card {
+  background-color: #ffffff; /* White background */
+  border: none; /* Remove border */
+}
+.card-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #cccccc; /* Placeholder text color */
+  font-size: 1.2rem;
+  font-weight: bold;
+  
+
+}
+#main-page {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  background-image: url('/assets/images/lpub.png');
+  background-size: cover; /* Ensure the image covers the entire page */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-attachment: fixed; /* Make the background fixed while scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
+#main-page::before {
+  content: '';
+  position: fixed; /* Use fixed to cover the screen always */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/images/lpub.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(5px);
+  z-index: 0; /* Send behind everything */
+}
+/* General container styles */
+
+/* Specific styles for the main container */
+#main-container {
+  max-width: 100%; 
+  background-color: #f8f9fa; 
+  padding: 20px;
+  border-radius: 10px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile container styles */
+#profile-container {
+  background-color: #ffffff; 
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Viewing container styles */
+#viewing-container {
+  background-color: #ffffff; 
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+body{
+  position:relative
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+/* user page */
+#user-page::before {
+  content: '';
+  position: fixed; /* Cover the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/images/lpub.png'); /* Use the same background image */
+  background-size: cover; /* Ensure the image covers the entire page */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  filter: blur(5px); /* Apply the blur effect */
+  z-index: -1; /* Send behind everything */
+}
+
+#user-page {
+  position: relative; /* Ensure content is above the background */
+  z-index: 1; /* Place content above the blurred background */
+}
+
+
+#top-container {
+  padding: 20px; /* Add padding around the container */;
+  border-radius: 5px; /* Rounded corners */
+  height: 300px; /* Fixed height */
+  display: flex; /* Enable Flexbox for the container */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+}
+
+#top-container .row {
+  width: 100%; /* Ensure the row takes up the full width */
+}
+
+#top-container .col-lg-4 {
+  display: flex; /* Enable Flexbox for the logo column */
+  justify-content: center; /* Center the logo horizontally */
+  align-items: center; /* Center the logo vertically */
+}
+
+#top-container img {
+  max-width: 100%; /* Ensure the image scales properly */
+  height: 100px; /* Maintain aspect ratio */
+}
+
+#top-container .col-lg-8 {
+  text-align: left; /* Align the text to the left */
+}
+
+#top-container .col-lg-8 h1 {
+  font-size: 4rem; /* Adjust the font size as needed */
+  font-weight: bold; /* Make the text bold */
+  color: #ffffff; /* Optional: Change the text color */
+}
+
+#bottom-container {
+  background-color: #ffffff; /* Set the background color to white */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+  border-radius: 40px 40px 0 0;
+}
+
+.box-1, .box-2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 800px; 
+  margin-bottom: 50px;
+}
+
+.box-1 {
+  background-color: white ;
+  padding : 20px;
+  border-radius: 10px;  
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); 
+}
+
+.box-2 {
+  background-color: white;
+  padding : 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+/* forgot pass */
+
+.res-btn {
+  background-color: #a21c39; /* Button background color */
+  color: white; /* Text color */
+  border: 2px solid transparent; /* Remove border */
+  padding: 0.5rem 1.5rem; /* Padding for the button */
+  font-size: 18px; /* Font size */
+  border-radius: 25px; /* Rounded corners */
+  transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+.res-btn:hover {
+  background-color: #ffffff; /* Background color on hover */
+  color: #a21c39; /* Text color on hover */
+  border: 2px solid #a21c39; /* Border color on hover */
+}
+
+
+.add-btn {
+  background-color: #a21c39; /* Button background color */
+  color: white; /* Text color */
+  border: #a21c39 solid 2px; /* Border color */
+  padding: 0.5rem 1.5rem; /* Padding for the button */
+  font-size: 18px; /* Font size */
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #ffffff; /* Background color on hover */
+  color: #a21c39; /* Text color on hover */
+  border: 2px solid #a21c39; /* Border color on hover */
+}
+
+.countdown-active {
+  background-color: grey !important;
+  color: #fff !important;
+  border: 2px solid grey !important;
+  cursor: not-allowed;
+}
+

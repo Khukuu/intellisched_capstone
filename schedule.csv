@@ -1,0 +1,15 @@
+Subject,Faculty,Section,Session,Day,Start Time,End Time,Room
+Physics,Donabelle,BSCS3A,FIRST,T,7:00,8:30,Lab01
+Math3C,Donabelle,BSCS3A,FIRST,T,15:00,16:30,Cisco_lab
+Physics,Donabelle,BSCS3A,SECOND,TH,9:00,10:30,Cisco_lab
+Math3C,Donabelle,BSCS3A,SECOND,TH,10:00,11:30,Cisco_lab
+Software Engineering,Melody Dimaano,BSCS3A,FIRST,F,7:00,9:00,Lab03
+Elective 2,Melody Dimaano,BSCS3A,FIRST,F,9:00,11:00,Mac_lab
+Discrete Structures,Maria Cristina,BSCS3A,FIRST,F,8:00,9:30,Cisco_lab
+Computational Statistics,Maria Cristina,BSCS3A,FIRST,F,12:00,14:00,Cisco_lab
+Networking 3,Nice,BSCS3A,FIRST,F,10:00,12:00,Cisco_lab
+Software Engineering,Melody Dimaano,BSCS3A,SECOND,S,7:00,10:00,Lab03
+Elective 2,Melody Dimaano,BSCS3A,SECOND,S,12:00,15:00,Mac_lab
+Discrete Structures,Maria Cristina,BSCS3A,SECOND,S,9:00,10:30,Cisco_lab
+Computational Statistics,Maria Cristina,BSCS3A,SECOND,S,15:00,18:00,Cisco_lab
+Networking 3,Nice,BSCS3A,SECOND,S,8:00,11:00,Cisco_lab
