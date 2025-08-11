@@ -1,0 +1,35 @@
+.navbar.custom-navbar {
+  background-color: #A22630 !important;
+}
+
+.btn-primary {
+  background-color: #A22630 !important;
+  border-color: #A22630 !important;
+  border-radius: 50rem !important; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Drop shadow */
+}
+
+.btn-success {
+  background-color: #fff !important;
+  border-color: #fff !important;
+  color: #A22630 !important; /* Text color to match theme */
+  border-radius: 50rem !important; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Drop shadow */
+}
+
+#logoutBtn {
+  /* Removed manual margins, Bootstrap ms-auto handles alignment */
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  margin: 0;
+  padding: 0;
+}
+/* Removed custom table styles; Bootstrap .table classes are preferred */
+/* Removed #result and button styles; Bootstrap handles these */
+
+/* Custom card styling for a macOS-like rounded look */
+.card-mac-style {
+  border-radius: 1rem; /* Adjust as needed for desired roundness */
+} 

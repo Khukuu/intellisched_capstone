@@ -1,0 +1,56 @@
+﻿subject_code,subject_name,lecture_hours_per_week,lab_hours_per_week,units,semester,program_specialization,year_level
+COMP1,Introduction to Computing,2,3,3,1,CS_Core,1
+COMP2,Computer Programming 1 (Fundamentals of Programming),2,3,3,1,CS_Core,1
+CS1,Digital Design,2,3,3,1,CS_Core,1
+GEC-UTS,Understanding the Self,3,0,3,1,General,1
+GEC-MATH,Mathematics in the Modern World,3,0,3,1,General,1
+MATH1,College Algebra,3,0,3,1,General,1
+BSC1,Being Skills Course 1,1.5,0,1.5,1,General,1
+PE1,Physical Fitness & Gymnastics,2,0,2,1,General,1
+NSTP1,National Service Training Program 1,3,0,3,1,General,1
+CS2,Computer Organization and Architecture,2,3,3,2,CS_Core,1
+CS3,Operating Systems,2,3,3,2,CS_Core,1
+CS5,Multimedia Technologies,2,3,3,2,CS_Core,1
+COMP3,Computer Programming 2 (Intermediate Programming),2,3,3,2,CS_Core,1
+MATH2,Plane and Spherical Trigonometry,3,0,3,2,General,1
+MATH3,Analytic Geometry,3,0,3,2,General,1
+BSC2,Being Skills Course 2,1.5,0,1.5,2,General,1
+EPC,English Proficiency,3,0,3,2,General,1
+PE2,Rhythmic Activities,2,0,2,2,General,1
+NSTP2,National Service Training Program 2,3,0,3,2,General,1
+CS6,Networking 1,2,3,3,3,CS_Advanced,1
+CS11,Elective 1,2,3,3,3,CS_Advanced,1
+COMP4,Data Structures & Algorithms,2,3,3,3,CS_Advanced,1
+CS4,Systems Analysis and Design,2,3,3,1,CS_Advanced,2
+CS8,Object-Oriented Programming,2,3,3,1,CS_Advanced,2
+CS9,Programming Languages,2,3,3,1,CS_Advanced,2
+CS10,Networking 2,2,3,3,1,CS_Advanced,2
+CS16,Elective 2,2,3,3,1,CS_Advanced,2
+MATH4,Differential Calculus,3,0,3,1,General,2
+MATH3C,Probability and Statistics,3,0,3,1,General,2
+FL,Foreign Language,3,0,3,1,General,2
+PE3,Individual & Dual Sports,2,0,2,1,General,2
+CS7,Project Management,2,3,3,2,CS_Advanced,2
+CS14,Networking 3,2,3,3,2,CS_Advanced,2
+CS15,Software Engineering,2,3,3,2,CS_Advanced,2
+CS18,Elective 3,2,3,3,2,CS_Advanced,2
+COMP5,Information Management,2,3,3,2,CS_Advanced,2
+MATH5,Integral Calculus,3,0,3,2,General,2
+GEC-TCW,The Contemporary World,3,0,3,2,General,2
+GEC-STS,"Science, Technology & Society",3,0,3,2,General,2
+PE4,Team Sports & Recreation,2,0,2,2,General,2
+CS12,Discrete Structures,3,0,3,3,CS_Advanced,2
+CS13,CS Thesis Writing 1,3,0,3,3,CS_Advanced,2
+PHYS1,Calculus-based Physics 1,2,3,3,3,General,2
+CS17,Automata Theory and Formal Languages,3,0,3,1,CS_Advanced,3
+CS19,Elective 4,2,3,3,1,CS_Advanced,3
+CS21,Networking 4,2,3,3,1,CS_Advanced,3
+CS22,CS Thesis Writing 2,3,0,3,1,CS_Advanced,3
+COMP6,Application Development & Emerging Technologies,2,3,3,1,CS_Advanced,3
+PHYS2,Calculus-based Physics 2,2,3,3,1,General,3
+GEC-RPH,Readings in Philippine History,3,0,3,1,General,3
+GEC-ART,Art Appreciation,3,0,3,1,General,3
+GEC-PCOM,Purposive Communication,3,0,3,1,General,3
+CS20,Modeling and Simulation,2,3,3,2,CS_Advanced,3
+RIZAL,The Life and Works of Rizal,3,0,3,2,General,3
+GEC-ETHICS,Ethics (Professional Ethics),3,0,3,2,General,3

@@ -1,0 +1,555 @@
+const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.disabled = true;
+
+const scheduleSection = document.getElementById('schedule-section');
+const dataManagementSection = document.getElementById('data-management-section');
+const scheduleNavLink = document.getElementById('scheduleNavLink');
+const dataNavLink = document.getElementById('dataNavLink');
+
+const uploadSubjectsForm = document.getElementById('uploadSubjectsForm');
+const uploadTeachersForm = document.getElementById('uploadTeachersForm');
+const uploadRoomsForm = document.getElementById('uploadRoomsForm');
+const uploadSectionsForm = document.getElementById('uploadSectionsForm');
+
+const semesterSelect = document.getElementById('semesterSelect'); // New: Get semester select element
+const yearFilter = document.getElementById('yearFilter');
+const sectionFilter = document.getElementById('sectionFilter');
+const viewMode = document.getElementById('viewMode');
+
+// Keep last generated schedule in memory for filtering
+let lastGeneratedSchedule = [];
+
+function showSection(sectionId) {
+  scheduleSection.style.display = 'none';
+  dataManagementSection.style.display = 'none';
+
+  scheduleNavLink.classList.remove('active');
+  dataNavLink.classList.remove('active');
+
+  if (sectionId === 'schedule-section') {
+    scheduleSection.style.display = 'block';
+    scheduleNavLink.classList.add('active');
+  } else if (sectionId === 'data-management-section') {
+    dataManagementSection.style.display = 'block';
+    dataNavLink.classList.add('active');
+    loadDataManagementTables(); // Load data when showing this section
+  }
+}
+
+// Initial display
+showSection('schedule-section');
+
+scheduleNavLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  showSection('schedule-section');
+});
+
+dataNavLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  showSection('data-management-section');
+});
+
+// Handle CSV file uploads
+uploadSubjectsForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('csCurriculumFile');
+  await uploadFile(fileInput.files[0], 'cs_curriculum');
+  loadDataManagementTables(); // Reload data after upload
+});
+
+uploadTeachersForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('teachersFile');
+  await uploadFile(fileInput.files[0], 'teachers');
+  loadDataManagementTables(); // Reload data after upload
+});
+
+uploadRoomsForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('roomsFile');
+  await uploadFile(fileInput.files[0], 'rooms');
+  loadDataManagementTables(); // Reload data after upload
+});
+
+uploadSectionsForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('sectionsFile');
+  await uploadFile(fileInput.files[0], 'sections');
+  loadDataManagementTables(); // Reload data after upload
+});
+
+async function uploadFile(file, filename) {
+  if (!file) {
+    alert('Please select a file to upload.');
+    return;
+  }
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await fetch(`/upload/${filename}`, {
+      method: 'POST',
+      body: formData,
+    });
+    const result = await response.json();
+    if (response.ok) {
+      alert(result.message);
+    } else {
+      alert(`Error uploading ${filename}: ${result.error || response.statusText}`);
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    alert('An error occurred during upload.');
+  }
+}
+
+// Day and Time Slot labels must match scheduler.py exactly
+const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const timeSlotLabels = [
+  "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
+  "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
+  "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
+  "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
+  "17:00-17:30", "17:30-18:00"
+];
+
+// Timetable subject color mapping helpers
+const SUBJECT_COLOR_PALETTE = [
+  '#AEC6CF', /* pastel blue */
+  '#FFB3BA', /* pastel pink */
+  '#FFDFBA', /* pastel peach */
+  '#FFFFBA', /* pastel yellow */
+  '#BFFCC6', /* pastel green */
+  '#CDE7FF', /* baby blue */
+  '#E4C1F9', /* pastel lavender */
+  '#F1CBFF', /* light mauve */
+  '#FDE2E4', /* rose */
+  '#E2F0CB', /* light green */
+  '#FBE7C6', /* apricot */
+  '#D7E3FC', /* periwinkle */
+  '#D4F0F0', /* powder */
+  '#F6EAC2', /* light sand */
+  '#FFD6E0', /* light pink */
+  '#C1F9E4', /* mint */
+  '#C9C0FF', /* light purple */
+  '#BFD1FF'  /* soft blue */
+];
+const subjectColorCache = {};
+function hashStringToInt(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+function getSubjectColor(subjectCode) {
+  const key = String(subjectCode || '');
+  if (subjectColorCache[key]) return subjectColorCache[key];
+  const idx = hashStringToInt(key) % SUBJECT_COLOR_PALETTE.length;
+  const color = SUBJECT_COLOR_PALETTE[idx];
+  subjectColorCache[key] = color;
+  return color;
+}
+function getTextColorForBackground(hex) {
+  // Expect #RRGGBB
+  const c = hex.replace('#', '');
+  if (c.length !== 6) return '#fff';
+  const r = parseInt(c.substr(0,2), 16);
+  const g = parseInt(c.substr(2,2), 16);
+  const b = parseInt(c.substr(4,2), 16);
+  // Relative luminance (sRGB)
+  const lum = 0.2126*(r/255) + 0.7152*(g/255) + 0.0722*(b/255);
+  return lum > 0.6 ? '#000' : '#fff';
+}
+
+
+document.getElementById('generateBtn').onclick = async function() {
+  document.getElementById('result').innerHTML = "Generating schedule...";
+  document.getElementById('timetable').innerHTML = "";
+  // Logs removed
+  
+  const selectedSemester = semesterSelect.value;
+  const requestBody = { semester: selectedSemester };
+
+  // New: Get number of sections per year level
+  requestBody.numSectionsYear1 = parseInt(document.getElementById('numSectionsYear1').value) || 0;
+  requestBody.numSectionsYear2 = parseInt(document.getElementById('numSectionsYear2').value) || 0;
+  requestBody.numSectionsYear3 = parseInt(document.getElementById('numSectionsYear3').value) || 0;
+  requestBody.numSectionsYear4 = parseInt(document.getElementById('numSectionsYear4').value) || 0;
+
+  // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
+  try {
+    const subjectsResponse = await fetch('/data/cs_curriculum');
+    const subjectsData = await subjectsResponse.json();
+    const yearsList = subjectsData
+      .filter(s => String(s.semester) === String(selectedSemester))
+      .map(s => parseInt(s.year_level))
+      .filter(n => !isNaN(n));
+    const allowedYears = new Set(yearsList);
+
+    const changedYears = [];
+    [1, 2, 3, 4].forEach(y => {
+      const key = `numSectionsYear${y}`;
+      if ((requestBody[key] || 0) > 0 && !allowedYears.has(y)) {
+        requestBody[key] = 0;
+        const inputEl = document.getElementById(key);
+        if (inputEl) inputEl.value = 0;
+        changedYears.push(y);
+      }
+    });
+
+    if (changedYears.length === 4) {
+      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No subjects exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
+      downloadBtn.disabled = true;
+      return;
+    }
+
+    if (changedYears.length > 0) {
+      const msg = `Adjusted sections for Year(s) ${changedYears.join(', ')} because no subjects exist for Semester ${selectedSemester}.`;
+      document.getElementById('result').innerHTML = `<div class="alert alert-warning">${msg}</div>`;
+    }
+  } catch (err) {
+    console.warn('Pre-validation skipped due to error:', err);
+  }
+
+  if (!requestBody.numSectionsYear1 && !requestBody.numSectionsYear2 && !requestBody.numSectionsYear3 && !requestBody.numSectionsYear4) {
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">No sections selected to schedule.</div>';
+    downloadBtn.disabled = true;
+    return;
+  }
+
+  const response = await fetch('/schedule', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+  const data = await response.json();
+  const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
+  lastGeneratedSchedule = scheduleArray;
+
+  // Logs removed
+
+  if (!Array.isArray(scheduleArray) || scheduleArray.length === 0) {
+    document.getElementById('result').innerHTML = "<b>No schedule generated.</b>";
+    document.getElementById('timetable').innerHTML = "";
+    downloadBtn.disabled = true;
+    return;
+  }
+
+  renderScheduleAndTimetable(lastGeneratedSchedule);
+  // Logs removed
+  populateFilters(lastGeneratedSchedule);
+};
+
+downloadBtn.onclick = function() {
+  if (!downloadBtn.disabled) {
+    const selectedSemester = semesterSelect.value;
+    let downloadUrl = '/download_schedule';
+    if (selectedSemester) {
+      downloadUrl += `?semester=${selectedSemester}`;
+    }
+    window.location.href = downloadUrl;
+  }
+};
+
+function populateFilters(data) {
+  // Extract available years from section IDs (format CS{year}{letter})
+  const years = new Set();
+  const sectionsByYear = new Map();
+  data.forEach(e => {
+    const match = /^CS(\d)/.exec(e.section_id || '');
+    if (match) {
+      const y = match[1];
+      years.add(y);
+      if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
+      sectionsByYear.get(y).add(e.section_id);
+    }
+  });
+
+  // Enable/disable year filter options based on presence
+  Array.from(yearFilter.options).forEach(opt => {
+    if (opt.value === 'all') return;
+    opt.disabled = !years.has(opt.value);
+  });
+
+  // If current selection is disabled, reset to 'all'
+  if (yearFilter.selectedOptions[0] && yearFilter.selectedOptions[0].disabled) {
+    yearFilter.value = 'all';
+  }
+
+  // Rebuild sectionFilter based on selected year
+  rebuildSectionFilter(sectionsByYear);
+}
+
+function rebuildSectionFilter(sectionsByYear) {
+  const selectedYear = yearFilter.value;
+  sectionFilter.innerHTML = '';
+  const defaultOpt = document.createElement('option');
+  defaultOpt.value = 'all';
+  defaultOpt.textContent = 'All Sections';
+  sectionFilter.appendChild(defaultOpt);
+
+  let sectionSet = new Set();
+  if (selectedYear === 'all') {
+    // union of all
+    sectionsByYear.forEach(set => set.forEach(s => sectionSet.add(s)));
+  } else if (sectionsByYear.has(selectedYear)) {
+    sectionSet = sectionsByYear.get(selectedYear);
+  }
+
+  Array.from(sectionSet).sort().forEach(sec => {
+    const opt = document.createElement('option');
+    opt.value = sec;
+    opt.textContent = sec;
+    sectionFilter.appendChild(opt);
+  });
+
+  sectionFilter.disabled = sectionFilter.options.length <= 1;
+  sectionFilter.value = 'all';
+}
+
+yearFilter.addEventListener('change', () => {
+  // Rebuild section list based on year
+  const sectionsByYear = new Map();
+  lastGeneratedSchedule.forEach(e => {
+    const match = /^CS(\d)/.exec(e.section_id || '');
+    if (match) {
+      const y = match[1];
+      if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
+      sectionsByYear.get(y).add(e.section_id);
+    }
+  });
+  rebuildSectionFilter(sectionsByYear);
+  renderScheduleAndTimetable(lastGeneratedSchedule);
+});
+
+sectionFilter.addEventListener('change', () => {
+  renderScheduleAndTimetable(lastGeneratedSchedule);
+});
+
+function applyFilters(data) {
+  const y = yearFilter.value;
+  const s = sectionFilter.value;
+  return data.filter(e => {
+    let ok = true;
+    if (y !== 'all') {
+      const m = /^CS(\d)/.exec(e.section_id || '');
+      ok = ok && m && m[1] === y;
+    }
+    if (s !== 'all') ok = ok && e.section_id === s;
+    return ok;
+  });
+}
+
+function renderScheduleAndTimetable(data) {
+  const filtered = applyFilters(Array.isArray(data) ? data : []);
+
+  // Schedule Table (left)
+  let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
+  for (const row of filtered) {
+    const subj = row.subject_name || row.subject_code || '';
+    const timeRange = computeEventTimeRange(row);
+    html += `<tr>
+      <td>${row.section_id}</td>
+      <td>${subj}</td>
+      <td>${row.type}</td>
+      <td>${row.teacher_name}</td>
+      <td>${row.room_id}</td>
+      <td>${row.day}</td>
+      <td>${timeRange}</td>
+    </tr>`;
+  }
+  html += "</tbody></table></div>";
+  document.getElementById('result').innerHTML = html;
+  downloadBtn.disabled = filtered.length === 0;
+
+  // Timetable (right)
+  const timetable = Array.from({length: timeSlotLabels.length}, () => Array.from({length: dayLabels.length}, () => []));
+  filtered.forEach(event => {
+    const dayIdx = dayLabels.indexOf(event.day);
+    const startSlotIdx = timeSlotLabels.indexOf(event.start_time_slot);
+    const duration = event.duration_slots;
+    if (dayIdx !== -1 && startSlotIdx !== -1) {
+      for (let i = 0; i < duration; i++) {
+        if (startSlotIdx + i < timeSlotLabels.length) {
+          timetable[startSlotIdx + i][dayIdx].push(event);
+        }
+      }
+    }
+  });
+
+  let tthtml = '<div class="table-responsive"><table class="table table-bordered"><thead><tr><th>Time Slot</th>';
+  for (const day of dayLabels) tthtml += `<th>${day}</th>`;
+  tthtml += '</tr></thead><tbody>';
+  const singleSectionView = sectionFilter && sectionFilter.value !== 'all';
+  if (singleSectionView) {
+    // Rowspan rendering for a single section to reflect duration visually
+    const skip = Array.from({ length: timeSlotLabels.length }, () => Array(dayLabels.length).fill(false));
+    const startsMap = Array.from({ length: timeSlotLabels.length }, () => Array.from({ length: dayLabels.length }, () => []));
+    filtered.forEach(event => {
+      const dIdx = dayLabels.indexOf(event.day);
+      const sIdx = timeSlotLabels.indexOf(event.start_time_slot);
+      if (dIdx !== -1 && sIdx !== -1) startsMap[sIdx][dIdx].push(event);
+    });
+    for (let t = 0; t < timeSlotLabels.length; t++) {
+      tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
+      for (let d = 0; d < dayLabels.length; d++) {
+        if (skip[t][d]) continue;
+        const starts = startsMap[t][d];
+        if (!starts || starts.length === 0) {
+          tthtml += '<td></td>';
+        } else {
+          const ev = starts[0];
+          const span = Math.min(parseInt(ev.duration_slots, 10) || 1, timeSlotLabels.length - t);
+          const subj = ev.subject_name || ev.subject_code || '';
+          const range = computeEventTimeRange(ev);
+          const bg = getSubjectColor(ev.subject_code);
+          const fg = getTextColorForBackground(bg);
+          tthtml += `<td rowspan="${span}" style="background:${bg}; color:${fg};">
+            <b>${subj}</b> <small style=\"color:#000; opacity:.85\">(${range})</small><br>
+            ${ev.section_id}<br>${ev.teacher_name}<br>${ev.room_id}
+          </td>`;
+          for (let k = 1; k < span; k++) skip[t + k][d] = true;
+        }
+      }
+      tthtml += '</tr>';
+    }
+  } else {
+    // Combined view: show subject and full time range in the start slot
+    for (let t = 0; t < timeSlotLabels.length; t++) {
+      tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
+      for (let d = 0; d < dayLabels.length; d++) {
+        const eventsInSlot = timetable[t][d];
+        if (eventsInSlot.length > 0) {
+          const uniqueEvents = [];
+          const seenEventIds = new Set();
+          eventsInSlot.forEach(event => {
+            const id = event.section_id + event.type + event.start_time_slot + event.day;
+            if (timeSlotLabels.indexOf(event.start_time_slot) === t && !seenEventIds.has(id)) {
+              uniqueEvents.push(event);
+              seenEventIds.add(id);
+            }
+          });
+          if (uniqueEvents.length > 0) {
+            tthtml += '<td>' + uniqueEvents.map(slot => {
+              const subj = slot.subject_name || slot.subject_code || '';
+              const range = computeEventTimeRange(slot);
+              const bg = getSubjectColor(slot.subject_code);
+              const fg = getTextColorForBackground(bg);
+              return `<div style=\"background:${bg}; color:${fg}; padding:4px 6px; border-radius:6px; margin-bottom:4px;\">
+                <b>${subj}</b> <small style=\"opacity:.85; color:#000\">(${range})</small><br>
+                ${slot.section_id}<br>${slot.teacher_name}<br>${slot.room_id}
+              </div>`;
+            }).join('') + '</td>';
+          } else {
+            tthtml += '<td></td>';
+          }
+        } else {
+          tthtml += '<td></td>';
+        }
+      }
+      tthtml += '</tr>';
+    }
+  }
+  tthtml += '</tbody></table></div>';
+  document.getElementById('timetable').innerHTML = tthtml;
+  // View toggle handling
+  applyViewMode();
+}
+
+// Build a readable time range from start slot and duration (e.g., 08:00-10:00)
+function computeEventTimeRange(event) {
+  const startIdx = timeSlotLabels.indexOf(event.start_time_slot);
+  const dur = parseInt(event.duration_slots, 10) || 0;
+  if (startIdx < 0 || dur <= 0) return event.start_time_slot || '';
+  const startStart = (event.start_time_slot || '').split('-')[0];
+  const endIdx = Math.min(timeSlotLabels.length - 1, startIdx + dur - 1);
+  const endEnd = (timeSlotLabels[endIdx] || '').split('-')[1] || '';
+  return `${startStart}-${endEnd}`;
+}
+
+// Apply current view mode to show only one view and expand its column
+function applyViewMode() {
+  const resultCol = document.getElementById('result');
+  const timetableCol = document.getElementById('timetable');
+  if (!resultCol || !timetableCol) return;
+
+  // Reset classes
+  resultCol.classList.remove('col-md-12');
+  timetableCol.classList.remove('col-md-12');
+  resultCol.classList.add('col-md-6');
+  timetableCol.classList.add('col-md-6');
+
+  if (viewMode && viewMode.value === 'timetable') {
+    resultCol.style.display = 'none';
+    timetableCol.style.display = 'block';
+    timetableCol.classList.remove('col-md-6');
+    timetableCol.classList.add('col-md-12');
+  } else if (viewMode && viewMode.value === 'list') {
+    resultCol.style.display = 'block';
+    timetableCol.style.display = 'none';
+    resultCol.classList.remove('col-md-6');
+    resultCol.classList.add('col-md-12');
+  } else { // both
+    resultCol.style.display = 'block';
+    timetableCol.style.display = 'block';
+    resultCol.classList.remove('col-md-12');
+    timetableCol.classList.remove('col-md-12');
+    resultCol.classList.add('col-md-6');
+    timetableCol.classList.add('col-md-6');
+  }
+}
+
+// Change view when selector changes
+if (viewMode) {
+  viewMode.addEventListener('change', () => {
+    applyViewMode();
+  });
+}
+
+
+async function loadDataManagementTables() {
+  // Fetch and display Subjects data
+  const subjectsResponse = await fetch('/data/cs_curriculum');
+  const subjectsData = await subjectsResponse.json();
+  renderTable(subjectsData, 'subjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']); // Updated headers
+
+  // Fetch and display Teachers data
+  const teachersResponse = await fetch('/data/teachers');
+  const teachersData = await teachersResponse.json();
+  renderTable(teachersData, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
+
+  // Fetch and display Rooms data
+  const roomsResponse = await fetch('/data/rooms');
+  const roomsData = await roomsResponse.json();
+  renderTable(roomsData, 'roomsData', ['room_id', 'room_name', 'is_laboratory']);
+
+  // Fetch and display Sections data
+  const sectionsResponse = await fetch('/data/sections');
+  const sectionsData = await sectionsResponse.json();
+  renderTable(sectionsData, 'sectionsData', ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
+}
+
+function renderTable(data, elementId, headers) {
+  if (!Array.isArray(data) || data.length === 0) {
+    document.getElementById(elementId).innerHTML = '<p>No data available.</p>';
+    return;
+  }
+  let tableHtml = '<table class="table table-striped table-bordered"><thead><tr>';
+  headers.forEach(header => {
+    tableHtml += `<th>${header}</th>`;
+  });
+  tableHtml += '</tr></thead><tbody>';
+  data.forEach(row => {
+    tableHtml += '<tr>';
+    headers.forEach(header => {
+      tableHtml += `<td>${row[header]}</td>`;
+    });
+    tableHtml += '</tr>';
+  });
+  tableHtml += '</tbody></table>';
+  document.getElementById(elementId).innerHTML = tableHtml;
+}

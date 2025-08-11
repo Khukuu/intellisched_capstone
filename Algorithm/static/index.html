@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Automatic Scheduler Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar mb-4">
+    <div class="container-fluid">
+      <span class="navbar-brand mb-0 h1">IntelliSched</span>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#" id="scheduleNavLink">Schedule</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="dataNavLink">Data Management</a>
+          </li>
+        </ul>
+      </div>
+      <button id="logoutBtn" class="btn btn-light ms-auto rounded-pill px-4">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <div id="schedule-section" class="card p-4 shadow-sm mb-4 card-mac-style">
+      <h1 class="card-title mb-4">Generate Schedule</h1>
+      <div class="mb-3">
+        <label for="semesterSelect" class="form-label">Select Semester:</label>
+        <select class="form-select" id="semesterSelect">
+          <option value="1" selected>1st Semester</option>
+          <option value="2">2nd Semester</option>
+          <option value="3">Summer Semester</option>
+        </select>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+          <label for="numSectionsYear1" class="form-label col-form-label-sm">1st Year Sections:</label>
+          <input type="number" class="form-control form-control-sm" id="numSectionsYear1" value="1" min="0">
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <label for="numSectionsYear2" class="form-label col-form-label-sm">2nd Year Sections:</label>
+          <input type="number" class="form-control form-control-sm" id="numSectionsYear2" value="1" min="0">
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <label for="numSectionsYear3" class="form-label col-form-label-sm">3rd Year Sections:</label>
+          <input type="number" class="form-control form-control-sm" id="numSectionsYear3" value="1" min="0">
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+          <label for="numSectionsYear4" class="form-label col-form-label-sm">4th Year Sections:</label>
+          <input type="number" class="form-control form-control-sm" id="numSectionsYear4" value="1" min="0">
+        </div>
+      </div>
+      <div class="d-flex justify-content-start mb-3">
+        <button id="generateBtn" class="btn btn-primary me-2">Generate Schedule</button>
+        <button id="downloadBtn" class="btn btn-success">Download CSV</button>
+      </div>
+      <div class="row g-3 align-items-end mb-4">
+        <div class="col-12 col-md-3">
+          <label for="yearFilter" class="form-label">Filter by Year</label>
+          <select id="yearFilter" class="form-select">
+            <option value="all" selected>All Years</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-3">
+          <label for="sectionFilter" class="form-label">Filter by Section</label>
+          <select id="sectionFilter" class="form-select" disabled>
+            <option value="all" selected>All Sections</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-3">
+          <label for="viewMode" class="form-label">View</label>
+          <select id="viewMode" class="form-select">
+            <option value="both" selected>Both (side-by-side)</option>
+            <option value="list">List only</option>
+            <option value="timetable">Timetable only</option>
+          </select>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-12 col-md-6" id="result"></div>
+        <div class="col-12 col-md-6" id="timetable"></div>
+      </div>
+      
+    </div>
+
+    <div id="data-management-section" class="card p-4 shadow-sm mb-4 card-mac-style" style="display:none;">
+      <h1 class="card-title mb-4">Data Management</h1>
+      
+      <h2>Subjects</h2>
+      <div id="subjectsData" class="table-responsive mb-4"></div>
+      <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
+        <div class="input-group">
+          <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
+          <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
+        </div>
+      </form>
+
+      <h2>Teachers</h2>
+      <div id="teachersData" class="table-responsive mb-4"></div>
+      <form id="uploadTeachersForm" enctype="multipart/form-data" class="mb-4">
+        <div class="input-group">
+          <input type="file" class="form-control" id="teachersFile" accept=".csv">
+          <button class="btn btn-outline-secondary" type="submit">Upload Teachers CSV</button>
+        </div>
+      </form>
+
+      <h2>Rooms</h2>
+      <div id="roomsData" class="table-responsive mb-4"></div>
+      <form id="uploadRoomsForm" enctype="multipart/form-data" class="mb-4">
+        <div class="input-group">
+          <input type="file" class="form-control" id="roomsFile" accept=".csv">
+          <button class="btn btn-outline-secondary" type="submit">Upload Rooms CSV</button>
+        </div>
+      </form>
+
+      <h2>Sections</h2>
+      <div id="sectionsData" class="table-responsive mb-4"></div>
+      <form id="uploadSectionsForm" enctype="multipart/form-data" class="mb-4">
+        <div class="input-group">
+          <input type="file" class="form-control" id="sectionsFile" accept=".csv">
+          <button class="btn btn-outline-secondary" type="submit">Upload Sections CSV</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
