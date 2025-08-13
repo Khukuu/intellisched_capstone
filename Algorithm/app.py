@@ -1,32 +1,35 @@
-from flask import Flask, request, jsonify, send_from_directory, Response, make_response
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse, FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 from scheduler import load_csv, generate_schedule
 import os
 import csv
 import io
 
-app = Flask(__name__, static_folder='static')
+app = FastAPI()
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
-@app.route('/')
-def index():
-    return app.send_static_file('index.html')
+@app.get('/')
+async def index():
+    index_path = os.path.join('static', 'index.html')
+    if not os.path.exists(index_path):
+        raise HTTPException(status_code=404, detail='Index file not found')
+    return FileResponse(index_path, media_type='text/html')
 
-@app.route('/schedule', methods=['POST'])
-def schedule():
+@app.post('/schedule')
+async def schedule(payload: dict):
     print('Received request for /schedule')
     subjects = load_csv('cs_curriculum.csv')
     teachers = load_csv('teachers.csv')
     rooms = load_csv('rooms.csv')
 
-    # Get semester from request, default to None if not provided
-    semester_filter = request.json.get('semester')
-    
-    # New: Get desired number of sections per year level
-    num_sections_year_1 = request.json.get('numSectionsYear1', 0)
-    num_sections_year_2 = request.json.get('numSectionsYear2', 0)
-    num_sections_year_3 = request.json.get('numSectionsYear3', 0)
-    num_sections_year_4 = request.json.get('numSectionsYear4', 0)
+    semester_filter = payload.get('semester')
 
-    # Pass a dictionary of desired sections per year to generate_schedule
+    num_sections_year_1 = payload.get('numSectionsYear1', 0)
+    num_sections_year_2 = payload.get('numSectionsYear2', 0)
+    num_sections_year_3 = payload.get('numSectionsYear3', 0)
+    num_sections_year_4 = payload.get('numSectionsYear4', 0)
+
     desired_sections_per_year = {
         1: num_sections_year_1,
         2: num_sections_year_2,
@@ -36,7 +39,6 @@ def schedule():
 
     print(f"Filtering for semester: {semester_filter}. Desired sections per year: {desired_sections_per_year}")
 
-    # Filter desired sections to only years that have subjects for the selected semester
     try:
         if semester_filter:
             available_years = set(
@@ -56,109 +58,45 @@ def schedule():
     }
 
     if not filtered_desired_sections_per_year:
-        print("Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.")
-        return jsonify([])
+        print('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
+        return JSONResponse(content=[])
 
-    # Call generate_schedule with filtered years
     result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year)
-    return jsonify(result)
+    return JSONResponse(content=result)
 
-@app.route('/download_schedule', methods=['GET'])
-def download_schedule():
-    subjects = load_csv('cs_curriculum.csv')
-    teachers = load_csv('teachers.csv')
-    rooms = load_csv('rooms.csv')
-    # Removed: sections = load_csv('sections.csv')
-
-    semester_filter = request.args.get('semester')
-    
-    # For download, we assume all sections that could be generated were generated
-    # For now, let's assume a default for all years if not specified for download
-    # The actual sections for download will come from the generated schedule, not a CSV
-    # This part needs to be re-evaluated once we confirm schedule generation works without sections.csv
-
-    # Placeholder: if you need to download a schedule, it should be the one already generated.
-    # If the schedule is dynamically generated without a sections.csv, you might need
-    # to store the last generated schedule in a session or similar for download.
-    # For now, leaving this simplified as we are focusing on generation.
-
-    # The previous logic in /schedule now directly passes desired_sections_per_year
-    # The download endpoint will likely need a different approach if sections are not stored.
-    # For now, this part will be simplified and only retrieve the semester.
-
-    # Original data loading (simplified for download for now)
-    # This endpoint logic will need to be adjusted significantly once the new section generation is stable
-    # schedule = generate_schedule(subjects, teachers, rooms, semester_filter, {}) # Placeholder for now
-
-    # For direct download, we might need a way to fetch the last generated schedule,
-    # or re-run a simplified generation based on query parameters.
-    # For now, we'll keep it minimal, as the primary goal is generation.
-
-    # Assuming the schedule is already stored or can be re-generated simply for download
-    # This will likely require changes to how the generated schedule is stored or retrieved
-    # For the sake of removing sections.csv, this will be simplified.
-
-    # Temporary measure: For download, if sections.csv is gone, we cannot load it.
-    # The download functionality will need a rework if the sections are generated on the fly.
-    # For now, we will simply filter subjects/teachers/rooms data to show it can still load.
-
-    # This entire block needs a rework for the download functionality later.
-
-    # For now, we will just return a dummy CSV if sections.csv is gone.
-    # This is to avoid errors while we refactor section generation.
-    # In a real scenario, you'd store the generated schedule and serve that.
-
-    # Dummy data for CSV download without sections.csv
+@app.get('/download_schedule')
+async def download_schedule(semester: str | None = None):
     fieldnames = ['section_id', 'subject_code', 'type', 'teacher_name', 'room_id', 'day', 'start_time_slot', 'duration_slots']
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     writer.writeheader()
+    csv_bytes = output.getvalue().encode('utf-8')
+    headers = {"Content-Disposition": "attachment; filename=schedule.csv"}
+    return Response(content=csv_bytes, media_type='text/csv', headers=headers)
 
-    # This would typically be the generated schedule. For now, it's empty.
-    # For testing, we can add a dummy row.
-    # writer.writerow({
-    #     'section_id': 'DUMMY-1A',
-    #     'subject_code': 'DUMMY_SUB',
-    #     'type': 'lecture',
-    #     'teacher_name': 'Dummy Teacher',
-    #     'room_id': 'Dummy Room',
-    #     'day': 'Mon',
-    #     'start_time_slot': '8:00-8:30',
-    #     'duration_slots': 2
-    # })
-
-    # If no generated schedule is available, return empty
-    # This part will need to be properly linked to the actual generated schedule later.
-    # For now, we focus on removing sections.csv dependency.
-
-    response = make_response(output.getvalue())
-    response.headers["Content-Disposition"] = "attachment; filename=schedule.csv"
-    response.headers["Content-type"] = "text/csv"
-    return response
-
-@app.route('/data/<filename>', methods=['GET'])
-def get_data(filename):
+@app.get('/data/{filename}')
+async def get_data(filename: str):
     filepath = os.path.join('.', f'{filename}.csv')
     if not os.path.exists(filepath):
-        return jsonify({'error': 'File not found'}), 404
+        raise HTTPException(status_code=404, detail='File not found')
     try:
         data = load_csv(filepath)
-        return jsonify(data)
+        return JSONResponse(content=data)
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
-@app.route('/upload/<filename>', methods=['POST'])
-def upload_file(filename):
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    if file and file.filename.endswith('.csv'):
-        filepath = os.path.join('.', f'{filename}.csv')
-        file.save(filepath)
-        return jsonify({'message': f'{filename}.csv updated successfully'}), 200
-    return jsonify({'error': 'Invalid file type. Only CSV allowed.'}), 400
+@app.post('/upload/{filename}')
+async def upload_file(filename: str, file: UploadFile = File(...)):
+    if not file.filename:
+        raise HTTPException(status_code=400, detail='No selected file')
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail='Invalid file type. Only CSV allowed.')
+    contents = await file.read()
+    filepath = os.path.join('.', f'{filename}.csv')
+    with open(filepath, 'wb') as f:
+        f.write(contents)
+    return { 'message': f'{filename}.csv updated successfully' }
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import uvicorn
+    uvicorn.run('app:app', host='127.0.0.1', port=5000, reload=True)
