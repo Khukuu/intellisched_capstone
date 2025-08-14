@@ -15,9 +15,14 @@ const semesterSelect = document.getElementById('semesterSelect'); // New: Get se
 const yearFilter = document.getElementById('yearFilter');
 const sectionFilter = document.getElementById('sectionFilter');
 const viewMode = document.getElementById('viewMode');
+const saveBtn = document.getElementById('saveBtn');
+const saveNameInput = document.getElementById('saveNameInput');
+const savedSchedulesSelect = document.getElementById('savedSchedulesSelect');
+const loadBtn = document.getElementById('loadBtn');
 
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
+let lastSavedId = '';
 
 function showSection(sectionId) {
   scheduleSection.style.display = 'none';
@@ -229,6 +234,7 @@ document.getElementById('generateBtn').onclick = async function() {
   const data = await response.json();
   const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
   lastGeneratedSchedule = scheduleArray;
+  lastSavedId = '';
 
   // Logs removed
 
@@ -242,18 +248,106 @@ document.getElementById('generateBtn').onclick = async function() {
   renderScheduleAndTimetable(lastGeneratedSchedule);
   // Logs removed
   populateFilters(lastGeneratedSchedule);
+  refreshSavedSchedulesList();
 };
 
 downloadBtn.onclick = function() {
   if (!downloadBtn.disabled) {
     const selectedSemester = semesterSelect.value;
     let downloadUrl = '/download_schedule';
-    if (selectedSemester) {
+    if (lastSavedId) {
+      downloadUrl += `?id=${encodeURIComponent(lastSavedId)}`;
+    } else if (selectedSemester) {
       downloadUrl += `?semester=${selectedSemester}`;
     }
     window.location.href = downloadUrl;
   }
 };
+
+// Save current generated schedule
+if (saveBtn) {
+  saveBtn.addEventListener('click', async () => {
+    if (!Array.isArray(lastGeneratedSchedule) || lastGeneratedSchedule.length === 0) {
+      alert('No schedule to save. Generate a schedule first.');
+      return;
+    }
+    const name = (saveNameInput && saveNameInput.value.trim()) || '';
+    try {
+      const resp = await fetch('/save_schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          semester: semesterSelect ? semesterSelect.value : undefined,
+          schedule: lastGeneratedSchedule
+        })
+      });
+      const res = await resp.json();
+      if (!resp.ok) {
+        throw new Error(res.detail || 'Failed to save schedule');
+      }
+      lastSavedId = res.id || '';
+      refreshSavedSchedulesList(lastSavedId);
+      alert('Schedule saved.');
+    } catch (e) {
+      console.error(e);
+      alert('Error saving schedule.');
+    }
+  });
+}
+
+// Load selected saved schedule
+if (loadBtn) {
+  loadBtn.addEventListener('click', async () => {
+    const id = savedSchedulesSelect ? savedSchedulesSelect.value : '';
+    if (!id) {
+      alert('Select a saved schedule first.');
+      return;
+    }
+    try {
+      const resp = await fetch(`/load_schedule?id=${encodeURIComponent(id)}`);
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.detail || 'Failed to load schedule');
+      }
+      const sched = Array.isArray(data.schedule) ? data.schedule : [];
+      lastGeneratedSchedule = sched;
+      lastSavedId = data.id || id;
+      if (semesterSelect && data.semester) semesterSelect.value = String(data.semester);
+      renderScheduleAndTimetable(lastGeneratedSchedule);
+      populateFilters(lastGeneratedSchedule);
+      applyViewMode();
+      alert('Schedule loaded.');
+    } catch (e) {
+      console.error(e);
+      alert('Error loading saved schedule.');
+    }
+  });
+}
+
+async function refreshSavedSchedulesList(selectId) {
+  try {
+    const resp = await fetch('/saved_schedules');
+    const items = await resp.json();
+    if (!savedSchedulesSelect) return;
+    savedSchedulesSelect.innerHTML = '<option value="">Select saved schedule…</option>';
+    items.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.id;
+      const labelName = item.name ? `${item.name}` : `${item.id}`;
+      const extra = item.semester ? `S${item.semester}` : '';
+      const count = typeof item.count === 'number' ? ` (${item.count})` : '';
+      opt.textContent = `${labelName} ${extra} ${count}`.trim();
+      savedSchedulesSelect.appendChild(opt);
+    });
+    if (selectId) savedSchedulesSelect.value = selectId;
+  } catch (e) {
+    console.warn('Could not load saved schedules:', e);
+  }
+}
+
+// Load saved list on page open
+refreshSavedSchedulesList();
 
 function populateFilters(data) {
   // Extract available years from section IDs (format CS{year}{letter})
