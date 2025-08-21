@@ -1,9 +1,9 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse, FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from scheduler import load_csv, generate_schedule
+from scheduler import generate_schedule
+from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 import os
-import csv
 import io
 import json
 from datetime import datetime
@@ -21,9 +21,9 @@ async def index():
 @app.post('/schedule')
 async def schedule(payload: dict):
     print('Received request for /schedule')
-    subjects = load_csv('cs_curriculum.csv')
-    teachers = load_csv('teachers.csv')
-    rooms = load_csv('rooms.csv')
+    subjects = load_subjects_from_db()
+    teachers = load_teachers_from_db()
+    rooms = load_rooms_from_db()
 
     semester_filter = payload.get('semester')
 
@@ -43,21 +43,29 @@ async def schedule(payload: dict):
 
     try:
         if semester_filter:
+            # Convert semester_filter to int for comparison
+            semester_filter_int = int(semester_filter) if semester_filter else None
             available_years = set(
                 int(s.get('year_level', 0)) for s in subjects
-                if s.get('semester') == semester_filter and s.get('year_level')
+                if int(s.get('semester', 0)) == semester_filter_int and s.get('year_level')
             )
         else:
             available_years = set(
                 int(s.get('year_level', 0)) for s in subjects if s.get('year_level')
             )
-    except Exception:
+    except Exception as e:
+        print(f"Error in year filtering: {e}")
         available_years = {1, 2, 3, 4}
 
+    print(f"Available years: {available_years}")
+    print(f"Desired sections per year: {desired_sections_per_year}")
+    
     filtered_desired_sections_per_year = {
         year: count for year, count in desired_sections_per_year.items()
         if count and (year in available_years)
     }
+    
+    print(f"Filtered desired sections: {filtered_desired_sections_per_year}")
 
     if not filtered_desired_sections_per_year:
         print('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
@@ -173,26 +181,127 @@ async def download_schedule(id: str | None = None, semester: str | None = None):
 
 @app.get('/data/{filename}')
 async def get_data(filename: str):
-    filepath = os.path.join('.', f'{filename}.csv')
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=404, detail='File not found')
     try:
-        data = load_csv(filepath)
+        if filename in ['cs_curriculum', 'subjects']:
+            data = load_subjects_from_db()
+        elif filename == 'teachers':
+            data = load_teachers_from_db()
+        elif filename == 'rooms':
+            data = load_rooms_from_db()
+        else:
+            raise HTTPException(status_code=404, detail='Data type not found')
         return JSONResponse(content=data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/upload/{filename}')
 async def upload_file(filename: str, file: UploadFile = File(...)):
-    if not file.filename:
-        raise HTTPException(status_code=400, detail='No selected file')
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail='Invalid file type. Only CSV allowed.')
-    contents = await file.read()
-    filepath = os.path.join('.', f'{filename}.csv')
-    with open(filepath, 'wb') as f:
-        f.write(contents)
-    return { 'message': f'{filename}.csv updated successfully' }
+    """Legacy endpoint - CSV uploads are no longer supported"""
+    raise HTTPException(status_code=400, detail='CSV uploads are no longer supported. Data is now managed through PostgreSQL database.')
+
+# Database management endpoints
+@app.post('/api/subjects')
+async def add_subject_endpoint(subject_data: dict):
+    """Add a new subject to the database"""
+    try:
+        from database import add_subject
+        add_subject(subject_data)
+        return JSONResponse(content={'message': 'Subject added successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/subjects/{subject_code}')
+async def update_subject_endpoint(subject_code: str, subject_data: dict):
+    """Update an existing subject in the database"""
+    try:
+        from database import update_subject
+        subject_data['subject_code'] = subject_code
+        update_subject(subject_code, subject_data)
+        return JSONResponse(content={'message': 'Subject updated successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/subjects/{subject_code}')
+async def delete_subject_endpoint(subject_code: str):
+    """Delete a subject from the database"""
+    try:
+        from database import delete_subject
+        delete_subject(subject_code)
+        return JSONResponse(content={'message': 'Subject deleted successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/teachers')
+async def add_teacher_endpoint(teacher_data: dict):
+    """Add a new teacher to the database"""
+    try:
+        from database import add_teacher
+        add_teacher(teacher_data)
+        return JSONResponse(content={'message': 'Teacher added successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/teachers/{teacher_id}')
+async def update_teacher_endpoint(teacher_id: str, teacher_data: dict):
+    """Update an existing teacher in the database"""
+    try:
+        from database import update_teacher
+        teacher_data['teacher_id'] = teacher_id
+        update_teacher(teacher_id, teacher_data)
+        return JSONResponse(content={'message': 'Teacher updated successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/teachers/{teacher_id}')
+async def delete_teacher_endpoint(teacher_id: str):
+    """Delete a teacher from the database"""
+    try:
+        from database import delete_teacher
+        delete_teacher(teacher_id)
+        return JSONResponse(content={'message': 'Teacher deleted successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/rooms')
+async def add_room_endpoint(room_data: dict):
+    """Add a new room to the database"""
+    try:
+        from database import add_room
+        add_room(room_data)
+        return JSONResponse(content={'message': 'Room added successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/rooms/{room_id}')
+async def update_room_endpoint(room_id: str, room_data: dict):
+    """Update an existing room in the database"""
+    try:
+        from database import update_room
+        room_data['room_id'] = room_id
+        update_room(room_id, room_data)
+        return JSONResponse(content={'message': 'Room updated successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/rooms/{room_id}')
+async def delete_room_endpoint(room_id: str):
+    """Delete a room from the database"""
+    try:
+        from database import delete_room
+        delete_room(room_id)
+        return JSONResponse(content={'message': 'Room deleted successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/migrate')
+async def migrate_data_endpoint():
+    """Trigger data migration from CSV to database"""
+    try:
+        from database import db
+        db.migrate_from_csv()
+        return JSONResponse(content={'message': 'Migration completed successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == '__main__':
     import uvicorn

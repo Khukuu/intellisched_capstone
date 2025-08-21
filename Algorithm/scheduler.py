@@ -1,10 +1,5 @@
-import csv
 from ortools.sat.python import cp_model
-
-def load_csv(filename):
-    with open(filename, newline='', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f)
-        return list(reader)
+from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 
 def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, desired_sections_per_year):
     logs = []
@@ -21,7 +16,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         teacher_name = t.get('teacher_name')
         if teacher_id and teacher_name:
             cleaned_teachers_data.append({
-                'teacher_id': teacher_id.strip(),
+                'teacher_id': teacher_id,  # Keep as integer
                 'teacher_name': teacher_name.strip(),
                 'can_teach': str(t.get('can_teach', '' )).replace(' ', '') # Ensure it's a string before replace
             })
@@ -99,7 +94,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         relevant_subjects = [
             s for s in subjects_data 
             if safe_int(s.get('year_level'), None) == cohort_year_level and 
-               (not cohort_semester or str(s.get('semester')) == str(cohort_semester))
+               (not cohort_semester or safe_int(s.get('semester'), None) == safe_int(cohort_semester, None))
         ]
 
         if not relevant_subjects:
@@ -125,11 +120,11 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             # Prepare room lists for lecture vs lab components
             lecture_rooms_for_subj = [
                 r['room_id'] for r in rooms_data
-                if (r.get('is_laboratory', 'false').lower() == 'true') == False
+                if not r.get('is_laboratory', False)
             ]
             lab_rooms_for_subj = [
                 r['room_id'] for r in rooms_data
-                if (r.get('is_laboratory', 'false').lower() == 'true') == True
+                if r.get('is_laboratory', False)
             ]
 
             # Skip unschedulable subjects

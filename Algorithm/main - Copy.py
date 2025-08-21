@@ -1,45 +1,40 @@
 from ortools.sat.python import cp_model
+from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 
 model = cp_model.CpModel()
 
-import csv
-
-# Load subjects
+# Load subjects from database
+subjects_data = load_subjects_from_db()
 subjects = []
-with open('subjects.csv', newline='', encoding='utf-8-sig') as f:
-    reader = csv.DictReader(f)
-    print("Detected Headers:", reader.fieldnames)
-    for row in reader:
-        subjects.append({
-            'code': row['subject_code'],
-            'name': row['subject_name'],
-            'units': int(row['units']),
-            'is_lab': row['is_laboratory'].lower() == 'true'
-        })
+for row in subjects_data:
+    # Convert database format to expected format
+    is_lab = row.get('lab_hours_per_week', 0) > 0
+    subjects.append({
+        'code': row['subject_code'],
+        'name': row['subject_name'],
+        'units': int(row['units']),
+        'is_lab': is_lab
+    })
 
-# Load teachers
+# Load teachers from database
+teachers_data = load_teachers_from_db()
 teachers = []
-with open('teachers.csv', newline='', encoding='utf-8-sig') as f:
-    reader = csv.DictReader(f)
-    print("Detected Headers:", reader.fieldnames)
-    for row in reader:
-        teachers.append({
-            'id': row['teacher_id'],
-            'name': row['teacher_name'],
-            'can_teach': [s.strip() for s in row['can_teach'].split(',')]
-        })
+for row in teachers_data:
+    teachers.append({
+        'id': row['teacher_id'],
+        'name': row['teacher_name'],
+        'can_teach': [s.strip() for s in row['can_teach'].split(',')] if row['can_teach'] else []
+    })
 
-# Load rooms
+# Load rooms from database
+rooms_data = load_rooms_from_db()
 rooms = []
-with open('rooms.csv', newline='', encoding='utf-8-sig') as f:
-    reader = csv.DictReader(f)
-    print("Detected Headers:", reader.fieldnames)
-    for row in reader:
-        rooms.append({
-            'id': row['room_id'],
-            'name': row['room_name'],
-            'is_lab': row['is_laboratory'].lower() == 'true'
-        })
+for row in rooms_data:
+    rooms.append({
+        'id': row['room_id'],
+        'name': row['room_name'],
+        'is_lab': row['is_laboratory']
+    })
 
 #MAPPING SUBJECTS TO TEACHERS AND ROOMS
 
