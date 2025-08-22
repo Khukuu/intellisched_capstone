@@ -1,6 +1,13 @@
-# intellisched\_capstone
+# intellisched_capstone
 
-Automatic Scheduling LPU\_B
+Automatic Scheduling LPU_B
+
+How to start
+
+1. Open terminal
+2. Run command "python app.py"
+
+
 
 
 
@@ -20,7 +27,7 @@ Dependencies
 Database setup
 
 1. Install PostgreSQL
-2. Run createDB\_script.sql (mysql -u root -p < intellisched.sql)
+2. Run createDB_script.sql (mysql -u root -p < intellisched.sql)
 
 
 

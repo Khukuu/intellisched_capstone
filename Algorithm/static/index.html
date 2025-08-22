@@ -2,31 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Automatic Scheduler Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IntelliSched — Automatic Scheduler</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark custom-navbar mb-4">
     <div class="container-fluid">
-      <span class="navbar-brand mb-0 h1">IntelliSched</span>
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <i class="bi bi-calendar3-fill me-2" aria-hidden="true"></i>
+        <span class="fs-5">IntelliSched</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#" id="scheduleNavLink">Schedule</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" id="dataNavLink">Data Management</a>
+            <a class="nav-link" href="#" id="dataNavLink">Data</a>
           </li>
         </ul>
+        <div class="d-flex align-items-center">
+          <button id="logoutBtn" class="btn btn-outline-light btn-sm rounded-pill"><i class="bi bi-box-arrow-right"></i> Logout</button>
+        </div>
       </div>
-      <button id="logoutBtn" class="btn btn-light ms-auto rounded-pill px-4">Logout</button>
     </div>
   </nav>
 
   <div class="container mt-4">
     <div id="schedule-section" class="card p-4 shadow-sm mb-4 card-mac-style">
-      <h1 class="card-title mb-4">Generate Schedule</h1>
+      <div class="d-flex align-items-start justify-content-between mb-3">
+        <div>
+          <h1 class="card-title mb-1">Generate Schedule</h1>
+          <p class="text-muted small mb-0">Quickly create timetables from your uploaded data. Adjust sections and filters as needed.</p>
+        </div>
+      </div>
       <div class="mb-3">
         <label for="semesterSelect" class="form-label">Select Semester:</label>
         <select class="form-select" id="semesterSelect">
@@ -53,17 +68,19 @@
           <input type="number" class="form-control form-control-sm" id="numSectionsYear4" value="1" min="0">
         </div>
       </div>
-      <div class="d-flex justify-content-start mb-3">
-        <button id="generateBtn" class="btn btn-primary me-2">Generate Schedule</button>
-        <button id="downloadBtn" class="btn btn-success me-3">Download CSV</button>
-
-        <input type="text" id="saveNameInput" class="form-control form-control-sm me-2" style="max-width: 220px;" placeholder="Schedule name" />
-        <button id="saveBtn" class="btn btn-outline-primary me-3">Save</button>
-
-        <select id="savedSchedulesSelect" class="form-select form-select-sm me-2" style="max-width: 320px;">
-          <option value="">Select saved schedule…</option>
-        </select>
-        <button id="loadBtn" class="btn btn-outline-secondary">Load</button>
+      <div class="row g-2 mb-3 align-items-center">
+        <div class="col-auto">
+          <button id="generateBtn" class="btn btn-primary" type="button"><i class="bi bi-play-fill me-1"></i> Generate</button>
+          <button id="downloadBtn" class="btn btn-outline-light border-0 ms-2"><i class="bi bi-download me-1"></i> CSV</button>
+        </div>
+        <div class="col-auto ms-auto d-flex align-items-center">
+          <input type="text" id="saveNameInput" class="form-control form-control-sm me-2" style="max-width: 260px;" placeholder="Schedule name (optional)" />
+          <button id="saveBtn" class="btn btn-outline-primary btn-sm me-2">Save</button>
+          <select id="savedSchedulesSelect" class="form-select form-select-sm me-2" style="min-width: 240px;">
+            <option value="">Select saved schedule…</option>
+          </select>
+          <button id="loadBtn" class="btn btn-outline-secondary btn-sm">Load</button>
+        </div>
       </div>
       <div class="row g-3 align-items-end mb-4">
         <div class="col-12 col-md-3">
@@ -91,56 +108,104 @@
           </select>
         </div>
       </div>
-      <div class="row mt-4">
-        <div class="col-12 col-md-6" id="result"></div>
-        <div class="col-12 col-md-6" id="timetable"></div>
+      <div class="row mt-4 g-3">
+        <div class="col-12 col-md-6" id="result">
+          <div class="placeholder p-4 text-center text-muted">No schedule generated yet. Click <strong>Generate</strong> to create one.</div>
+        </div>
+        <div class="col-12 col-md-6" id="timetable">
+          <div class="placeholder p-4 text-center text-muted">Timetable will appear here after generation.</div>
+        </div>
       </div>
       
     </div>
 
     <div id="data-management-section" class="card p-4 shadow-sm mb-4 card-mac-style" style="display:none;">
       <h1 class="card-title mb-4">Data Management</h1>
-      
-      <h2>Subjects</h2>
-      <div id="subjectsData" class="table-responsive mb-4"></div>
-      <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
-        <div class="input-group">
-          <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
-          <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
-        </div>
-      </form>
 
-      <h2>Teachers</h2>
-      <div id="teachersData" class="table-responsive mb-4"></div>
-      <form id="uploadTeachersForm" enctype="multipart/form-data" class="mb-4">
-        <div class="input-group">
-          <input type="file" class="form-control" id="teachersFile" accept=".csv">
-          <button class="btn btn-outline-secondary" type="submit">Upload Teachers CSV</button>
-        </div>
-      </form>
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="dataTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="tab-subjects" data-tab="subjects" data-bs-toggle="tab" data-bs-target="#pane-subjects" type="button" role="tab" aria-controls="pane-subjects" aria-selected="true">Subjects</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-teachers" data-tab="teachers" data-bs-toggle="tab" data-bs-target="#pane-teachers" type="button" role="tab" aria-controls="pane-teachers" aria-selected="false">Teachers</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-rooms" data-tab="rooms" data-bs-toggle="tab" data-bs-target="#pane-rooms" type="button" role="tab" aria-controls="pane-rooms" aria-selected="false">Rooms</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tab-sections" data-tab="sections" data-bs-toggle="tab" data-bs-target="#pane-sections" type="button" role="tab" aria-controls="pane-sections" aria-selected="false">Sections</button>
+        </li>
+      </ul>
 
-      <h2>Rooms</h2>
-      <div id="roomsData" class="table-responsive mb-4"></div>
-      <form id="uploadRoomsForm" enctype="multipart/form-data" class="mb-4">
-        <div class="input-group">
-          <input type="file" class="form-control" id="roomsFile" accept=".csv">
-          <button class="btn btn-outline-secondary" type="submit">Upload Rooms CSV</button>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
+          <h2>Subjects</h2>
+          <div class="mb-3 d-flex">
+            <input id="subjectsSearch" class="form-control form-control-sm me-2" placeholder="Search subjects (code, name)…" />
+            <button id="subjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+          </div>
+          <div id="subjectsData" class="table-responsive mb-4"></div>
+          <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
+            <div class="input-group">
+              <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
+              <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
+            </div>
+          </form>
         </div>
-      </form>
 
-      <h2>Sections</h2>
-      <div id="sectionsData" class="table-responsive mb-4"></div>
-      <form id="uploadSectionsForm" enctype="multipart/form-data" class="mb-4">
-        <div class="input-group">
-          <input type="file" class="form-control" id="sectionsFile" accept=".csv">
-          <button class="btn btn-outline-secondary" type="submit">Upload Sections CSV</button>
+        <div class="tab-pane fade" id="pane-teachers" role="tabpanel" aria-labelledby="tab-teachers">
+          <h2>Teachers</h2>
+          <div class="mb-3 d-flex">
+            <input id="teachersSearch" class="form-control form-control-sm me-2" placeholder="Search teachers (id, name, subjects)…" />
+            <button id="teachersRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+          </div>
+          <div id="teachersData" class="table-responsive mb-4"></div>
+          <form id="uploadTeachersForm" enctype="multipart/form-data" class="mb-4">
+            <div class="input-group">
+              <input type="file" class="form-control" id="teachersFile" accept=".csv">
+              <button class="btn btn-outline-secondary" type="submit">Upload Teachers CSV</button>
+            </div>
+          </form>
         </div>
-      </form>
+
+        <div class="tab-pane fade" id="pane-rooms" role="tabpanel" aria-labelledby="tab-rooms">
+          <h2>Rooms</h2>
+          <div class="mb-3 d-flex">
+            <input id="roomsSearch" class="form-control form-control-sm me-2" placeholder="Search rooms (id, name)…" />
+            <button id="roomsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+          </div>
+          <div id="roomsData" class="table-responsive mb-4"></div>
+          <form id="uploadRoomsForm" enctype="multipart/form-data" class="mb-4">
+            <div class="input-group">
+              <input type="file" class="form-control" id="roomsFile" accept=".csv">
+              <button class="btn btn-outline-secondary" type="submit">Upload Rooms CSV</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="tab-pane fade" id="pane-sections" role="tabpanel" aria-labelledby="tab-sections">
+          <h2>Sections</h2>
+          <div class="mb-3 d-flex">
+            <input id="sectionsSearch" class="form-control form-control-sm me-2" placeholder="Search sections (id, subject)…" />
+            <button id="sectionsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+          </div>
+          <div id="sectionsData" class="table-responsive mb-4"></div>
+          <form id="uploadSectionsForm" enctype="multipart/form-data" class="mb-4">
+            <div class="input-group">
+              <input type="file" class="form-control" id="sectionsFile" accept=".csv">
+              <button class="btn btn-outline-secondary" type="submit">Upload Sections CSV</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
     </div>
   </div>
 
-  <script src="/static/script.js"></script>
+  <!-- modal removed -->
+  <!-- modal removed -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/script.js"></script>
 </body>
 </html> 

@@ -24,6 +24,17 @@ const loadBtn = document.getElementById('loadBtn');
 let lastGeneratedSchedule = [];
 let lastSavedId = '';
 
+// Cached data for tabs so searches/filtering work reliably
+let subjectsCache = [];
+let teachersCache = [];
+let roomsCache = [];
+let sectionsCache = [];
+
+// Safe value getter for possibly-null elements
+function elValue(el) {
+  try { return el ? el.value : null; } catch (e) { return null; }
+}
+
 function showSection(sectionId) {
   scheduleSection.style.display = 'none';
   dataManagementSection.style.display = 'none';
@@ -54,33 +65,33 @@ dataNavLink.addEventListener('click', (e) => {
   showSection('data-management-section');
 });
 
-// Handle CSV file uploads
-uploadSubjectsForm.addEventListener('submit', async (e) => {
+// Handle CSV file uploads (each reloads only its active table)
+if (uploadSubjectsForm) uploadSubjectsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('csCurriculumFile');
   await uploadFile(fileInput.files[0], 'cs_curriculum');
-  loadDataManagementTables(); // Reload data after upload
+  await loadSubjectsTable(); // Reload subjects after upload
 });
 
-uploadTeachersForm.addEventListener('submit', async (e) => {
+if (uploadTeachersForm) uploadTeachersForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('teachersFile');
   await uploadFile(fileInput.files[0], 'teachers');
-  loadDataManagementTables(); // Reload data after upload
+  await loadTeachersTable(); // Reload teachers after upload
 });
 
-uploadRoomsForm.addEventListener('submit', async (e) => {
+if (uploadRoomsForm) uploadRoomsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('roomsFile');
   await uploadFile(fileInput.files[0], 'rooms');
-  loadDataManagementTables(); // Reload data after upload
+  await loadRoomsTable(); // Reload rooms after upload
 });
 
-uploadSectionsForm.addEventListener('submit', async (e) => {
+if (uploadSectionsForm) uploadSectionsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('sectionsFile');
   await uploadFile(fileInput.files[0], 'sections');
-  loadDataManagementTables(); // Reload data after upload
+  await loadSectionsTable(); // Reload sections after upload
 });
 
 async function uploadFile(file, filename) {
@@ -169,19 +180,17 @@ function getTextColorForBackground(hex) {
 }
 
 
+// Generate schedule directly using inline inputs
 document.getElementById('generateBtn').onclick = async function() {
   document.getElementById('result').innerHTML = "Generating schedule...";
   document.getElementById('timetable').innerHTML = "";
-  // Logs removed
-  
-  const selectedSemester = semesterSelect.value;
-  const requestBody = { semester: selectedSemester };
 
-  // New: Get number of sections per year level
-  requestBody.numSectionsYear1 = parseInt(document.getElementById('numSectionsYear1').value) || 0;
-  requestBody.numSectionsYear2 = parseInt(document.getElementById('numSectionsYear2').value) || 0;
-  requestBody.numSectionsYear3 = parseInt(document.getElementById('numSectionsYear3').value) || 0;
-  requestBody.numSectionsYear4 = parseInt(document.getElementById('numSectionsYear4').value) || 0;
+  const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
+  const requestBody = { semester: selectedSemester };
+  requestBody.numSectionsYear1 = parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10);
+  requestBody.numSectionsYear2 = parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10);
+  requestBody.numSectionsYear3 = parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10);
+  requestBody.numSectionsYear4 = parseInt(elValue(document.getElementById('numSectionsYear4')) || 0, 10);
 
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
@@ -206,7 +215,7 @@ document.getElementById('generateBtn').onclick = async function() {
 
     if (changedYears.length === 4) {
       document.getElementById('result').innerHTML = '<div class="alert alert-warning">No subjects exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
-      downloadBtn.disabled = true;
+      if (downloadBtn) downloadBtn.disabled = true;
       return;
     }
 
@@ -220,35 +229,37 @@ document.getElementById('generateBtn').onclick = async function() {
 
   if (!requestBody.numSectionsYear1 && !requestBody.numSectionsYear2 && !requestBody.numSectionsYear3 && !requestBody.numSectionsYear4) {
     document.getElementById('result').innerHTML = '<div class="alert alert-info">No sections selected to schedule.</div>';
-    downloadBtn.disabled = true;
+    if (downloadBtn) downloadBtn.disabled = true;
     return;
   }
 
-  const response = await fetch('/schedule', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(requestBody)
-  });
-  const data = await response.json();
-  const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
-  lastGeneratedSchedule = scheduleArray;
-  lastSavedId = '';
+  try {
+    const response = await fetch('/schedule', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+    const data = await response.json();
+    const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
+    lastGeneratedSchedule = scheduleArray;
+    lastSavedId = '';
 
-  // Logs removed
+    if (!Array.isArray(scheduleArray) || scheduleArray.length === 0) {
+      document.getElementById('result').innerHTML = "<b>No schedule generated.</b>";
+      document.getElementById('timetable').innerHTML = "";
+      if (downloadBtn) downloadBtn.disabled = true;
+      return;
+    }
 
-  if (!Array.isArray(scheduleArray) || scheduleArray.length === 0) {
-    document.getElementById('result').innerHTML = "<b>No schedule generated.</b>";
-    document.getElementById('timetable').innerHTML = "";
-    downloadBtn.disabled = true;
-    return;
+    renderScheduleAndTimetable(lastGeneratedSchedule);
+    populateFilters(lastGeneratedSchedule);
+    refreshSavedSchedulesList();
+  } catch (e) {
+    console.error('Error generating schedule', e);
+    document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error generating schedule. See console.</div>';
   }
-
-  renderScheduleAndTimetable(lastGeneratedSchedule);
-  // Logs removed
-  populateFilters(lastGeneratedSchedule);
-  refreshSavedSchedulesList();
 };
 
 downloadBtn.onclick = function() {
@@ -295,6 +306,8 @@ if (saveBtn) {
     }
   });
 }
+
+// (modal removed) no delegated handlers needed
 
 // Load selected saved schedule
 if (loadBtn) {
@@ -605,27 +618,122 @@ if (viewMode) {
 }
 
 
-async function loadDataManagementTables() {
-  // Fetch and display Subjects data
-  const subjectsResponse = await fetch('/data/cs_curriculum');
-  const subjectsData = await subjectsResponse.json();
-  renderTable(subjectsData, 'subjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']); // Updated headers
-
-  // Fetch and display Teachers data
-  const teachersResponse = await fetch('/data/teachers');
-  const teachersData = await teachersResponse.json();
-  renderTable(teachersData, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
-
-  // Fetch and display Rooms data
-  const roomsResponse = await fetch('/data/rooms');
-  const roomsData = await roomsResponse.json();
-  renderTable(roomsData, 'roomsData', ['room_id', 'room_name', 'is_laboratory']);
-
-  // Fetch and display Sections data
-  const sectionsResponse = await fetch('/data/sections');
-  const sectionsData = await sectionsResponse.json();
-  renderTable(sectionsData, 'sectionsData', ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
+// Lazy-load per-tab data loaders
+async function loadSubjectsTable() {
+  try {
+    const subjectsResponse = await fetch('/data/cs_curriculum');
+    if (!subjectsResponse.ok) throw new Error('Failed to load subjects');
+    subjectsCache = await subjectsResponse.json();
+    renderTable(subjectsCache, 'subjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  } catch (e) {
+    console.warn('Could not load subjects:', e);
+    document.getElementById('subjectsData').innerHTML = '<p>No data available.</p>';
+  }
+  // Attach client-side search handler
+  const sInput = document.getElementById('subjectsSearch');
+  if (sInput) {
+    sInput.oninput = () => filterTable('subjectsData', subjectsCache, ['subject_code', 'subject_name']);
+  }
 }
+
+async function loadTeachersTable() {
+  try {
+    const teachersResponse = await fetch('/data/teachers');
+    if (!teachersResponse.ok) throw new Error('Failed to load teachers');
+    teachersCache = await teachersResponse.json();
+    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
+  } catch (e) {
+    console.warn('Could not load teachers:', e);
+    document.getElementById('teachersData').innerHTML = '<p>No data available.</p>';
+  }
+  const tInput = document.getElementById('teachersSearch');
+  if (tInput) {
+    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach']);
+  }
+}
+
+async function loadRoomsTable() {
+  try {
+    const roomsResponse = await fetch('/data/rooms');
+    if (!roomsResponse.ok) throw new Error('Failed to load rooms');
+    roomsCache = await roomsResponse.json();
+    renderTable(roomsCache, 'roomsData', ['room_id', 'room_name', 'is_laboratory']);
+  } catch (e) {
+    console.warn('Could not load rooms:', e);
+    document.getElementById('roomsData').innerHTML = '<p>No data available.</p>';
+  }
+  const rInput = document.getElementById('roomsSearch');
+  if (rInput) {
+    rInput.oninput = () => filterTable('roomsData', roomsCache, ['room_id', 'room_name']);
+  }
+}
+
+async function loadSectionsTable() {
+  try {
+    const sectionsResponse = await fetch('/data/sections');
+    if (!sectionsResponse.ok) throw new Error('Failed to load sections');
+    sectionsCache = await sectionsResponse.json();
+    renderTable(sectionsCache, 'sectionsData', ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
+  } catch (e) {
+    console.warn('Could not load sections:', e);
+    document.getElementById('sectionsData').innerHTML = '<p>No data available.</p>';
+  }
+  const secInput = document.getElementById('sectionsSearch');
+  if (secInput) {
+    secInput.oninput = () => filterTable('sectionsData', sectionsCache, ['section_id', 'subject_code']);
+  }
+}
+
+function filterTable(elementId, data, searchableFields) {
+  const input = document.getElementById(elementId.replace('Data','Search')) || document.querySelector(`#${elementId.split('Data')[0]}Search`);
+  const q = (input && input.value || '').trim().toLowerCase();
+  if (!q) {
+    // show full
+    if (elementId === 'subjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
+    else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
+    else if (elementId === 'sectionsData') renderTable(data, elementId, ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
+    return;
+  }
+  const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
+  // reuse renderTable but with filtered data
+  if (elementId === 'subjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
+  else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
+  else if (elementId === 'sectionsData') renderTable(filtered, elementId, ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
+}
+
+async function loadDataManagementTables() {
+  // Determine active tab and load only it
+  const activeBtn = document.querySelector('#dataTabs .nav-link.active');
+  const tab = activeBtn ? activeBtn.dataset.tab : 'subjects';
+  if (tab === 'subjects') await loadSubjectsTable();
+  else if (tab === 'teachers') await loadTeachersTable();
+  else if (tab === 'rooms') await loadRoomsTable();
+  else if (tab === 'sections') await loadSectionsTable();
+}
+
+// Wire tab buttons to load content when activated (use Bootstrap event)
+document.querySelectorAll('#dataTabs button[data-bs-toggle="tab"]').forEach(btn => {
+  btn.addEventListener('shown.bs.tab', (e) => {
+    const tab = e.target.dataset.tab;
+    if (tab === 'subjects') loadSubjectsTable();
+    else if (tab === 'teachers') loadTeachersTable();
+    else if (tab === 'rooms') loadRoomsTable();
+    else if (tab === 'sections') loadSectionsTable();
+  });
+});
+
+// Wire refresh buttons
+['subjects','teachers','rooms','sections'].forEach(key => {
+  const btn = document.getElementById(`${key}Refresh`);
+  if (btn) btn.addEventListener('click', () => {
+    if (key === 'subjects') loadSubjectsTable();
+    if (key === 'teachers') loadTeachersTable();
+    if (key === 'rooms') loadRoomsTable();
+    if (key === 'sections') loadSectionsTable();
+  });
+});
 
 function renderTable(data, elementId, headers) {
   if (!Array.isArray(data) || data.length === 0) {
