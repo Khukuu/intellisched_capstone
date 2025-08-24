@@ -5,7 +5,8 @@ Automatic Scheduling LPU_B
 How to start
 
 1. Open terminal
-2. Run command "python app.py"
+2. Activate virtual environment ".venv\Scripts\activate"
+3. Run the app "uvicorn app:app --reload"
 
 
 
