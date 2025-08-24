@@ -24,7 +24,7 @@ body {
   margin: 0;
   padding: 0;
   /* Page background image: replace the URL below with your preferred image or keep it in /static/ */
-  background-image: url('/static/lpu.png');
+  background-image: url('/static/assets/lpu.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
