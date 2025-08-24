@@ -2,6 +2,8 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 from typing import List, Dict, Any
+import hashlib
+import secrets
 
 class DatabaseManager:
     def __init__(self, connection_string: str = None):
@@ -62,6 +64,18 @@ class ScheduleDatabase:
             room_name VARCHAR(255) NOT NULL,
             is_laboratory BOOLEAN DEFAULT FALSE
         );
+        
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(50) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            salt VARCHAR(255) NOT NULL,
+            full_name VARCHAR(255),
+            email VARCHAR(255),
+            role VARCHAR(20) DEFAULT 'user',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        );
         """
         
         # Split and execute each statement
@@ -69,6 +83,164 @@ class ScheduleDatabase:
         for statement in statements:
             if statement.strip():
                 self.db.execute_single(statement)
+        
+        # Check if users table has correct structure
+        if not self._check_users_table_structure():
+            print("⚠️ Users table structure is incorrect. Attempting to fix...")
+            if self._fix_users_table():
+                print("✅ Users table structure fixed successfully")
+            else:
+                print("❌ Failed to fix users table structure. Please run fix_users_table.py manually.")
+                return
+        
+        # Create default admin user if it doesn't exist
+        self.create_default_admin()
+    
+    def _check_users_table_structure(self):
+        """Check if the users table has the correct structure"""
+        try:
+            # Check if salt column exists
+            result = self.db.execute_query("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name = 'users' AND column_name = 'salt'
+            """)
+            return len(result) > 0
+        except Exception as e:
+            print(f"Error checking table structure: {e}")
+            return False
+    
+    def _fix_users_table(self):
+        """Fix the users table structure by recreating it"""
+        try:
+            # Drop and recreate the users table
+            self.db.execute_single("DROP TABLE IF EXISTS users CASCADE")
+            
+            create_users_sql = """
+            CREATE TABLE users (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                salt VARCHAR(255) NOT NULL,
+                full_name VARCHAR(255),
+                email VARCHAR(255),
+                role VARCHAR(20) DEFAULT 'user',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP
+            );
+            """
+            
+            self.db.execute_single(create_users_sql)
+            return True
+        except Exception as e:
+            print(f"Error fixing users table: {e}")
+            return False
+    
+    def create_default_admin(self):
+        """Create a default admin user if none exists"""
+        try:
+            # Check if admin user exists
+            existing_admin = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('admin',))
+            if not existing_admin:
+                # Create default admin user
+                password = "admin123"
+                salt = secrets.token_hex(16)
+                password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+                
+                self.db.execute_single("""
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, ('admin', password_hash, salt, 'Administrator', 'admin@intellisched.com', 'admin'))
+                
+                print("✅ Default admin user created (username: admin, password: admin123)")
+        except Exception as e:
+            print(f"⚠️ Could not create default admin user: {e}")
+    
+    def verify_user_credentials(self, username: str, password: str) -> Dict[str, Any]:
+        """Verify user credentials and return user info if valid"""
+        try:
+            user = self.db.execute_query("SELECT * FROM users WHERE username = %s", (username,))
+            if not user:
+                return None
+            
+            user = user[0]
+            stored_hash = user['password_hash']
+            salt = user['salt']
+            
+            # Hash the provided password with the stored salt
+            input_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+            
+            if input_hash == stored_hash:
+                # Update last login
+                self.db.execute_single("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (user['id'],))
+                
+                # Return user info (without sensitive data)
+                return {
+                    'id': user['id'],
+                    'username': user['username'],
+                    'full_name': user['full_name'],
+                    'email': user['email'],
+                    'role': user['role']
+                }
+            return None
+        except Exception as e:
+            print(f"Error verifying credentials: {e}")
+            return None
+    
+    def get_user_by_id(self, user_id: int) -> Dict[str, Any]:
+        """Get user by ID (without sensitive data)"""
+        try:
+            user = self.db.execute_query("SELECT id, username, full_name, email, role, created_at, last_login FROM users WHERE id = %s", (user_id,))
+            return user[0] if user else None
+        except Exception as e:
+            print(f"Error getting user: {e}")
+            return None
+    
+    def get_user_by_username(self, username: str) -> Dict[str, Any]:
+        """Get user by username (without sensitive data)"""
+        try:
+            user = self.db.execute_query("SELECT id, username, full_name, email, role, created_at, last_login FROM users WHERE username = %s", (username,))
+            return user[0] if user else None
+        except Exception as e:
+            print(f"Error getting user: {e}")
+            return None
+    
+    def create_user(self, user_data: Dict[str, Any]) -> bool:
+        """Create a new user"""
+        try:
+            password = user_data['password']
+            salt = secrets.token_hex(16)
+            password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+            
+            self.db.execute_single("""
+                INSERT INTO users (username, password_hash, salt, full_name, email, role)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """, (
+                user_data['username'],
+                password_hash,
+                salt,
+                user_data.get('full_name', ''),
+                user_data.get('email', ''),
+                user_data.get('role', 'user')
+            ))
+            return True
+        except Exception as e:
+            print(f"Error creating user: {e}")
+            return False
+    
+    def update_user_password(self, user_id: int, new_password: str) -> bool:
+        """Update user password"""
+        try:
+            salt = secrets.token_hex(16)
+            password_hash = hashlib.sha256((new_password + salt).encode()).hexdigest()
+            
+            self.db.execute_single("""
+                UPDATE users SET password_hash = %s, salt = %s WHERE id = %s
+            """, (password_hash, salt, user_id))
+            return True
+        except Exception as e:
+            print(f"Error updating password: {e}")
+            return False
     
     def load_subjects(self) -> List[Dict[str, Any]]:
         """Load all subjects from database"""

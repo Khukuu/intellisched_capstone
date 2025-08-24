@@ -1,25 +1,161 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse, FileResponse, Response
+from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, status, Request
+from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
 from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 import os
 import io
 import json
-from datetime import datetime
+import csv
+from datetime import datetime, timedelta
+import jwt  # PyJWT is installed as 'jwt'
+from typing import Optional
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
 
+# JWT Configuration
+SECRET_KEY = "your-secret-key-change-in-production"  # Change this in production!
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Security
+security = HTTPBearer(auto_error=False)
+
+# JWT Token functions
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return username
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+# Authentication endpoints
+@app.post('/auth/login')
+async def login(payload: dict):
+    try:
+        username = payload.get('username')
+        password = payload.get('password')
+        
+        if not username or not password:
+            raise HTTPException(status_code=400, detail="Username and password are required")
+        
+        print(f"🔐 Login attempt for user: {username}")
+        
+        # Verify credentials
+        user = db.verify_user_credentials(username, password)
+        if not user:
+            print(f"❌ Login failed for user {username}: Invalid credentials")
+            raise HTTPException(status_code=401, detail="Invalid username or password")
+        
+        print(f"✅ Login successful for user {username}")
+        
+        # Create access token
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": username}, expires_delta=access_token_expires
+        )
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "username": username,
+            "full_name": user.get('full_name'),
+            "role": user.get('role')
+        }
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    except Exception as e:
+        print(f"❌ Unexpected error during login: {e}")
+        print(f"   Error type: {type(e).__name__}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+@app.get('/auth/me')
+async def get_current_user(username: str = Depends(verify_token)):
+    """Get current user information"""
+    user = db.get_user_by_username(username)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@app.post('/auth/logout')
+async def logout():
+    """Logout endpoint (client-side token removal)"""
+    return {"message": "Successfully logged out"}
+
+@app.get('/health')
+async def health_check():
+    """Health check endpoint to test database connectivity"""
+    try:
+        # Test database connection
+        from database import db
+        test_query = db.db.execute_query("SELECT 1 as test")
+        if test_query and len(test_query) > 0:
+            return {"status": "healthy", "database": "connected", "message": "All systems operational"}
+        else:
+            return {"status": "unhealthy", "database": "error", "message": "Database query failed"}
+    except Exception as e:
+        return {"status": "unhealthy", "database": "error", "message": f"Database error: {str(e)}"}
+
+# Main route - serve main app (authentication handled by frontend)
 @app.get('/')
 async def index():
+    """Main route - serve main app, authentication handled by frontend"""
     index_path = os.path.join('static', 'index.html')
     if not os.path.exists(index_path):
         raise HTTPException(status_code=404, detail='Index file not found')
     return FileResponse(index_path, media_type='text/html')
 
+@app.get('/login')
+async def login_page():
+    """Serve login page for unauthenticated users"""
+    login_path = os.path.join('static', 'login.html')
+    if not os.path.exists(login_path):
+        raise HTTPException(status_code=404, detail='Login file not found')
+    return FileResponse(login_path, media_type='text/html')
+
 @app.post('/schedule')
-async def schedule(payload: dict):
+async def schedule(payload: dict, username: str = Depends(verify_token)):
     print('Received request for /schedule')
     subjects = load_subjects_from_db()
     teachers = load_teachers_from_db()
@@ -107,11 +243,11 @@ def _list_saved_summaries():
     return items
 
 @app.get('/saved_schedules')
-async def saved_schedules():
+async def saved_schedules(username: str = Depends(verify_token)):
     return JSONResponse(content=_list_saved_summaries())
 
 @app.post('/save_schedule')
-async def save_schedule(payload: dict):
+async def save_schedule(payload: dict, username: str = Depends(verify_token)):
     schedule = payload.get('schedule')
     if not isinstance(schedule, list) or len(schedule) == 0:
         raise HTTPException(status_code=400, detail='No schedule provided to save')
@@ -135,7 +271,7 @@ async def save_schedule(payload: dict):
     return JSONResponse(content={'id': uid, 'name': name, 'semester': semester, 'created_at': created_at})
 
 @app.get('/load_schedule')
-async def load_schedule(id: str):
+async def load_schedule(id: str, username: str = Depends(verify_token)):
     saved_dir = _ensure_saved_dir()
     # Find file by id prefix
     candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(id) and fn.endswith('.json')]
@@ -147,7 +283,7 @@ async def load_schedule(id: str):
     return JSONResponse(content=data)
 
 @app.get('/download_schedule')
-async def download_schedule(id: str | None = None, semester: str | None = None):
+async def download_schedule(id: str | None = None, semester: str | None = None, username: str = Depends(verify_token)):
     # Determine which schedule to download
     schedule_data = None
     if id:
@@ -180,7 +316,7 @@ async def download_schedule(id: str | None = None, semester: str | None = None):
     return Response(content=csv_bytes, media_type='text/csv', headers=headers)
 
 @app.get('/data/{filename}')
-async def get_data(filename: str):
+async def get_data(filename: str, username: str = Depends(verify_token)):
     try:
         if filename in ['cs_curriculum', 'subjects']:
             data = load_subjects_from_db()
@@ -195,7 +331,7 @@ async def get_data(filename: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/upload/{filename}')
-async def upload_file(filename: str, file: UploadFile = File(...)):
+async def upload_file(filename: str, file: UploadFile = File(...), username: str = Depends(verify_token)):
     """Legacy endpoint - CSV uploads are no longer supported"""
     raise HTTPException(status_code=400, detail='CSV uploads are no longer supported. Data is now managed through PostgreSQL database.')
 

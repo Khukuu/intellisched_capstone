@@ -30,6 +30,19 @@ let teachersCache = [];
 let roomsCache = [];
 let sectionsCache = [];
 
+// Authentication helper function
+function getAuthHeaders() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login';
+    return {};
+  }
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+}
+
 // Safe value getter for possibly-null elements
 function elValue(el) {
   try { return el ? el.value : null; } catch (e) { return null; }
@@ -105,6 +118,9 @@ async function uploadFile(file, filename) {
   try {
     const response = await fetch(`/upload/${filename}`, {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      },
       body: formData,
     });
     const result = await response.json();
@@ -236,9 +252,7 @@ document.getElementById('generateBtn').onclick = async function() {
   try {
     const response = await fetch('/schedule', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(requestBody)
     });
     const data = await response.json();
@@ -286,7 +300,7 @@ if (saveBtn) {
     try {
       const resp = await fetch('/save_schedule', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           name,
           semester: semesterSelect ? semesterSelect.value : undefined,
@@ -318,7 +332,9 @@ if (loadBtn) {
       return;
     }
     try {
-      const resp = await fetch(`/load_schedule?id=${encodeURIComponent(id)}`);
+      const resp = await fetch(`/load_schedule?id=${encodeURIComponent(id)}`, {
+        headers: getAuthHeaders()
+      });
       const data = await resp.json();
       if (!resp.ok) {
         throw new Error(data.detail || 'Failed to load schedule');
@@ -340,7 +356,9 @@ if (loadBtn) {
 
 async function refreshSavedSchedulesList(selectId) {
   try {
-    const resp = await fetch('/saved_schedules');
+          const resp = await fetch('/saved_schedules', {
+        headers: getAuthHeaders()
+      });
     const items = await resp.json();
     if (!savedSchedulesSelect) return;
     savedSchedulesSelect.innerHTML = '<option value="">Select saved schedule…</option>';
@@ -621,7 +639,9 @@ if (viewMode) {
 // Lazy-load per-tab data loaders
 async function loadSubjectsTable() {
   try {
-    const subjectsResponse = await fetch('/data/cs_curriculum');
+    const subjectsResponse = await fetch('/data/cs_curriculum', {
+      headers: getAuthHeaders()
+    });
     if (!subjectsResponse.ok) throw new Error('Failed to load subjects');
     subjectsCache = await subjectsResponse.json();
     renderTable(subjectsCache, 'subjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
@@ -638,7 +658,9 @@ async function loadSubjectsTable() {
 
 async function loadTeachersTable() {
   try {
-    const teachersResponse = await fetch('/data/teachers');
+    const teachersResponse = await fetch('/data/teachers', {
+      headers: getAuthHeaders()
+    });
     if (!teachersResponse.ok) throw new Error('Failed to load teachers');
     teachersCache = await teachersResponse.json();
     renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
@@ -654,7 +676,9 @@ async function loadTeachersTable() {
 
 async function loadRoomsTable() {
   try {
-    const roomsResponse = await fetch('/data/rooms');
+    const roomsResponse = await fetch('/data/rooms', {
+      headers: getAuthHeaders()
+    });
     if (!roomsResponse.ok) throw new Error('Failed to load rooms');
     roomsCache = await roomsResponse.json();
     renderTable(roomsCache, 'roomsData', ['room_id', 'room_name', 'is_laboratory']);
@@ -670,7 +694,9 @@ async function loadRoomsTable() {
 
 async function loadSectionsTable() {
   try {
-    const sectionsResponse = await fetch('/data/sections');
+    const sectionsResponse = await fetch('/data/sections', {
+      headers: getAuthHeaders()
+    });
     if (!sectionsResponse.ok) throw new Error('Failed to load sections');
     sectionsCache = await sectionsResponse.json();
     renderTable(sectionsCache, 'sectionsData', ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
