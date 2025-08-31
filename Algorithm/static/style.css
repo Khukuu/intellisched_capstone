@@ -47,6 +47,11 @@ body {
   background: #fbfbfd;
   border: 1px dashed #e6e9ef;
   border-radius: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  text-align: center;
 }
 
 /* Tables: slightly softer look */
