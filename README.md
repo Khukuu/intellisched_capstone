@@ -1,11 +1,11 @@
-# intellisched_capstone
+# intellisched\_capstone
 
-Automatic Scheduling LPU_B
+Automatic Scheduling LPU\_B
 
 How to start
 
 1. Open terminal
-2. Activate virtual environment ".venv\Scripts\activate"
+2. Activate virtual environment ".venv\\Scripts\\activate"
 3. Run the app "uvicorn app:app --reload"
 
 
@@ -28,7 +28,11 @@ Dependencies
 Database setup
 
 1. Install PostgreSQL
-2. Run createDB_script.sql (mysql -u root -p < intellisched.sql)
+2. Run createDB\_script.sql (mysql -u root -p < intellisched.sql)
 
 
+
+
+
+**python -c "import jwt; print('JWT library:', jwt.\_\_file\_\_); print('Version:', getattr(jwt, '\_\_version\_\_', 'Unknown'))"**
 
