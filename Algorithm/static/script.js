@@ -198,7 +198,7 @@ function getTextColorForBackground(hex) {
 
 // Generate schedule directly using inline inputs
 document.getElementById('generateBtn').onclick = async function() {
-  document.getElementById('result').innerHTML = "Generating schedule...";
+  document.getElementById('result').innerHTML = '<div class="p-4 text-center">Generating schedule...</div>';
   document.getElementById('timetable').innerHTML = "";
 
   const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
@@ -472,7 +472,7 @@ function applyFilters(data) {
 function renderScheduleAndTimetable(data) {
   const filtered = applyFilters(Array.isArray(data) ? data : []);
 
-  // Schedule Table (left)
+  // Schedule Table (side-by-side column)
   let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
   for (const row of filtered) {
     const subj = row.subject_name || row.subject_code || '';
@@ -488,7 +488,10 @@ function renderScheduleAndTimetable(data) {
     </tr>`;
   }
   html += "</tbody></table></div>";
-  document.getElementById('result').innerHTML = html;
+  const resultDiv = document.getElementById('result');
+  if (resultDiv) {
+    resultDiv.innerHTML = html;
+  }
   downloadBtn.disabled = filtered.length === 0;
 
   // Timetable (right)
@@ -580,7 +583,10 @@ function renderScheduleAndTimetable(data) {
     }
   }
   tthtml += '</tbody></table></div>';
-  document.getElementById('timetable').innerHTML = tthtml;
+  const timetableDiv = document.getElementById('timetable');
+  if (timetableDiv) {
+    timetableDiv.innerHTML = tthtml;
+  }
   // View toggle handling
   applyViewMode();
 }
@@ -781,3 +787,24 @@ function renderTable(data, elementId, headers) {
   tableHtml += '</tbody></table>';
   document.getElementById(elementId).innerHTML = tableHtml;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    window.location.href = '/login';
+    return;
+  }
+
+  // Update navbar with user info
+  const username = localStorage.getItem('username');
+  if (username) {
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
+  }
+
+  // Update profile section
+  const profileUsername = document.getElementById('profile-username');
+  const profileRole = document.getElementById('profile-role');
+  if (profileUsername) profileUsername.textContent = username || 'User';
+  if (profileRole) profileRole.textContent = localStorage.getItem('role') || 'User';
+});
