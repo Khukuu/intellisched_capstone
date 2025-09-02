@@ -123,6 +123,49 @@ async def logout():
     """Logout endpoint (client-side token removal)"""
     return {"message": "Successfully logged out"}
 
+@app.post('/auth/register')
+async def register(payload: dict):
+    """Create a new user account"""
+    try:
+        username = (payload.get('username') or '').strip()
+        password = payload.get('password') or ''
+        full_name = (payload.get('full_name') or '').strip()
+        email = (payload.get('email') or '').strip()
+
+        if not username or not password:
+            raise HTTPException(status_code=400, detail="Username and password are required")
+
+        # Check if user already exists
+        existing = db.get_user_by_username(username)
+        if existing:
+            raise HTTPException(status_code=409, detail="Username already exists")
+
+        ok = db.create_user({
+            'username': username,
+            'password': password,
+            'full_name': full_name,
+            'email': email,
+            'role': 'user'
+        })
+        if not ok:
+            raise HTTPException(status_code=500, detail="Could not create user")
+
+        # Auto-login: issue token
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(data={"sub": username}, expires_delta=access_token_expires)
+        return {
+            "message": "Account created successfully",
+            "access_token": access_token,
+            "token_type": "bearer",
+            "username": username,
+            "full_name": full_name or None,
+            "role": 'user'
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get('/health')
 async def health_check():
     """Health check endpoint to test database connectivity"""
@@ -153,6 +196,14 @@ async def login_page():
     if not os.path.exists(login_path):
         raise HTTPException(status_code=404, detail='Login file not found')
     return FileResponse(login_path, media_type='text/html')
+
+@app.get('/register')
+async def register_page():
+    """Serve registration page for new account creation"""
+    register_path = os.path.join('static', 'register.html')
+    if not os.path.exists(register_path):
+        raise HTTPException(status_code=404, detail='Register file not found')
+    return FileResponse(register_path, media_type='text/html')
 
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(verify_token)):

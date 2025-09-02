@@ -223,9 +223,13 @@
       
       <button type="submit" class="btn btn-login">
         <i class="bi bi-box-arrow-in-right me-2"></i>
-        Sign In
+        Log in
       </button>
     </form>
+
+    <div class="text-center mt-3">
+      <a href="/register" class="small">Create a new account</a>
+    </div>
     
     <!-- Footer INSIDE the card -->
     <footer class="footer text-center">
@@ -272,6 +276,8 @@
         showAlert('Network error. Please try again.', 'danger');
       }
     });
+
+    // Registration moved to /register
     
     function showAlert(message, type) {
       const alertContainer = document.getElementById('alertContainer');
