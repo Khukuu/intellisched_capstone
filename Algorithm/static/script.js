@@ -30,6 +30,15 @@ let teachersCache = [];
 let roomsCache = [];
 let sectionsCache = [];
 
+// Room ID to room name mapping
+let roomIdToNameMap = {};
+
+// Function to get room name from room ID
+function getRoomName(roomId) {
+  // Since scheduler now outputs room names directly as room_id, just return it
+  return roomId;
+}
+
 // Authentication helper function
 function getAuthHeaders() {
   const token = localStorage.getItem('authToken');
@@ -250,6 +259,9 @@ document.getElementById('generateBtn').onclick = async function() {
   }
 
   try {
+    // Load rooms data first to populate room mapping
+    await loadRoomsTable();
+    
     const response = await fetch('/schedule', {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -332,6 +344,9 @@ if (loadBtn) {
       return;
     }
     try {
+      // Load rooms data first to populate room mapping
+      await loadRoomsTable();
+      
       const resp = await fetch(`/load_schedule?id=${encodeURIComponent(id)}`, {
         headers: getAuthHeaders()
       });
@@ -482,7 +497,7 @@ function renderScheduleAndTimetable(data) {
       <td>${subj}</td>
       <td>${row.type}</td>
       <td>${row.teacher_name}</td>
-      <td>${row.room_id}</td>
+      <td>${getRoomName(row.room_id)}</td>
       <td>${row.day}</td>
       <td>${timeRange}</td>
     </tr>`;
@@ -538,7 +553,7 @@ function renderScheduleAndTimetable(data) {
           const fg = getTextColorForBackground(bg);
           tthtml += `<td rowspan="${span}" style="background:${bg}; color:${fg};">
             <b>${subj}</b> <small style=\"color:#000; opacity:.85\">(${range})</small><br>
-            ${ev.section_id}<br>${ev.teacher_name}<br>${ev.room_id}
+            ${ev.section_id}<br>${ev.teacher_name}<br>${getRoomName(ev.room_id)}
           </td>`;
           for (let k = 1; k < span; k++) skip[t + k][d] = true;
         }
@@ -569,7 +584,7 @@ function renderScheduleAndTimetable(data) {
               const fg = getTextColorForBackground(bg);
               return `<div style=\"background:${bg}; color:${fg}; padding:4px 6px; border-radius:6px; margin-bottom:4px;\">
                 <b>${subj}</b> <small style=\"opacity:.85; color:#000\">(${range})</small><br>
-                ${slot.section_id}<br>${slot.teacher_name}<br>${slot.room_id}
+                ${slot.section_id}<br>${slot.teacher_name}<br>${getRoomName(slot.room_id)}
               </div>`;
             }).join('') + '</td>';
           } else {
@@ -687,6 +702,9 @@ async function loadRoomsTable() {
     });
     if (!roomsResponse.ok) throw new Error('Failed to load rooms');
     roomsCache = await roomsResponse.json();
+    
+    // Room mapping no longer needed since scheduler outputs room names directly
+    
     renderTable(roomsCache, 'roomsData', ['room_id', 'room_name', 'is_laboratory']);
   } catch (e) {
     console.warn('Could not load rooms:', e);
@@ -807,4 +825,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const profileRole = document.getElementById('profile-role');
   if (profileUsername) profileUsername.textContent = username || 'User';
   if (profileRole) profileRole.textContent = localStorage.getItem('role') || 'User';
+  
+  // Load rooms data to populate room mapping
+  loadRoomsTable();
 });

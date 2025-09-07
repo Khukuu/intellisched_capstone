@@ -36,6 +36,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
 
     room_map = {r['room_id']: r for r in rooms_data}
     room_ids = [r['room_id'] for r in rooms_data]
+    room_names = [r['room_name'] for r in rooms_data]
 
     # Define granular days and time slots (30-minute increments)
     day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -478,7 +479,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 'subject_name': subject_map.get(event['subject_code'], {}).get('subject_name', event['subject_code']),
                 'type': event['type'], # 'lecture', 'lab', 'non_lab'
                 'teacher_name': teacher_id_to_name[teacher_ids[teacher_idx]],
-                'room_id': room_ids[room_idx],
+                'room_id': room_names[room_idx],
                 'day': day_labels[day_idx],
                 'start_time_slot': time_slot_labels[start_time_idx],
                 'duration_slots': int(event['duration_slots'])
@@ -533,7 +534,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 'subject_name': subject_map.get(event['subject_code'], {}).get('subject_name', event['subject_code']),
                 'type': event['type'],
                 'teacher_name': teacher_id_to_name[teacher_ids[teacher_idx]],
-                'room_id': room_ids[room_idx],
+                'room_id': room_names[room_idx],
                 'day': day_labels[day_idx],
                 'start_time_slot': time_slot_labels[start_time_idx],
                 'duration_slots': int(event['duration_slots'])
