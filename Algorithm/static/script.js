@@ -968,18 +968,32 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
+  // Check user role - only chair users should access this page
+  const userRole = localStorage.getItem('role');
+  if (userRole !== 'chair') {
+    alert('Access denied. This area is only accessible to Chair users.');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
+    window.location.href = '/login';
+    return;
+  }
+
   // Update navbar with user info
   const username = localStorage.getItem('username');
   if (username) {
     const logoutBtn = document.getElementById('logoutBtn');
-    logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
+    logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} (Chair) <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
   }
 
   // Update profile section
   const profileUsername = document.getElementById('profile-username');
   const profileRole = document.getElementById('profile-role');
   if (profileUsername) profileUsername.textContent = username || 'User';
-  if (profileRole) profileRole.textContent = localStorage.getItem('role') || 'User';
+  if (profileRole) {
+    profileRole.textContent = 'Chair';
+    profileRole.className = 'badge bg-success'; // Green badge for chair role
+  }
   
   // Load rooms data to populate room mapping
   loadRoomsTable();

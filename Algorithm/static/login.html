@@ -314,12 +314,20 @@
         const data = await response.json();
         
         if (response.ok) {
-          // Store the token
+          // Store the token and user info
           localStorage.setItem('authToken', data.access_token);
           localStorage.setItem('username', data.username);
+          localStorage.setItem('role', data.role || 'user');
           
-          // Redirect to main app immediately
-          window.location.href = '/';
+          // Redirect based on user role
+          if (data.role === 'admin') {
+            window.location.href = '/admin';
+          } else if (data.role === 'chair') {
+            window.location.href = '/chair';
+          } else {
+            // Regular users - redirect to main app (which will handle access control)
+            window.location.href = '/';
+          }
         } else {
           showAlert(data.detail || 'Login failed', 'danger');
         }

@@ -6,8 +6,9 @@ This document explains the new authentication system added to IntelliSched.
 
 - **Secure Login**: Username/password authentication
 - **JWT Tokens**: Secure, time-limited access tokens
-- **Protected Routes**: All main functionality requires authentication
-- **User Management**: Database-backed user accounts
+- **Role-Based Access Control**: Different user roles with specific permissions
+- **Protected Routes**: All main functionality requires authentication and appropriate roles
+- **User Management**: Database-backed user accounts with role assignments
 - **Session Management**: Automatic token expiration and renewal
 
 ## 🏗️ Architecture
@@ -30,9 +31,9 @@ pip install -r requirements.txt
 ```
 
 ### 2. Database Setup
-The system automatically creates the `users` table and a default admin account:
-- **Username**: `admin`
-- **Password**: `admin123`
+The system automatically creates the `users` table and default accounts:
+- **Admin Account**: `admin` / `admin123` (Full system access)
+- **Chair Account**: `chair` / `chair123` (Scheduling and data management access)
 
 ### 3. Start the Application
 ```bash
@@ -43,8 +44,10 @@ uvicorn app:app --reload
 
 ### Login Flow
 1. Navigate to `/login`
-2. Enter credentials (admin/admin123 by default)
-3. Upon successful login, you'll be redirected to the main app
+2. Enter credentials:
+   - **Admin**: `admin` / `admin123` → Redirected to `/admin`
+   - **Chair**: `chair` / `chair123` → Redirected to `/chair`
+3. Upon successful login, you'll be redirected to the appropriate dashboard based on your role
 4. All API calls automatically include the authentication token
 
 ### Logout
@@ -55,8 +58,31 @@ uvicorn app:app --reload
 
 - **Password Hashing**: SHA-256 with random salt
 - **JWT Tokens**: 30-minute expiration
-- **Protected Endpoints**: All sensitive operations require authentication
+- **Role-Based Access Control**: Different user roles with specific permissions
+- **Protected Endpoints**: All sensitive operations require authentication and appropriate roles
 - **Automatic Redirects**: Unauthenticated users are sent to login
+- **Cross-Role Protection**: Users cannot access functionality outside their role
+
+## 👥 User Roles
+
+### Admin Role
+- **Access**: Full system administration
+- **Dashboard**: `/admin` (placeholder for future admin functionality)
+- **Permissions**: System-wide access (to be implemented)
+
+### Chair Role
+- **Access**: Scheduling and data management
+- **Dashboard**: `/chair` (scheduling functionality)
+- **Permissions**:
+  - Generate schedules
+  - Manage subjects, teachers, rooms
+  - Save and load schedules
+  - Download schedules
+  - Access data management interface
+
+### User Role (Default)
+- **Access**: Limited (currently redirected to login)
+- **Permissions**: Basic access (to be defined)
 
 ## 🔍 API Endpoints
 
@@ -65,13 +91,23 @@ uvicorn app:app --reload
 - `POST /auth/login` - Authenticate user
 - `POST /auth/logout` - Logout (client-side token removal)
 
-### Protected Endpoints
-- `GET /` - Main application
+### Role-Based Protected Endpoints
+
+#### Chair Role Required
+- `GET /chair` - Chair dashboard (scheduling functionality)
 - `POST /schedule` - Generate schedule
 - `GET /data/*` - Data management
 - `POST /save_schedule` - Save schedules
 - `GET /load_schedule` - Load saved schedules
+- `GET /saved_schedules` - List saved schedules
+- `GET /download_schedule` - Download schedules
+- `POST /api/subjects` - Manage subjects
+- `POST /api/teachers` - Manage teachers
+- `POST /api/rooms` - Manage rooms
 - And more...
+
+#### Admin Role Required
+- `GET /admin` - Admin dashboard (placeholder for future admin functionality)
 
 ## 🧪 Testing
 
@@ -80,11 +116,18 @@ Run the authentication test script:
 python test_auth.py
 ```
 
-This will test:
+Run the role-based access control test script:
+```bash
+python test_roles.py
+```
+
+These will test:
 - Unauthenticated access blocking
-- Valid login
-- Protected route access with token
+- Valid login for different roles
+- Role-based access control
+- Protected route access with appropriate tokens
 - Invalid credential rejection
+- Cross-role access denial
 
 ## 🔧 Configuration
 

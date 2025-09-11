@@ -66,6 +66,34 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+def require_role(allowed_roles: list):
+    """Decorator to require specific roles for access"""
+    def role_checker(username: str = Depends(verify_token)):
+        user = db.get_user_by_username(username)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User not found"
+            )
+        
+        user_role = user.get('role', 'user')
+        if user_role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Access denied. Required roles: {', '.join(allowed_roles)}"
+            )
+        
+        return username
+    return role_checker
+
+def require_chair_role(username: str = Depends(require_role(['chair']))):
+    """Require chair role for access"""
+    return username
+
+def require_admin_role(username: str = Depends(require_role(['admin']))):
+    """Require admin role for access"""
+    return username
+
 # Authentication endpoints
 @app.post('/auth/login')
 async def login(payload: dict):
@@ -180,14 +208,110 @@ async def health_check():
     except Exception as e:
         return {"status": "unhealthy", "database": "error", "message": f"Database error: {str(e)}"}
 
-# Main route - serve main app (authentication handled by frontend)
+# Main route - redirect to appropriate dashboard based on role
 @app.get('/')
 async def index():
-    """Main route - serve main app, authentication handled by frontend"""
+    """Main route - redirect users to appropriate dashboard"""
+    return RedirectResponse(url='/login')
+
+# Chair-specific route for scheduling functionality
+@app.get('/chair')
+async def chair_dashboard():
+    """Chair dashboard with scheduling and data management - authentication handled by frontend"""
     index_path = os.path.join('static', 'index.html')
     if not os.path.exists(index_path):
         raise HTTPException(status_code=404, detail='Index file not found')
     return FileResponse(index_path, media_type='text/html')
+
+# Admin route (placeholder for future admin functionality)
+@app.get('/admin')
+async def admin_dashboard():
+    """Admin dashboard - placeholder for future admin functionality - authentication handled by frontend"""
+    admin_path = os.path.join('static', 'admin.html')
+    if not os.path.exists(admin_path):
+        # Create a simple admin placeholder page
+        admin_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliSched - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-shield-check me-2"></i>
+                IntelliSched Admin
+            </a>
+            <div class="d-flex">
+                <button id="logoutBtn" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-tools" style="font-size: 4rem; color: #6c757d;"></i>
+                        <h2 class="mt-3">Admin Dashboard</h2>
+                        <p class="text-muted">Admin functionality coming soon...</p>
+                        <p class="small text-muted">This area will contain user management, system settings, and administrative tools.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Authentication check and role-based access control
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Check user role - only admin users should access this page
+            const userRole = localStorage.getItem('role');
+            if (userRole !== 'admin') {
+                alert('Access denied. This area is only accessible to Admin users.');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('username');
+                localStorage.removeItem('role');
+                window.location.href = '/login';
+                return;
+            }
+            
+            // Update navbar with user info
+            const username = localStorage.getItem('username');
+            if (username) {
+                const logoutBtn = document.getElementById('logoutBtn');
+                logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} (Admin) <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
+            }
+        });
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            window.location.href = '/login';
+        });
+    </script>
+</body>
+</html>
+        """
+        with open(admin_path, 'w', encoding='utf-8') as f:
+            f.write(admin_content)
+    
+    return FileResponse(admin_path, media_type='text/html')
 
 @app.get('/login')
 async def login_page():
@@ -206,7 +330,7 @@ async def register_page():
     return FileResponse(register_path, media_type='text/html')
 
 @app.post('/schedule')
-async def schedule(payload: dict, username: str = Depends(verify_token)):
+async def schedule(payload: dict, username: str = Depends(require_chair_role)):
     print('Received request for /schedule')
     subjects = load_subjects_from_db()
     teachers = load_teachers_from_db()
@@ -294,11 +418,11 @@ def _list_saved_summaries():
     return items
 
 @app.get('/saved_schedules')
-async def saved_schedules(username: str = Depends(verify_token)):
+async def saved_schedules(username: str = Depends(require_chair_role)):
     return JSONResponse(content=_list_saved_summaries())
 
 @app.post('/save_schedule')
-async def save_schedule(payload: dict, username: str = Depends(verify_token)):
+async def save_schedule(payload: dict, username: str = Depends(require_chair_role)):
     schedule = payload.get('schedule')
     if not isinstance(schedule, list) or len(schedule) == 0:
         raise HTTPException(status_code=400, detail='No schedule provided to save')
@@ -322,7 +446,7 @@ async def save_schedule(payload: dict, username: str = Depends(verify_token)):
     return JSONResponse(content={'id': uid, 'name': name, 'semester': semester, 'created_at': created_at})
 
 @app.get('/load_schedule')
-async def load_schedule(id: str, username: str = Depends(verify_token)):
+async def load_schedule(id: str, username: str = Depends(require_chair_role)):
     saved_dir = _ensure_saved_dir()
     # Find file by id prefix
     candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(id) and fn.endswith('.json')]
@@ -334,7 +458,7 @@ async def load_schedule(id: str, username: str = Depends(verify_token)):
     return JSONResponse(content=data)
 
 @app.get('/download_schedule')
-async def download_schedule(id: str | None = None, semester: str | None = None, username: str = Depends(verify_token)):
+async def download_schedule(id: str | None = None, semester: str | None = None, username: str = Depends(require_chair_role)):
     # Determine which schedule to download
     schedule_data = None
     if id:
@@ -367,7 +491,7 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
     return Response(content=csv_bytes, media_type='text/csv', headers=headers)
 
 @app.get('/data/{filename}')
-async def get_data(filename: str, username: str = Depends(verify_token)):
+async def get_data(filename: str, username: str = Depends(require_chair_role)):
     try:
         if filename in ['cs_curriculum', 'subjects']:
             data = load_subjects_from_db()
@@ -382,13 +506,13 @@ async def get_data(filename: str, username: str = Depends(verify_token)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/upload/{filename}')
-async def upload_file(filename: str, file: UploadFile = File(...), username: str = Depends(verify_token)):
+async def upload_file(filename: str, file: UploadFile = File(...), username: str = Depends(require_chair_role)):
     """Legacy endpoint - CSV uploads are no longer supported"""
     raise HTTPException(status_code=400, detail='CSV uploads are no longer supported. Data is now managed through PostgreSQL database.')
 
-# Database management endpoints
+# Database management endpoints (Chair role required)
 @app.post('/api/subjects')
-async def add_subject_endpoint(subject_data: dict):
+async def add_subject_endpoint(subject_data: dict, username: str = Depends(require_chair_role)):
     """Add a new subject to the database"""
     try:
         from database import add_subject
@@ -398,7 +522,7 @@ async def add_subject_endpoint(subject_data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put('/api/subjects/{subject_code}')
-async def update_subject_endpoint(subject_code: str, subject_data: dict):
+async def update_subject_endpoint(subject_code: str, subject_data: dict, username: str = Depends(require_chair_role)):
     """Update an existing subject in the database"""
     try:
         from database import update_subject
@@ -409,7 +533,7 @@ async def update_subject_endpoint(subject_code: str, subject_data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete('/api/subjects/{subject_code}')
-async def delete_subject_endpoint(subject_code: str):
+async def delete_subject_endpoint(subject_code: str, username: str = Depends(require_chair_role)):
     """Delete a subject from the database"""
     try:
         from database import delete_subject
@@ -419,7 +543,7 @@ async def delete_subject_endpoint(subject_code: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/api/teachers')
-async def add_teacher_endpoint(teacher_data: dict):
+async def add_teacher_endpoint(teacher_data: dict, username: str = Depends(require_chair_role)):
     """Add a new teacher to the database"""
     try:
         from database import add_teacher
@@ -429,7 +553,7 @@ async def add_teacher_endpoint(teacher_data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put('/api/teachers/{teacher_id}')
-async def update_teacher_endpoint(teacher_id: str, teacher_data: dict):
+async def update_teacher_endpoint(teacher_id: str, teacher_data: dict, username: str = Depends(require_chair_role)):
     """Update an existing teacher in the database"""
     try:
         from database import update_teacher
@@ -440,7 +564,7 @@ async def update_teacher_endpoint(teacher_id: str, teacher_data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete('/api/teachers/{teacher_id}')
-async def delete_teacher_endpoint(teacher_id: str):
+async def delete_teacher_endpoint(teacher_id: str, username: str = Depends(require_chair_role)):
     """Delete a teacher from the database"""
     try:
         from database import delete_teacher
@@ -450,7 +574,7 @@ async def delete_teacher_endpoint(teacher_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/api/rooms')
-async def add_room_endpoint(room_data: dict):
+async def add_room_endpoint(room_data: dict, username: str = Depends(require_chair_role)):
     """Add a new room to the database"""
     try:
         from database import add_room
@@ -460,7 +584,7 @@ async def add_room_endpoint(room_data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put('/api/rooms/{room_id}')
-async def update_room_endpoint(room_id: str, room_data: dict):
+async def update_room_endpoint(room_id: str, room_data: dict, username: str = Depends(require_chair_role)):
     """Update an existing room in the database"""
     try:
         from database import update_room
@@ -471,7 +595,7 @@ async def update_room_endpoint(room_id: str, room_data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete('/api/rooms/{room_id}')
-async def delete_room_endpoint(room_id: str):
+async def delete_room_endpoint(room_id: str, username: str = Depends(require_chair_role)):
     """Delete a room from the database"""
     try:
         from database import delete_room
@@ -481,7 +605,7 @@ async def delete_room_endpoint(room_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/api/migrate')
-async def migrate_data_endpoint():
+async def migrate_data_endpoint(username: str = Depends(require_chair_role)):
     """Trigger data migration from CSV to database"""
     try:
         from database import db

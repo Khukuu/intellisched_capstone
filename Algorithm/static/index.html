@@ -289,7 +289,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/static/script.js"></script>
   <script>
-    // Authentication check
+    // Authentication check and role-based routing
     document.addEventListener('DOMContentLoaded', function() {
       const token = localStorage.getItem('authToken');
       if (!token) {
@@ -297,11 +297,27 @@
         return;
       }
       
-      // Update navbar with user info
-      const username = localStorage.getItem('username');
-      if (username) {
-        const logoutBtn = document.getElementById('logoutBtn');
-        logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
+      // Check user role and redirect accordingly
+      const userRole = localStorage.getItem('role');
+      if (userRole === 'admin') {
+        window.location.href = '/admin';
+        return;
+      } else if (userRole === 'chair') {
+        // Chair users stay on this page (scheduling functionality)
+        // Update navbar with user info
+        const username = localStorage.getItem('username');
+        if (username) {
+          const logoutBtn = document.getElementById('logoutBtn');
+          logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} (Chair) <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
+        }
+      } else {
+        // Other roles (user, etc.) - redirect to login or show access denied
+        alert('Access denied. You do not have permission to access this area.');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+        window.location.href = '/login';
+        return;
       }
     });
     

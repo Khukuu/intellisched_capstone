@@ -137,7 +137,7 @@ class ScheduleDatabase:
             return False
     
     def create_default_admin(self):
-        """Create a default admin user if none exists"""
+        """Create default admin and chair users if they don't exist"""
         try:
             # Check if admin user exists
             existing_admin = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('admin',))
@@ -153,8 +153,24 @@ class ScheduleDatabase:
                 """, ('admin', password_hash, salt, 'Administrator', 'admin@intellisched.com', 'admin'))
                 
                 print("✅ Default admin user created (username: admin, password: admin123)")
+            
+            # Check if chair user exists
+            existing_chair = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('chair',))
+            if not existing_chair:
+                # Create default chair user
+                password = "chair123"
+                salt = secrets.token_hex(16)
+                password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+                
+                self.db.execute_single("""
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, ('chair', password_hash, salt, 'Department Chair', 'chair@intellisched.com', 'chair'))
+                
+                print("✅ Default chair user created (username: chair, password: chair123)")
+                
         except Exception as e:
-            print(f"⚠️ Could not create default admin user: {e}")
+            print(f"⚠️ Could not create default users: {e}")
     
     def verify_user_credentials(self, username: str, password: str) -> Dict[str, Any]:
         """Verify user credentials and return user info if valid"""
