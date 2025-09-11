@@ -40,9 +40,9 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
 
     # Define granular days and time slots (30-minute increments)
     day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    # Assuming 8 AM to 5 PM with a lunch break (12-1 PM)
+    # Assuming 8 AM to 8 PM with a lunch break (12-1 PM)
     time_slot_labels = []
-    for h in range(8, 18): # 8 AM to 5 PM (exclusive 6 PM)
+    for h in range(8, 20): # 8 AM to 8 PM (exclusive 9 PM)
         time_slot_labels.append(f"{h:02d}:00-{h:02d}:30")
         time_slot_labels.append(f"{h:02d}:30-{h+1:02d}:00")
     # Remove 12:00-1:00 for lunch break
@@ -118,7 +118,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 t['teacher_id'] for t in cleaned_teachers_data 
                 if subject_code in t['can_teach'].split(',')
             ]
-            # Prepare room lists for lecture vs lab components
+            # Prepare room lists for lecture vs lab components with special constraints
             lecture_rooms_for_subj = [
                 r['room_id'] for r in rooms_data
                 if not r.get('is_laboratory', False)
@@ -127,6 +127,29 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 r['room_id'] for r in rooms_data
                 if r.get('is_laboratory', False)
             ]
+            
+            # Apply special room assignment rules
+            # Rule 1: Specific CS subjects (CS6, CS10, CS14, CS21) must use Cisco Lab only
+            if subject_code.upper() in ['CS6', 'CS10', 'CS14', 'CS21']:
+                # Find Cisco Lab room
+                cisco_lab_rooms = [r['room_id'] for r in rooms_data if 'cisco' in str(r.get('room_name', '')).lower()]
+                if cisco_lab_rooms:
+                    lecture_rooms_for_subj = cisco_lab_rooms
+                    lab_rooms_for_subj = cisco_lab_rooms
+                    print(f"Applied CS constraint: {subject_code} assigned to Cisco Lab only")
+                else:
+                    print(f"Warning: Cisco Lab not found for CS subject {subject_code}")
+            
+            # Rule 2: Only specific PE subjects (PE1, PE2, PE3, PE4) can use LPU_Gymnasium
+            elif subject_code.upper() in ['PE1', 'PE2', 'PE3', 'PE4']:
+                # Find LPU_Gymnasium room
+                gym_rooms = [r['room_id'] for r in rooms_data if 'gymnasium' in str(r.get('room_name', '')).lower()]
+                if gym_rooms:
+                    lecture_rooms_for_subj = gym_rooms
+                    lab_rooms_for_subj = gym_rooms
+                    print(f"Applied PE constraint: {subject_code} assigned to LPU_Gymnasium only")
+                else:
+                    print(f"Warning: LPU_Gymnasium not found for PE subject {subject_code}")
 
             # Skip unschedulable subjects
             if not valid_teachers_for_subj:
@@ -260,6 +283,31 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
 
     print('Scheduler: Adding constraints...')
     logs.append('Scheduler: Adding constraints...')
+    
+    # Debug: Print room availability
+    print(f"Total events to schedule: {len(meeting_events)}")
+    print(f"Total rooms available: {len(rooms_data)}")
+    for room in rooms_data:
+        print(f"  - {room['room_id']}: {room['room_name']}")
+    
+    # Debug: Print event room requirements
+    for i, event in enumerate(meeting_events):
+        print(f"Event {i}: {event['subject_code']} ({event['section_id']}) - {len(event['valid_rooms'])} valid rooms: {event['valid_rooms']}")
+    
+    # Add room preference to distribute events more evenly
+    # Create a simple room preference based on event index to avoid all events using the same room
+    for i, event in enumerate(meeting_events):
+        if len(event['valid_rooms']) > 1:
+            # Add a small preference to use different rooms based on event index
+            preferred_room_idx = i % len(event['valid_rooms'])
+            preferred_room_id = event['valid_rooms'][preferred_room_idx]
+            preferred_room_index = room_ids.index(preferred_room_id)
+            
+            # Add a soft constraint to prefer this room (but don't make it mandatory)
+            # This will help distribute events across different rooms
+            room_preference = model.NewBoolVar(f'room_pref_{i}')
+            model.Add(assigned_rooms_vars[i] == preferred_room_index).OnlyEnforceIf(room_preference)
+            model.Add(assigned_rooms_vars[i] != preferred_room_index).OnlyEnforceIf(room_preference.Not())
 
     # Pairwise no-overlap for teachers on the same day
     for i in range(len(meeting_events)):
@@ -281,25 +329,92 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             model.Add(assigned_starts[j] + int(meeting_events[j]['duration_slots']) <= assigned_starts[i]).OnlyEnforceIf(sep_ji_t)
             model.AddBoolOr([sep_ij_t, sep_ji_t, same_teacher.Not(), same_day.Not()])
 
-    # Pairwise no-overlap for rooms on the same day
-    for i in range(len(meeting_events)):
-        for j in range(i + 1, len(meeting_events)):
-            # Same room indicator
-            same_room = model.NewBoolVar(f'same_room_{i}_{j}')
-            model.Add(assigned_rooms_vars[i] == assigned_rooms_vars[j]).OnlyEnforceIf(same_room)
-            model.Add(assigned_rooms_vars[i] != assigned_rooms_vars[j]).OnlyEnforceIf(same_room.Not())
-
-            # Same day indicator (reuse new var for rooms)
-            same_day_r = model.NewBoolVar(f'same_day_room_{i}_{j}')
-            model.Add(assigned_days[i] == assigned_days[j]).OnlyEnforceIf(same_day_r)
-            model.Add(assigned_days[i] != assigned_days[j]).OnlyEnforceIf(same_day_r.Not())
-
-            # Time separation disjunction for room overlap
-            sep_ij_r = model.NewBoolVar(f'separate_{i}_{j}_r')
-            sep_ji_r = model.NewBoolVar(f'separate_{j}_{i}_r')
-            model.Add(assigned_starts[i] + int(meeting_events[i]['duration_slots']) <= assigned_starts[j]).OnlyEnforceIf(sep_ij_r)
-            model.Add(assigned_starts[j] + int(meeting_events[j]['duration_slots']) <= assigned_starts[i]).OnlyEnforceIf(sep_ji_r)
-            model.AddBoolOr([sep_ij_r, sep_ji_r, same_room.Not(), same_day_r.Not()])
+    # Simple room overlap constraint using AddNoOverlap
+    # Get gymnasium room IDs
+    gym_room_ids = [r['room_id'] for r in rooms_data if 'gymnasium' in str(r.get('room_name', '')).lower()]
+    
+    # Create intervals for each event
+    event_intervals = []
+    for i, event in enumerate(meeting_events):
+        # Create interval for this event
+        interval = model.NewIntervalVar(
+            assigned_starts[i],
+            int(event['duration_slots']),
+            assigned_starts[i] + int(event['duration_slots']),
+            f'event_interval_{i}'
+        )
+        event_intervals.append(interval)
+    
+    # Add no-overlap constraint for each room (except LPU_Gymnasium for PE subjects only)
+    for room_idx, room_id in enumerate(room_ids):
+        if room_id in gym_room_ids:
+            # Only skip room overlap constraint for LPU_Gymnasium if both events are PE subjects
+            print(f"Checking LPU_Gymnasium constraint for room_id: {room_id}")
+            # Find all events that can use this room
+            events_for_room = []
+            for i, event in enumerate(meeting_events):
+                if room_id in event['valid_rooms']:
+                    events_for_room.append(i)
+            
+            if len(events_for_room) > 1:
+                print(f"Adding special LPU_Gymnasium constraint for room {room_id} with {len(events_for_room)} events")
+                
+                # Create conditional intervals for this room
+                room_intervals = []
+                for i in events_for_room:
+                    # Check if this event is a PE subject
+                    is_pe_subject = meeting_events[i]['subject_code'].upper() in ['PE1', 'PE2', 'PE3', 'PE4']
+                    
+                    # Create a conditional interval that only exists if this event is assigned to this room
+                    room_assigned = model.NewBoolVar(f'room_{room_id}_assigned_{i}')
+                    model.Add(assigned_rooms_vars[i] == room_idx).OnlyEnforceIf(room_assigned)
+                    model.Add(assigned_rooms_vars[i] != room_idx).OnlyEnforceIf(room_assigned.Not())
+                    
+                    # Create interval that only exists when room is assigned
+                    room_interval = model.NewOptionalIntervalVar(
+                        assigned_starts[i], 
+                        int(meeting_events[i]['duration_slots']), 
+                        assigned_starts[i] + int(meeting_events[i]['duration_slots']),
+                        room_assigned,
+                        f'room_{room_id}_interval_{i}'
+                    )
+                    room_intervals.append(room_interval)
+                
+                # Add no-overlap constraint for this room
+                model.AddNoOverlap(room_intervals)
+                print(f"Applied AddNoOverlap constraint for LPU_Gymnasium with {len(room_intervals)} intervals")
+            continue
+            
+        # Find all events that can use this room
+        events_for_room = []
+        for i, event in enumerate(meeting_events):
+            if room_id in event['valid_rooms']:
+                events_for_room.append(i)
+        
+        if len(events_for_room) > 1:
+            print(f"Adding room overlap constraint for room {room_id} with {len(events_for_room)} events")
+            
+            # Create conditional intervals for this room
+            room_intervals = []
+            for i in events_for_room:
+                # Create a conditional interval that only exists if this event is assigned to this room
+                room_assigned = model.NewBoolVar(f'room_{room_id}_assigned_{i}')
+                model.Add(assigned_rooms_vars[i] == room_idx).OnlyEnforceIf(room_assigned)
+                model.Add(assigned_rooms_vars[i] != room_idx).OnlyEnforceIf(room_assigned.Not())
+                
+                # Create interval that only exists when room is assigned
+                room_interval = model.NewOptionalIntervalVar(
+                    assigned_starts[i], 
+                    int(meeting_events[i]['duration_slots']), 
+                    assigned_starts[i] + int(meeting_events[i]['duration_slots']),
+                    room_assigned,
+                    f'room_{room_id}_interval_{i}'
+                )
+                room_intervals.append(room_interval)
+            
+            # Add no-overlap constraint for this room
+            model.AddNoOverlap(room_intervals)
+            print(f"Applied AddNoOverlap constraint for room {room_id} with {len(room_intervals)} intervals")
 
     # Pairwise no-overlap for sections on the same day (prevent students' schedule clashes)
     for i in range(len(meeting_events)):

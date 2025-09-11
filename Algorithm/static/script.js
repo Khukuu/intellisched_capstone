@@ -14,6 +14,8 @@ const uploadSectionsForm = document.getElementById('uploadSectionsForm');
 const semesterSelect = document.getElementById('semesterSelect'); // New: Get semester select element
 const yearFilter = document.getElementById('yearFilter');
 const sectionFilter = document.getElementById('sectionFilter');
+const roomFilter = document.getElementById('roomFilter');
+const roomDropdown = document.getElementById('roomDropdown');
 const viewMode = document.getElementById('viewMode');
 const saveBtn = document.getElementById('saveBtn');
 const saveNameInput = document.getElementById('saveNameInput');
@@ -23,6 +25,8 @@ const loadBtn = document.getElementById('loadBtn');
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
 let lastSavedId = '';
+let currentRoomFilter = 'all';
+let availableRooms = [];
 
 // Cached data for tabs so searches/filtering work reliably
 let subjectsCache = [];
@@ -151,7 +155,8 @@ const timeSlotLabels = [
   "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
   "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
-  "17:00-17:30", "17:30-18:00"
+  "17:00-17:30", "17:30-18:00", "18:00-18:30", "18:30-19:00",
+  "19:00-19:30", "19:30-20:00"
 ];
 
 // Timetable subject color mapping helpers
@@ -175,6 +180,26 @@ const SUBJECT_COLOR_PALETTE = [
   '#C9C0FF', /* light purple */
   '#BFD1FF'  /* soft blue */
 ];
+
+// Special colors for laboratory subjects - more vibrant and prominent
+const LAB_COLOR_PALETTE = [
+  '#FF6B6B', /* vibrant red */
+  '#4ECDC4', /* teal */
+  '#45B7D1', /* bright blue */
+  '#96CEB4', /* mint green */
+  '#FFEAA7', /* golden yellow */
+  '#DDA0DD', /* medium orchid */
+  '#98D8C8', /* turquoise */
+  '#F7DC6F', /* bright yellow */
+  '#BB8FCE', /* light purple */
+  '#85C1E9', /* light blue */
+  '#F8C471', /* orange */
+  '#82E0AA', /* light green */
+  '#F1948A', /* salmon */
+  '#85C1E9', /* sky blue */
+  '#D7BDE2'  /* light purple */
+];
+
 const subjectColorCache = {};
 function hashStringToInt(str) {
   let hash = 0;
@@ -184,12 +209,16 @@ function hashStringToInt(str) {
   }
   return Math.abs(hash);
 }
-function getSubjectColor(subjectCode) {
+function getSubjectColor(subjectCode, subjectType = null) {
   const key = String(subjectCode || '');
-  if (subjectColorCache[key]) return subjectColorCache[key];
-  const idx = hashStringToInt(key) % SUBJECT_COLOR_PALETTE.length;
-  const color = SUBJECT_COLOR_PALETTE[idx];
-  subjectColorCache[key] = color;
+  const cacheKey = `${key}_${subjectType || 'default'}`;
+  if (subjectColorCache[cacheKey]) return subjectColorCache[cacheKey];
+  
+  // Use lab colors for laboratory subjects, regular colors for others
+  const palette = (subjectType === 'lab') ? LAB_COLOR_PALETTE : SUBJECT_COLOR_PALETTE;
+  const idx = hashStringToInt(key) % palette.length;
+  const color = palette[idx];
+  subjectColorCache[cacheKey] = color;
   return color;
 }
 function getTextColorForBackground(hex) {
@@ -219,8 +248,21 @@ document.getElementById('generateBtn').onclick = async function() {
 
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
-    const subjectsResponse = await fetch('/data/cs_curriculum');
+    const subjectsResponse = await fetch('/data/cs_curriculum', {
+      headers: getAuthHeaders()
+    });
+    
+    if (!subjectsResponse.ok) {
+      console.error('Failed to load subjects:', subjectsResponse.status);
+      throw new Error(`Failed to load subjects: ${subjectsResponse.status}`);
+    }
+    
     const subjectsData = await subjectsResponse.json();
+    
+    if (!Array.isArray(subjectsData)) {
+      throw new Error('Subjects data is not an array');
+    }
+    
     const yearsList = subjectsData
       .filter(s => String(s.semester) === String(selectedSemester))
       .map(s => parseInt(s.year_level))
@@ -279,8 +321,8 @@ document.getElementById('generateBtn').onclick = async function() {
       return;
     }
 
-    renderScheduleAndTimetable(lastGeneratedSchedule);
     populateFilters(lastGeneratedSchedule);
+    renderScheduleAndTimetable(lastGeneratedSchedule);
     refreshSavedSchedulesList();
   } catch (e) {
     console.error('Error generating schedule', e);
@@ -395,6 +437,7 @@ async function refreshSavedSchedulesList(selectId) {
 // Load saved list on page open
 refreshSavedSchedulesList();
 
+
 function populateFilters(data) {
   // Extract available years from section IDs (format CS{year}{letter})
   const years = new Set();
@@ -422,6 +465,9 @@ function populateFilters(data) {
 
   // Rebuild sectionFilter based on selected year
   rebuildSectionFilter(sectionsByYear);
+  
+  // Rebuild roomFilter based on available rooms
+  rebuildRoomFilter();
 }
 
 function rebuildSectionFilter(sectionsByYear) {
@@ -451,6 +497,65 @@ function rebuildSectionFilter(sectionsByYear) {
   sectionFilter.value = 'all';
 }
 
+function rebuildRoomFilter() {
+  if (!roomFilter || !roomDropdown) {
+    console.error('Room filter elements not found');
+    return;
+  }
+  
+  // Get unique rooms from the current schedule
+  const rooms = new Set();
+  lastGeneratedSchedule.forEach(e => {
+    if (e.room_id) {
+      rooms.add(e.room_id);
+    }
+  });
+
+  availableRooms = Array.from(rooms).sort();
+  
+  // Update dropdown with all rooms
+  updateRoomDropdown(availableRooms);
+  
+  // Enable/disable the filter
+  roomFilter.disabled = availableRooms.length === 0;
+  
+  // Reset to "All Rooms" if disabled or if current selection is not available
+  if (roomFilter.disabled || (currentRoomFilter !== 'all' && !availableRooms.includes(currentRoomFilter))) {
+    currentRoomFilter = 'all';
+    roomFilter.value = '';
+    roomFilter.placeholder = 'Search rooms...';
+  }
+}
+
+function updateRoomDropdown(rooms) {
+  roomDropdown.innerHTML = '';
+  
+  // Add "All Rooms" option
+  const allOption = document.createElement('div');
+  allOption.className = 'dropdown-item';
+  allOption.setAttribute('data-value', 'all');
+  allOption.textContent = 'All Rooms';
+  allOption.style.cursor = 'pointer';
+  roomDropdown.appendChild(allOption);
+  
+  // Add individual room options
+  rooms.forEach(room => {
+    const option = document.createElement('div');
+    option.className = 'dropdown-item';
+    option.setAttribute('data-value', room);
+    option.textContent = room;
+    option.style.cursor = 'pointer';
+    roomDropdown.appendChild(option);
+  });
+}
+
+function filterRoomDropdown(searchTerm) {
+  const filteredRooms = availableRooms.filter(room => 
+    room.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  updateRoomDropdown(filteredRooms);
+}
+
 yearFilter.addEventListener('change', () => {
   // Rebuild section list based on year
   const sectionsByYear = new Map();
@@ -463,6 +568,7 @@ yearFilter.addEventListener('change', () => {
     }
   });
   rebuildSectionFilter(sectionsByYear);
+  rebuildRoomFilter();
   renderScheduleAndTimetable(lastGeneratedSchedule);
 });
 
@@ -470,9 +576,57 @@ sectionFilter.addEventListener('change', () => {
   renderScheduleAndTimetable(lastGeneratedSchedule);
 });
 
+// Room filter event listeners
+roomFilter.addEventListener('input', (e) => {
+  const searchTerm = e.target.value;
+  filterRoomDropdown(searchTerm);
+  roomDropdown.style.display = 'block';
+});
+
+roomFilter.addEventListener('focus', () => {
+  if (!roomFilter.disabled) {
+    roomDropdown.style.display = 'block';
+  }
+});
+
+roomFilter.addEventListener('blur', (e) => {
+  // Delay hiding to allow click on dropdown items
+  setTimeout(() => {
+    roomDropdown.style.display = 'none';
+  }, 200);
+});
+
+// Handle dropdown item clicks
+roomDropdown.addEventListener('click', (e) => {
+  if (e.target.classList.contains('dropdown-item')) {
+    const value = e.target.getAttribute('data-value');
+    currentRoomFilter = value;
+    
+    if (value === 'all') {
+      roomFilter.value = '';
+      roomFilter.placeholder = 'Search rooms...';
+    } else {
+      roomFilter.value = value;
+    }
+    
+    roomDropdown.style.display = 'none';
+    renderScheduleAndTimetable(lastGeneratedSchedule);
+  }
+});
+
+// Handle keyboard navigation
+roomFilter.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    roomDropdown.style.display = 'none';
+    roomFilter.blur();
+  }
+});
+
+
 function applyFilters(data) {
   const y = yearFilter.value;
   const s = sectionFilter.value;
+  const r = currentRoomFilter;
   return data.filter(e => {
     let ok = true;
     if (y !== 'all') {
@@ -480,6 +634,7 @@ function applyFilters(data) {
       ok = ok && m && m[1] === y;
     }
     if (s !== 'all') ok = ok && e.section_id === s;
+    if (r !== 'all') ok = ok && e.room_id === r;
     return ok;
   });
 }
@@ -549,7 +704,7 @@ function renderScheduleAndTimetable(data) {
           const span = Math.min(parseInt(ev.duration_slots, 10) || 1, timeSlotLabels.length - t);
           const subj = ev.subject_name || ev.subject_code || '';
           const range = computeEventTimeRange(ev);
-          const bg = getSubjectColor(ev.subject_code);
+          const bg = getSubjectColor(ev.subject_code, ev.type);
           const fg = getTextColorForBackground(bg);
           tthtml += `<td rowspan="${span}" style="background:${bg}; color:${fg};">
             <b>${subj}</b> <small style=\"color:#000; opacity:.85\">(${range})</small><br>
@@ -580,7 +735,7 @@ function renderScheduleAndTimetable(data) {
             tthtml += '<td>' + uniqueEvents.map(slot => {
               const subj = slot.subject_name || slot.subject_code || '';
               const range = computeEventTimeRange(slot);
-              const bg = getSubjectColor(slot.subject_code);
+              const bg = getSubjectColor(slot.subject_code, slot.type);
               const fg = getTextColorForBackground(bg);
               return `<div style=\"background:${bg}; color:${fg}; padding:4px 6px; border-radius:6px; margin-bottom:4px;\">
                 <b>${subj}</b> <small style=\"opacity:.85; color:#000\">(${range})</small><br>

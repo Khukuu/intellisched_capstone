@@ -47,14 +47,23 @@
       border-radius: 20px;
       border: 1px solid rgba(184, 58, 63, 0.1);
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-      padding: 2.2rem;
+      padding: 1.2rem 2rem;
       width: 100%;
-      max-width: 650px;
+      max-width: 450px;
       text-align: center;
       position: relative;
       z-index: 10;
       transform: translateY(0);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      /* Hide scrollbar */
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+    }
+    
+    .login-container::-webkit-scrollbar {
+      display: none; /* WebKit browsers (Chrome, Safari, Edge) */
     }
     
     .login-container:hover {
@@ -63,13 +72,13 @@
     }
     
     .logo {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
     
     .logo i {
-      font-size: 6.5rem;
+      font-size: 5rem;
       color: #b83a3f; /* LPU red - same as main app */
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       display: block;
       filter: drop-shadow(0 4px 8px rgba(184, 58, 63, 0.3));
     }
@@ -77,8 +86,8 @@
     .logo h1 {
       color: #333; /* Same as main app */
       font-weight: 600;
-      margin-bottom: 0.5rem;
-      font-size: 2.5rem;
+      margin-bottom: 0.3rem;
+      font-size: 2rem;
       letter-spacing: -0.5px;
     }
     
@@ -172,31 +181,78 @@
     }
     
     .mb-3 {
-      margin-bottom: 0.7rem !important;
+      margin-bottom: 0.5rem !important;
     }
     
     .mb-4 {
-      margin-bottom: 1rem !important;
+      margin-bottom: 0.7rem !important;
     }
     
     .footer {
-      margin-top: 1.5rem;
-      padding: 0.7rem 0 0.3rem 0;
+      margin-top: 1rem;
+      padding: 0.5rem 0 0.2rem 0;
       background: transparent;
       border: none;
       box-shadow: none;
       border-radius: 0;
     }
     
-    /* Responsive adjustments */
-    @media (max-width: 767px) {
+    /* Enhanced responsive adjustments */
+    @media (max-width: 768px) {
       .login-container { 
-        padding: 2.5rem 2rem; 
+        padding: 2rem 1.5rem; 
         margin: 1rem;
-        max-width: 90%;
+        max-width: 95%;
+        border-radius: 16px;
       }
+      .logo h1 { font-size: 2rem; }
+      .logo i { font-size: 4rem; }
+      .logo p { font-size: 0.9rem; }
+      .form-control { padding: 0.6rem 0.9rem; font-size: 0.95rem; }
+      .btn-login { padding: 0.6rem 1rem; font-size: 1rem; }
+    }
+    
+    @media (max-width: 576px) {
+      .login-container { 
+        padding: 1.5rem 1rem; 
+        margin: 0.5rem;
+        max-width: 98%;
+        border-radius: 12px;
+      }
+      .logo h1 { font-size: 1.6rem; }
+      .logo i { font-size: 3rem; }
+      .logo p { font-size: 0.85rem; }
+      .form-control { padding: 0.55rem 0.8rem; font-size: 0.9rem; }
+      .btn-login { padding: 0.55rem 0.9rem; font-size: 0.95rem; }
+      .form-label { font-size: 0.9rem; }
+    }
+    
+    @media (max-width: 480px) {
+      .login-container { 
+        padding: 1.2rem 0.8rem; 
+        margin: 0.3rem;
+        max-width: 99%;
+      }
+      .logo h1 { font-size: 1.4rem; }
+      .logo i { font-size: 2.5rem; }
+      .logo p { font-size: 0.8rem; }
+      .form-control { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
+      .btn-login { padding: 0.5rem 0.8rem; font-size: 0.9rem; }
+      .form-label { font-size: 0.85rem; }
+    }
+    
+    /* Landscape orientation adjustments */
+    @media (max-height: 600px) and (orientation: landscape) {
+      .login-container { 
+        padding: 1rem 2rem; 
+        margin: 0.5rem;
+      }
+      .logo { margin-bottom: 1rem; }
       .logo h1 { font-size: 1.8rem; }
       .logo i { font-size: 3rem; }
+      .logo p { font-size: 0.85rem; }
+      .mb-3 { margin-bottom: 0.5rem !important; }
+      .mb-4 { margin-bottom: 0.7rem !important; }
     }
   </style>
 </head>
@@ -262,13 +318,8 @@
           localStorage.setItem('authToken', data.access_token);
           localStorage.setItem('username', data.username);
           
-          // Show success message
-          showAlert('Login successful! Redirecting...', 'success');
-          
-          // Redirect to main app after a short delay
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 1000);
+          // Redirect to main app immediately
+          window.location.href = '/';
         } else {
           showAlert(data.detail || 'Login failed', 'danger');
         }
