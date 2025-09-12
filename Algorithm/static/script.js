@@ -39,8 +39,8 @@ let roomIdToNameMap = {};
 
 // Function to get room name from room ID
 function getRoomName(roomId) {
-  // Since scheduler now outputs room names directly as room_id, just return it
-  return roomId;
+  if (!roomId) return '';
+  return roomIdToNameMap[String(roomId)] || String(roomId);
 }
 
 // Authentication helper function
@@ -503,15 +503,23 @@ function rebuildRoomFilter() {
     return;
   }
   
-  // Get unique rooms from the current schedule
-  const rooms = new Set();
+  // Build display list using schedule rooms (names) if present, else all rooms from DB
+  const roomsFromSchedule = new Set();
   lastGeneratedSchedule.forEach(e => {
     if (e.room_id) {
-      rooms.add(e.room_id);
+      roomsFromSchedule.add(getRoomName(e.room_id));
     }
   });
-
-  availableRooms = Array.from(rooms).sort();
+  if (roomsFromSchedule.size > 0) {
+    availableRooms = Array.from(roomsFromSchedule).sort();
+  } else {
+    const names = new Set();
+    (roomsCache || []).forEach(r => {
+      const name = (r && (r.room_name || r.room_id)) || '';
+      if (name) names.add(name);
+    });
+    availableRooms = Array.from(names).sort();
+  }
   
   // Update dropdown with all rooms
   updateRoomDropdown(availableRooms);
@@ -634,7 +642,10 @@ function applyFilters(data) {
       ok = ok && m && m[1] === y;
     }
     if (s !== 'all') ok = ok && e.section_id === s;
-    if (r !== 'all') ok = ok && e.room_id === r;
+    if (r !== 'all') {
+      const evName = getRoomName(e.room_id);
+      ok = ok && (String(e.room_id) === String(r) || String(evName) === String(r));
+    }
     return ok;
   });
 }
@@ -857,9 +868,15 @@ async function loadRoomsTable() {
     });
     if (!roomsResponse.ok) throw new Error('Failed to load rooms');
     roomsCache = await roomsResponse.json();
-    
-    // Room mapping no longer needed since scheduler outputs room names directly
-    
+    // Build mapping id -> name
+    roomIdToNameMap = {};
+    if (Array.isArray(roomsCache)) {
+      roomsCache.forEach(r => {
+        if (r && r.room_id) {
+          roomIdToNameMap[String(r.room_id)] = r.room_name || r.room_id;
+        }
+      });
+    }
     renderTable(roomsCache, 'roomsData', ['room_id', 'room_name', 'is_laboratory']);
   } catch (e) {
     console.warn('Could not load rooms:', e);
@@ -1043,6 +1060,38 @@ function promptForData(fields, initial = {}) {
 }
 
 function setupCrudButtons() {
+  // Subjects
+  const subAdd = document.getElementById('subjectsAdd');
+  const subEdit = document.getElementById('subjectsEdit');
+  const subDel = document.getElementById('subjectsDelete');
+  if (subAdd) subAdd.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const data = promptForData(fields);
+    if (!data) return;
+    data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
+    data.lab_hours_per_week = data.lab_hours_per_week ? parseInt(data.lab_hours_per_week, 10) : 0;
+    data.units = data.units ? parseInt(data.units, 10) : 0;
+    data.semester = data.semester ? parseInt(data.semester, 10) : null;
+    data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
+    await fetch('/api/subjects', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    loadSubjectsTable();
+  };
+  if (subEdit) subEdit.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const selected = getSelectedRowData('subjectsData', fields);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    openBulkEditModal('subjects', fields, selected);
+  };
+  if (subDel) subDel.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const selected = getSelectedRowData('subjectsData', fields);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    if (!confirm(`Delete ${selected.length} subject(s)?`)) return;
+    for (const item of selected) {
+      await fetch(`/api/subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+    }
+    loadSubjectsTable();
+  };
   // Teachers
   const tAdd = document.getElementById('teachersAdd');
   const tEdit = document.getElementById('teachersEdit');
@@ -1167,10 +1216,18 @@ function openBulkEditModal(kind, fields, selectedRows) {
       if (toApply.hasOwnProperty('year_level')) toApply.year_level = toApply.year_level ? parseInt(toApply.year_level, 10) : null;
       if (toApply.hasOwnProperty('num_meetings_non_lab')) toApply.num_meetings_non_lab = toApply.num_meetings_non_lab ? parseInt(toApply.num_meetings_non_lab, 10) : 0;
     }
+    if (kind === 'subjects') {
+      ['lecture_hours_per_week','lab_hours_per_week','units','semester','year_level'].forEach(k => {
+        if (toApply.hasOwnProperty(k)) {
+          const v = toApply[k];
+          toApply[k] = v === '' || v == null ? (k === 'semester' || k === 'year_level' ? null : 0) : parseInt(v, 10);
+        }
+      });
+    }
 
     // Perform PUT per selected row
     for (const row of selectedRows) {
-      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'section_id';
+      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : (kind === 'sections') ? 'section_id' : 'subject_code';
       const idVal = row[idField];
       const body = { ...row, ...toApply };
       const url = `/api/${kind}/${encodeURIComponent(idVal)}`;
@@ -1181,6 +1238,7 @@ function openBulkEditModal(kind, fields, selectedRows) {
     if (kind === 'teachers') await loadTeachersTable();
     if (kind === 'rooms') await loadRoomsTable();
     if (kind === 'sections') await loadSectionsTable();
+    if (kind === 'subjects') await loadSubjectsTable();
 
     // Close modal
     const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
