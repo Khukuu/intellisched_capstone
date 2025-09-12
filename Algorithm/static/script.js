@@ -941,24 +941,41 @@ document.querySelectorAll('#dataTabs button[data-bs-toggle="tab"]').forEach(btn 
 });
 
 function renderTable(data, elementId, headers) {
-  if (!Array.isArray(data) || data.length === 0) {
-    document.getElementById(elementId).innerHTML = '<p>No data available.</p>';
-    return;
-  }
-  let tableHtml = '<table class="table table-striped table-bordered"><thead><tr>';
-  headers.forEach(header => {
-    tableHtml += `<th>${header}</th>`;
-  });
+  const hasData = Array.isArray(data) && data.length > 0;
+  let tableHtml = '<table class="table table-striped table-bordered selectable-table"><thead><tr>';
+  // selection checkbox column
+  tableHtml += '<th style="width:36px;"><input type="checkbox" class="form-check-input" data-role="select-all"></th>';
+  headers.forEach(header => { tableHtml += `<th>${header}</th>`; });
   tableHtml += '</tr></thead><tbody>';
-  data.forEach(row => {
-    tableHtml += '<tr>';
-    headers.forEach(header => {
-      tableHtml += `<td>${row[header]}</td>`;
+  if (hasData) {
+    data.forEach(row => {
+      tableHtml += '<tr>';
+      tableHtml += '<td><input type="checkbox" class="form-check-input" data-role="row-select"></td>';
+      headers.forEach(header => { tableHtml += `<td>${row[header]}</td>`; });
+      tableHtml += '</tr>';
     });
-    tableHtml += '</tr>';
-  });
+  } else {
+    tableHtml += `<tr><td colspan="${headers.length + 1}" class="text-center text-muted">No data available.</td></tr>`;
+  }
   tableHtml += '</tbody></table>';
   document.getElementById(elementId).innerHTML = tableHtml;
+  // enable row selection
+  const container = document.getElementById(elementId);
+  const rows = container.querySelectorAll('tbody tr');
+  rows.forEach(tr => {
+    tr.addEventListener('click', () => {
+      rows.forEach(r => r.classList.remove('table-active'));
+      tr.classList.add('table-active');
+    });
+  });
+  // select-all checkbox
+  const selectAll = container.querySelector('thead input[data-role="select-all"]');
+  if (selectAll) {
+    selectAll.addEventListener('change', (e) => {
+      const checks = container.querySelectorAll('tbody input[data-role="row-select"]');
+      checks.forEach(c => c.checked = selectAll.checked);
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -997,4 +1014,180 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load rooms data to populate room mapping
   loadRoomsTable();
+  // Hook up CRUD action buttons
+  setupCrudButtons();
 });
+
+function getSelectedRowData(elementId, headers) {
+  const container = document.getElementById(elementId);
+  if (!container) return null;
+  const trs = Array.from(container.querySelectorAll('tbody tr')).filter(tr => tr.querySelector('input[data-role="row-select"]')?.checked);
+  if (trs.length === 0) return [];
+  return trs.map(tr => {
+    const tds = Array.from(tr.querySelectorAll('td'));
+    const data = {};
+    // offset by 1 due to checkbox column
+    headers.forEach((h, idx) => { data[h] = (tds[idx + 1] && tds[idx + 1].textContent) || ''; });
+    return data;
+  });
+}
+
+function promptForData(fields, initial = {}) {
+  const result = {};
+  for (const f of fields) {
+    const val = prompt(`Enter ${f}`, initial[f] != null ? String(initial[f]) : '');
+    if (val === null) return null;
+    result[f] = val;
+  }
+  return result;
+}
+
+function setupCrudButtons() {
+  // Teachers
+  const tAdd = document.getElementById('teachersAdd');
+  const tEdit = document.getElementById('teachersEdit');
+  const tDel = document.getElementById('teachersDelete');
+  if (tAdd) tAdd.onclick = async () => {
+    const data = promptForData(['teacher_id','teacher_name','can_teach']);
+    if (!data) return;
+    await fetch('/api/teachers', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    loadTeachersTable();
+  };
+  if (tEdit) tEdit.onclick = async () => {
+    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    openBulkEditModal('teachers', ['teacher_id','teacher_name','can_teach'], selected);
+  };
+  if (tDel) tDel.onclick = async () => {
+    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    if (!confirm(`Delete ${selected.length} teacher(s)?`)) return;
+    for (const item of selected) {
+      await fetch(`/api/teachers/${encodeURIComponent(item.teacher_id)}`, { method: 'DELETE', headers: getAuthHeaders() });
+    }
+    loadTeachersTable();
+  };
+
+  // Rooms
+  const rAdd = document.getElementById('roomsAdd');
+  const rEdit = document.getElementById('roomsEdit');
+  const rDel = document.getElementById('roomsDelete');
+  if (rAdd) rAdd.onclick = async () => {
+    const data = promptForData(['room_id','room_name','is_laboratory']);
+    if (!data) return;
+    data.is_laboratory = ['1','true','yes','y'].includes(String(data.is_laboratory).trim().toLowerCase());
+    await fetch('/api/rooms', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    loadRoomsTable();
+  };
+  if (rEdit) rEdit.onclick = async () => {
+    const selected = getSelectedRowData('roomsData', ['room_id','room_name','is_laboratory']);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    openBulkEditModal('rooms', ['room_id','room_name','is_laboratory'], selected);
+  };
+  if (rDel) rDel.onclick = async () => {
+    const selected = getSelectedRowData('roomsData', ['room_id','room_name','is_laboratory']);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    if (!confirm(`Delete ${selected.length} room(s)?`)) return;
+    for (const item of selected) {
+      await fetch(`/api/rooms/${encodeURIComponent(item.room_id)}`, { method: 'DELETE', headers: getAuthHeaders() });
+    }
+    loadRoomsTable();
+  };
+
+  // Sections
+  const sAdd = document.getElementById('sectionsAdd');
+  const sEdit = document.getElementById('sectionsEdit');
+  const sDel = document.getElementById('sectionsDelete');
+  if (sAdd) sAdd.onclick = async () => {
+    const data = promptForData(['section_id','subject_code','year_level','num_meetings_non_lab']);
+    if (!data) return;
+    data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
+    data.num_meetings_non_lab = data.num_meetings_non_lab ? parseInt(data.num_meetings_non_lab, 10) : 0;
+    await fetch('/api/sections', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    loadSectionsTable();
+  };
+  if (sEdit) sEdit.onclick = async () => {
+    const selected = getSelectedRowData('sectionsData', ['section_id','subject_code','year_level','num_meetings_non_lab']);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    openBulkEditModal('sections', ['section_id','subject_code','year_level','num_meetings_non_lab'], selected);
+  };
+  if (sDel) sDel.onclick = async () => {
+    const selected = getSelectedRowData('sectionsData', ['section_id','subject_code','year_level','num_meetings_non_lab']);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    if (!confirm(`Delete ${selected.length} section(s)?`)) return;
+    for (const item of selected) {
+      await fetch(`/api/sections/${encodeURIComponent(item.section_id)}`, { method: 'DELETE', headers: getAuthHeaders() });
+    }
+    loadSectionsTable();
+  };
+}
+
+function openBulkEditModal(kind, fields, selectedRows) {
+  const modalEl = document.getElementById('bulkEditModal');
+  const content = document.getElementById('bulkEditContent');
+  const saveBtn = document.getElementById('bulkEditSaveBtn');
+  if (!modalEl || !content || !saveBtn) return;
+
+  // Build form: checkboxes for fields and inputs for new values
+  let html = '';
+  html += `<p>${selectedRows.length} row(s) selected.</p>`;
+  html += '<div class="table-responsive"><table class="table"><thead><tr><th>Apply</th><th>Field</th><th>New value</th></tr></thead><tbody>';
+  fields.forEach(f => {
+    const disabled = (f.endsWith('_id') || f === 'teacher_id' || f === 'room_id' || f === 'section_id') ? 'disabled' : '';
+    html += `<tr>
+      <td><input type="checkbox" class="form-check-input" data-role="field-check" data-field="${f}" ${disabled && 'disabled'}></td>
+      <td>${f}</td>
+      <td><input type="text" class="form-control form-control-sm" data-role="field-input" data-field="${f}" ${disabled && 'disabled'}></td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  content.innerHTML = html;
+
+  // Attach handler
+  saveBtn.onclick = async () => {
+    const checks = Array.from(content.querySelectorAll('input[data-role="field-check"]'));
+    const inputs = Array.from(content.querySelectorAll('input[data-role="field-input"]'));
+    const toApply = {};
+    checks.forEach(chk => {
+      if (chk.checked && !chk.disabled) {
+        const f = chk.getAttribute('data-field');
+        const inp = inputs.find(i => i.getAttribute('data-field') === f);
+        toApply[f] = inp ? inp.value : '';
+      }
+    });
+    if (Object.keys(toApply).length === 0) {
+      alert('Select at least one field to apply.');
+      return;
+    }
+    // Cast booleans/ints where needed
+    if (kind === 'rooms' && toApply.hasOwnProperty('is_laboratory')) {
+      toApply.is_laboratory = ['1','true','yes','y'].includes(String(toApply.is_laboratory).trim().toLowerCase());
+    }
+    if (kind === 'sections') {
+      if (toApply.hasOwnProperty('year_level')) toApply.year_level = toApply.year_level ? parseInt(toApply.year_level, 10) : null;
+      if (toApply.hasOwnProperty('num_meetings_non_lab')) toApply.num_meetings_non_lab = toApply.num_meetings_non_lab ? parseInt(toApply.num_meetings_non_lab, 10) : 0;
+    }
+
+    // Perform PUT per selected row
+    for (const row of selectedRows) {
+      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'section_id';
+      const idVal = row[idField];
+      const body = { ...row, ...toApply };
+      const url = `/api/${kind}/${encodeURIComponent(idVal)}`;
+      await fetch(url, { method: 'PUT', headers: getAuthHeaders(), body: JSON.stringify(body) });
+    }
+
+    // Refresh table
+    if (kind === 'teachers') await loadTeachersTable();
+    if (kind === 'rooms') await loadRoomsTable();
+    if (kind === 'sections') await loadSectionsTable();
+
+    // Close modal
+    const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    bsModal.hide();
+  };
+
+  // Show modal
+  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  bsModal.show();
+}

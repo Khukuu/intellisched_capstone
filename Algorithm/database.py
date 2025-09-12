@@ -51,6 +51,18 @@ class ScheduleDatabase:
     def setup_tables(self):
         """Create tables if they don't exist"""
         create_tables_sql = """
+        CREATE TABLE IF NOT EXISTS cs_curriculum (
+            id SERIAL PRIMARY KEY,
+            subject_code VARCHAR(50) UNIQUE NOT NULL,
+            subject_name VARCHAR(255) NOT NULL,
+            lecture_hours_per_week INTEGER DEFAULT 0,
+            lab_hours_per_week INTEGER DEFAULT 0,
+            units INTEGER DEFAULT 0,
+            semester INTEGER,
+            program_specialization VARCHAR(255),
+            year_level INTEGER
+        );
+        
         CREATE TABLE IF NOT EXISTS teachers (
             id SERIAL PRIMARY KEY,
             teacher_id VARCHAR(20) UNIQUE NOT NULL,
@@ -63,6 +75,14 @@ class ScheduleDatabase:
             room_id VARCHAR(20) UNIQUE NOT NULL,
             room_name VARCHAR(255) NOT NULL,
             is_laboratory BOOLEAN DEFAULT FALSE
+        );
+        
+        CREATE TABLE IF NOT EXISTS sections (
+            id SERIAL PRIMARY KEY,
+            section_id VARCHAR(50) UNIQUE NOT NULL,
+            subject_code VARCHAR(50),
+            year_level INTEGER,
+            num_meetings_non_lab INTEGER DEFAULT 0
         );
         
         CREATE TABLE IF NOT EXISTS users (
@@ -299,6 +319,19 @@ class ScheduleDatabase:
         """
         return self.db.execute_query(query)
     
+    def load_sections(self) -> List[Dict[str, Any]]:
+        """Load all sections from database"""
+        query = """
+        SELECT 
+            section_id,
+            subject_code,
+            year_level,
+            num_meetings_non_lab
+        FROM sections
+        ORDER BY section_id
+        """
+        return self.db.execute_query(query)
+    
     def insert_subject(self, subject_data: Dict[str, Any]) -> None:
         """Insert a single subject"""
         query = """
@@ -358,6 +391,24 @@ class ScheduleDatabase:
         )
         self.db.execute_single(query, params)
     
+    def insert_section(self, section_data: Dict[str, Any]) -> None:
+        """Insert a single section"""
+        query = """
+        INSERT INTO sections (section_id, subject_code, year_level, num_meetings_non_lab)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT (section_id) DO UPDATE SET
+            subject_code = EXCLUDED.subject_code,
+            year_level = EXCLUDED.year_level,
+            num_meetings_non_lab = EXCLUDED.num_meetings_non_lab
+        """
+        params = (
+            section_data['section_id'],
+            section_data.get('subject_code'),
+            section_data.get('year_level'),
+            section_data.get('num_meetings_non_lab', 0)
+        )
+        self.db.execute_single(query, params)
+    
     def migrate_from_csv(self):
         """Legacy function - data is already in PostgreSQL"""
         print("✅ Data is already in PostgreSQL database")
@@ -377,6 +428,10 @@ def load_teachers_from_db():
 def load_rooms_from_db():
     """Load rooms from database (replaces CSV loading)"""
     return db.load_rooms()
+ 
+def load_sections_from_db():
+    """Load sections from database (replaces CSV loading)"""
+    return db.load_sections()
 
 def add_subject(subject_data: Dict[str, Any]) -> None:
     """Add a new subject to the database"""
@@ -389,6 +444,10 @@ def add_teacher(teacher_data: Dict[str, Any]) -> None:
 def add_room(room_data: Dict[str, Any]) -> None:
     """Add a new room to the database"""
     db.insert_room(room_data)
+ 
+def add_section(section_data: Dict[str, Any]) -> None:
+    """Add a new section to the database"""
+    db.insert_section(section_data)
 
 def update_subject(subject_code: str, subject_data: Dict[str, Any]) -> None:
     """Update an existing subject in the database"""
@@ -401,6 +460,10 @@ def update_teacher(teacher_id: str, teacher_data: Dict[str, Any]) -> None:
 def update_room(room_id: str, room_data: Dict[str, Any]) -> None:
     """Update an existing room in the database"""
     db.insert_room(room_data)  # Uses ON CONFLICT DO UPDATE
+ 
+def update_section(section_id: str, section_data: Dict[str, Any]) -> None:
+    """Update an existing section in the database"""
+    db.insert_section(section_data)  # Uses ON CONFLICT DO UPDATE
 
 def delete_subject(subject_code: str) -> None:
     """Delete a subject from the database"""
@@ -416,6 +479,11 @@ def delete_room(room_id: str) -> None:
     """Delete a room from the database"""
     query = "DELETE FROM rooms WHERE room_id = %s"
     db.db.execute_single(query, (room_id,))
+ 
+def delete_section(section_id: str) -> None:
+    """Delete a section from the database"""
+    query = "DELETE FROM sections WHERE section_id = %s"
+    db.db.execute_single(query, (section_id,))
 
 def get_subject_by_code(subject_code: str) -> Dict[str, Any]:
     """Get a specific subject by code"""
@@ -433,4 +501,10 @@ def get_room_by_id(room_id: str) -> Dict[str, Any]:
     """Get a specific room by ID"""
     query = "SELECT * FROM rooms WHERE room_id = %s"
     results = db.db.execute_query(query, (room_id,))
+    return results[0] if results else None
+
+def get_section_by_id(section_id: str) -> Dict[str, Any]:
+    """Get a specific section by ID"""
+    query = "SELECT * FROM sections WHERE section_id = %s"
+    results = db.db.execute_query(query, (section_id,))
     return results[0] if results else None

@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResp
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
-from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db
 import os
 import io
 import json
@@ -499,6 +499,8 @@ async def get_data(filename: str, username: str = Depends(require_chair_role)):
             data = load_teachers_from_db()
         elif filename == 'rooms':
             data = load_rooms_from_db()
+        elif filename == 'sections':
+            data = load_sections_from_db()
         else:
             raise HTTPException(status_code=404, detail='Data type not found')
         return JSONResponse(content=data)
@@ -507,8 +509,92 @@ async def get_data(filename: str, username: str = Depends(require_chair_role)):
 
 @app.post('/upload/{filename}')
 async def upload_file(filename: str, file: UploadFile = File(...), username: str = Depends(require_chair_role)):
-    """Legacy endpoint - CSV uploads are no longer supported"""
-    raise HTTPException(status_code=400, detail='CSV uploads are no longer supported. Data is now managed through PostgreSQL database.')
+    """Accept CSV uploads and upsert into database for supported datasets."""
+    try:
+        content = await file.read()
+        text = content.decode('utf-8-sig')
+        reader = csv.DictReader(io.StringIO(text))
+        # Normalize keys to lowercase for robust mapping
+        rows = []
+        for raw in reader:
+            rows.append({ (k or '').strip().lower(): (v or '').strip() for k, v in raw.items() })
+        if not rows:
+            raise HTTPException(status_code=400, detail='Empty CSV file')
+
+        def safe_int(val):
+            try:
+                v = (val or '').strip()
+                if v == '':
+                    return 0
+                # handle floats like '2.0'
+                if '.' in v:
+                    return int(float(v))
+                return int(v)
+            except Exception:
+                return 0
+
+        if filename in ['cs_curriculum', 'subjects']:
+            from database import add_subject
+            for r in rows:
+                subject = {
+                    'subject_code': r.get('subject_code') or r.get('code') or '',
+                    'subject_name': r.get('subject_name') or r.get('name') or '',
+                    'lecture_hours_per_week': safe_int(r.get('lecture_hours_per_week') or r.get('lec_hours')),
+                    'lab_hours_per_week': safe_int(r.get('lab_hours_per_week') or r.get('lab_hours')),
+                    'units': safe_int(r.get('units')),
+                    'semester': (lambda x: (safe_int(x) or None))(r.get('semester')),
+                    'program_specialization': (r.get('program_specialization') or r.get('program') or None),
+                    'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
+                }
+                if not subject['subject_code']:
+                    continue
+                add_subject(subject)
+            return JSONResponse(content={'message': 'Subjects CSV uploaded successfully'})
+        elif filename == 'teachers':
+            from database import add_teacher
+            for r in rows:
+                teacher = {
+                    'teacher_id': r.get('teacher_id') or r.get('id') or '',
+                    'teacher_name': r.get('teacher_name') or r.get('name') or '',
+                    'can_teach': r.get('can_teach') or r.get('subjects') or '',
+                }
+                if not teacher['teacher_id']:
+                    continue
+                add_teacher(teacher)
+            return JSONResponse(content={'message': 'Teachers CSV uploaded successfully'})
+        elif filename == 'rooms':
+            from database import add_room
+            for r in rows:
+                val = (str(r.get('is_laboratory') or r.get('lab') or '').strip().lower())
+                is_lab = val in ['1', 'true', 'yes', 'y']
+                room = {
+                    'room_id': r.get('room_id') or r.get('id') or '',
+                    'room_name': (r.get('room_name') or r.get('name') or '') or (r.get('room_id') or ''),
+                    'is_laboratory': is_lab,
+                }
+                if not room['room_id']:
+                    continue
+                add_room(room)
+            return JSONResponse(content={'message': 'Rooms CSV uploaded successfully'})
+        elif filename == 'sections':
+            from database import add_section
+            for r in rows:
+                section = {
+                    'section_id': r.get('section_id') or r.get('id') or '',
+                    'subject_code': (r.get('subject_code') or '') or None,
+                    'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
+                    'num_meetings_non_lab': safe_int(r.get('num_meetings_non_lab') or r.get('meetings')),
+                }
+                if not section['section_id']:
+                    continue
+                add_section(section)
+            return JSONResponse(content={'message': 'Sections CSV uploaded successfully'})
+        else:
+            raise HTTPException(status_code=404, detail='Unsupported upload type')
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Database management endpoints (Chair role required)
 @app.post('/api/subjects')
@@ -601,6 +687,35 @@ async def delete_room_endpoint(room_id: str, username: str = Depends(require_cha
         from database import delete_room
         delete_room(room_id)
         return JSONResponse(content={'message': 'Room deleted successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Sections CRUD
+@app.post('/api/sections')
+async def add_section_endpoint(section_data: dict, username: str = Depends(require_chair_role)):
+    try:
+        from database import add_section
+        add_section(section_data)
+        return JSONResponse(content={'message': 'Section added successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/sections/{section_id}')
+async def update_section_endpoint(section_id: str, section_data: dict, username: str = Depends(require_chair_role)):
+    try:
+        from database import update_section
+        section_data['section_id'] = section_id
+        update_section(section_id, section_data)
+        return JSONResponse(content={'message': 'Section updated successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/sections/{section_id}')
+async def delete_section_endpoint(section_id: str, username: str = Depends(require_chair_role)):
+    try:
+        from database import delete_section
+        delete_section(section_id)
+        return JSONResponse(content={'message': 'Section deleted successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
