@@ -94,6 +94,18 @@ def require_admin_role(username: str = Depends(require_role(['admin']))):
     """Require admin role for access"""
     return username
 
+def require_dean_role(username: str = Depends(require_role(['dean']))):
+    """Require dean role for access"""
+    return username
+
+def require_secretary_role(username: str = Depends(require_role(['secretary']))):
+    """Require secretary role for access"""
+    return username
+
+def require_dean_or_secretary_role(username: str = Depends(require_role(['dean', 'secretary']))):
+    """Require dean or secretary role for access"""
+    return username
+
 # Authentication endpoints
 @app.post('/auth/login')
 async def login(payload: dict):
@@ -230,84 +242,7 @@ async def admin_dashboard():
     admin_path = os.path.join('static', 'admin.html')
     if not os.path.exists(admin_path):
         # Create a simple admin placeholder page
-        admin_content = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IntelliSched - Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <i class="bi bi-shield-check me-2"></i>
-                IntelliSched Admin
-            </a>
-            <div class="d-flex">
-                <button id="logoutBtn" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-box-arrow-right"></i> Logout
-                </button>
-            </div>
-        </div>
-    </nav>
-    
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <i class="bi bi-tools" style="font-size: 4rem; color: #6c757d;"></i>
-                        <h2 class="mt-3">Admin Dashboard</h2>
-                        <p class="text-muted">Admin functionality coming soon...</p>
-                        <p class="small text-muted">This area will contain user management, system settings, and administrative tools.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Authentication check and role-based access control
-        document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                window.location.href = '/login';
-                return;
-            }
-            
-            // Check user role - only admin users should access this page
-            const userRole = localStorage.getItem('role');
-            if (userRole !== 'admin') {
-                alert('Access denied. This area is only accessible to Admin users.');
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('username');
-                localStorage.removeItem('role');
-                window.location.href = '/login';
-                return;
-            }
-            
-            // Update navbar with user info
-            const username = localStorage.getItem('username');
-            if (username) {
-                const logoutBtn = document.getElementById('logoutBtn');
-                logoutBtn.innerHTML = `<i class="bi bi-person"></i> ${username} (Admin) <i class="bi bi-box-arrow-right ms-1"></i> Logout`;
-            }
-        });
         
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('username');
-            localStorage.removeItem('role');
-            window.location.href = '/login';
-        });
-    </script>
-</body>
-</html>
-        """
         with open(admin_path, 'w', encoding='utf-8') as f:
             f.write(admin_content)
     
@@ -328,6 +263,32 @@ async def register_page():
     if not os.path.exists(register_path):
         raise HTTPException(status_code=404, detail='Register file not found')
     return FileResponse(register_path, media_type='text/html')
+
+@app.get('/dean')
+async def dean_dashboard():
+    """Dean dashboard for viewing and approving proposed schedules"""
+    dean_path = os.path.join('static', 'dean.html')
+    if not os.path.exists(dean_path):
+        # Create dean dashboard page
+        
+        with open(dean_path, 'w', encoding='utf-8') as f:
+            f.write(dean_content)
+    
+    return FileResponse(dean_path, media_type='text/html')
+
+@app.get('/secretary')
+async def secretary_dashboard():
+    """Secretary dashboard for viewing, editing, and deleting schedules"""
+    secretary_path = os.path.join('static', 'secretary.html')
+    if not os.path.exists(secretary_path):
+        # Create secretary dashboard page
+        
+        
+        with open(secretary_path, 'w', encoding='utf-8') as f:
+            f.write(secretary_content)
+    
+    return FileResponse(secretary_path, media_type='text/html')
+
 
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(require_chair_role)):
@@ -443,6 +404,15 @@ async def save_schedule(payload: dict, username: str = Depends(require_chair_rol
     }
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+    
+    # Create approval request for the saved schedule
+    try:
+        from database import create_schedule_approval
+        create_schedule_approval(uid, name, semester, username)
+        print(f"✅ Schedule approval request created for {uid}")
+    except Exception as e:
+        print(f"⚠️ Could not create approval request: {e}")
+    
     return JSONResponse(content={'id': uid, 'name': name, 'semester': semester, 'created_at': created_at})
 
 @app.get('/load_schedule')
@@ -726,6 +696,127 @@ async def migrate_data_endpoint(username: str = Depends(require_chair_role)):
         from database import db
         db.migrate_from_csv()
         return JSONResponse(content={'message': 'Migration completed successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Schedule approval endpoints
+@app.post('/api/schedule_approval')
+async def create_schedule_approval_endpoint(payload: dict, username: str = Depends(require_chair_role)):
+    """Create a schedule approval request"""
+    try:
+        from database import create_schedule_approval
+        schedule_id = payload.get('schedule_id')
+        schedule_name = payload.get('schedule_name', '')
+        semester = payload.get('semester')
+        
+        if not schedule_id:
+            raise HTTPException(status_code=400, detail="Schedule ID is required")
+        
+        success = create_schedule_approval(schedule_id, schedule_name, semester, username)
+        if success:
+            return JSONResponse(content={'message': 'Schedule approval request created successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create approval request")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/pending_schedules')
+async def get_pending_schedules_endpoint(username: str = Depends(require_dean_role)):
+    """Get all pending schedule approvals for dean"""
+    try:
+        from database import get_pending_schedules
+        schedules = get_pending_schedules()
+        return JSONResponse(content=schedules)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/approved_schedules')
+async def get_approved_schedules_endpoint(username: str = Depends(require_dean_or_secretary_role)):
+    """Get all approved schedules for dean and secretary"""
+    try:
+        from database import get_approved_schedules
+        schedules = get_approved_schedules()
+        return JSONResponse(content=schedules)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/approve_schedule/{schedule_id}')
+async def approve_schedule_endpoint(schedule_id: str, payload: dict, username: str = Depends(require_dean_role)):
+    """Approve a schedule"""
+    try:
+        from database import approve_schedule
+        comments = payload.get('comments', '')
+        success = approve_schedule(schedule_id, username, comments)
+        if success:
+            return JSONResponse(content={'message': 'Schedule approved successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to approve schedule")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/reject_schedule/{schedule_id}')
+async def reject_schedule_endpoint(schedule_id: str, payload: dict, username: str = Depends(require_dean_role)):
+    """Reject a schedule"""
+    try:
+        from database import reject_schedule
+        comments = payload.get('comments', '')
+        success = reject_schedule(schedule_id, username, comments)
+        if success:
+            return JSONResponse(content={'message': 'Schedule rejected successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to reject schedule")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/schedule_approval_status/{schedule_id}')
+async def get_schedule_approval_status_endpoint(schedule_id: str, username: str = Depends(verify_token)):
+    """Get approval status for a specific schedule"""
+    try:
+        from database import get_schedule_approval_status
+        status = get_schedule_approval_status(schedule_id)
+        return JSONResponse(content=status)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Notification endpoints
+@app.get('/api/notifications')
+async def get_notifications_endpoint(username: str = Depends(verify_token)):
+    """Get notifications for the current user"""
+    try:
+        from database import get_user_notifications, get_user_id_by_username
+        user_id = get_user_id_by_username(username)
+        if not user_id:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        notifications = get_user_notifications(user_id)
+        return JSONResponse(content=notifications)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/notifications/unread')
+async def get_unread_notifications_endpoint(username: str = Depends(verify_token)):
+    """Get unread notifications for the current user"""
+    try:
+        from database import get_user_notifications, get_user_id_by_username
+        user_id = get_user_id_by_username(username)
+        if not user_id:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        notifications = get_user_notifications(user_id, unread_only=True)
+        return JSONResponse(content=notifications)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/notifications/{notification_id}/read')
+async def mark_notification_read_endpoint(notification_id: int, username: str = Depends(verify_token)):
+    """Mark a notification as read"""
+    try:
+        from database import mark_notification_read
+        success = mark_notification_read(notification_id)
+        if success:
+            return JSONResponse(content={'message': 'Notification marked as read'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to mark notification as read")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
