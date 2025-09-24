@@ -96,13 +96,39 @@ class ScheduleDatabase:
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             last_login TIMESTAMP
         );
+        
+        CREATE TABLE IF NOT EXISTS schedule_approvals (
+            id SERIAL PRIMARY KEY,
+            schedule_id VARCHAR(50) NOT NULL,
+            schedule_name VARCHAR(255),
+            semester INTEGER,
+            status VARCHAR(20) DEFAULT 'pending',
+            created_by VARCHAR(50),
+            approved_by VARCHAR(50),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            approved_at TIMESTAMP,
+            comments TEXT
+        );
+        
+        CREATE TABLE IF NOT EXISTS notifications (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            title VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            type VARCHAR(50) DEFAULT 'info',
+            is_read BOOLEAN DEFAULT FALSE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
         """
         
         # Split and execute each statement
-        statements = create_tables_sql.split(';')
+        statements = [stmt.strip() for stmt in create_tables_sql.split(';') if stmt.strip()]
         for statement in statements:
-            if statement.strip():
+            try:
                 self.db.execute_single(statement)
+            except Exception as e:
+                print(f"Warning: Could not execute statement: {e}")
+                # Continue with other statements
         
         # Check if users table has correct structure
         if not self._check_users_table_structure():
@@ -157,7 +183,7 @@ class ScheduleDatabase:
             return False
     
     def create_default_admin(self):
-        """Create default admin and chair users if they don't exist"""
+        """Create default admin, chair, dean, and secretary users if they don't exist"""
         try:
             # Check if admin user exists
             existing_admin = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('admin',))
@@ -188,6 +214,36 @@ class ScheduleDatabase:
                 """, ('chair', password_hash, salt, 'Department Chair', 'chair@intellisched.com', 'chair'))
                 
                 print("✅ Default chair user created (username: chair, password: chair123)")
+            
+            # Check if dean user exists
+            existing_dean = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('dean',))
+            if not existing_dean:
+                # Create default dean user
+                password = "dean123"
+                salt = secrets.token_hex(16)
+                password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+                
+                self.db.execute_single("""
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, ('dean', password_hash, salt, 'Dean', 'dean@intellisched.com', 'dean'))
+                
+                print("✅ Default dean user created (username: dean, password: dean123)")
+            
+            # Check if secretary user exists
+            existing_secretary = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('sec',))
+            if not existing_secretary:
+                # Create default secretary user
+                password = "sec123"
+                salt = secrets.token_hex(16)
+                password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
+                
+                self.db.execute_single("""
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, ('sec', password_hash, salt, 'Secretary', 'secretary@intellisched.com', 'secretary'))
+                
+                print("✅ Default secretary user created (username: sec, password: sec123)")
                 
         except Exception as e:
             print(f"⚠️ Could not create default users: {e}")
@@ -508,3 +564,158 @@ def get_section_by_id(section_id: str) -> Dict[str, Any]:
     query = "SELECT * FROM sections WHERE section_id = %s"
     results = db.db.execute_query(query, (section_id,))
     return results[0] if results else None
+
+# Schedule approval functions
+def create_schedule_approval(schedule_id: str, schedule_name: str, semester: int, created_by: str) -> bool:
+    """Create a new schedule approval request"""
+    try:
+        query = """
+        INSERT INTO schedule_approvals (schedule_id, schedule_name, semester, created_by, status)
+        VALUES (%s, %s, %s, %s, 'pending')
+        """
+        db.db.execute_single(query, (schedule_id, schedule_name, semester, created_by))
+        return True
+    except Exception as e:
+        print(f"Error creating schedule approval: {e}")
+        return False
+
+def get_pending_schedules() -> List[Dict[str, Any]]:
+    """Get all pending schedule approvals"""
+    query = """
+    SELECT * FROM schedule_approvals 
+    WHERE status = 'pending' 
+    ORDER BY created_at DESC
+    """
+    return db.db.execute_query(query)
+
+def get_approved_schedules() -> List[Dict[str, Any]]:
+    """Get all approved schedules"""
+    query = """
+    SELECT * FROM schedule_approvals 
+    WHERE status = 'approved' 
+    ORDER BY approved_at DESC
+    """
+    return db.db.execute_query(query)
+
+def approve_schedule(schedule_id: str, approved_by: str, comments: str = None) -> bool:
+    """Approve a schedule"""
+    try:
+        # Get schedule details for notification
+        schedule_query = "SELECT * FROM schedule_approvals WHERE schedule_id = %s"
+        schedule_result = db.db.execute_query(schedule_query, (schedule_id,))
+        
+        query = """
+        UPDATE schedule_approvals 
+        SET status = 'approved', approved_by = %s, approved_at = CURRENT_TIMESTAMP, comments = %s
+        WHERE schedule_id = %s AND status = 'pending'
+        """
+        db.db.execute_single(query, (approved_by, comments, schedule_id))
+        
+        # Send notification to the creator
+        if schedule_result:
+            schedule = schedule_result[0]
+            creator_id = get_user_id_by_username(schedule['created_by'])
+            if creator_id:
+                create_notification(
+                    creator_id,
+                    "Schedule Approved",
+                    f"Your schedule '{schedule['schedule_name']}' has been approved by {approved_by}.",
+                    "success"
+                )
+        
+        return True
+    except Exception as e:
+        print(f"Error approving schedule: {e}")
+        return False
+
+def reject_schedule(schedule_id: str, rejected_by: str, comments: str = None) -> bool:
+    """Reject a schedule"""
+    try:
+        # Get schedule details for notification
+        schedule_query = "SELECT * FROM schedule_approvals WHERE schedule_id = %s"
+        schedule_result = db.db.execute_query(schedule_query, (schedule_id,))
+        
+        query = """
+        UPDATE schedule_approvals 
+        SET status = 'rejected', approved_by = %s, approved_at = CURRENT_TIMESTAMP, comments = %s
+        WHERE schedule_id = %s AND status = 'pending'
+        """
+        db.db.execute_single(query, (rejected_by, comments, schedule_id))
+        
+        # Send notification to the creator
+        if schedule_result:
+            schedule = schedule_result[0]
+            creator_id = get_user_id_by_username(schedule['created_by'])
+            if creator_id:
+                create_notification(
+                    creator_id,
+                    "Schedule Rejected",
+                    f"Your schedule '{schedule['schedule_name']}' has been rejected by {rejected_by}. Comments: {comments or 'No comments provided'}",
+                    "warning"
+                )
+        
+        return True
+    except Exception as e:
+        print(f"Error rejecting schedule: {e}")
+        return False
+
+def get_schedule_approval_status(schedule_id: str) -> Dict[str, Any]:
+    """Get approval status for a specific schedule"""
+    query = "SELECT * FROM schedule_approvals WHERE schedule_id = %s"
+    results = db.db.execute_query(query, (schedule_id,))
+    return results[0] if results else None
+
+# Notification functions
+def create_notification(user_id: int, title: str, message: str, notification_type: str = 'info') -> bool:
+    """Create a new notification for a user"""
+    try:
+        query = """
+        INSERT INTO notifications (user_id, title, message, type)
+        VALUES (%s, %s, %s, %s)
+        """
+        db.db.execute_single(query, (user_id, title, message, notification_type))
+        return True
+    except Exception as e:
+        print(f"Error creating notification: {e}")
+        return False
+
+def get_user_notifications(user_id: int, unread_only: bool = False) -> List[Dict[str, Any]]:
+    """Get notifications for a user"""
+    try:
+        if unread_only:
+            query = """
+            SELECT * FROM notifications 
+            WHERE user_id = %s AND is_read = FALSE 
+            ORDER BY created_at DESC
+            """
+            return db.db.execute_query(query, (user_id,))
+        else:
+            query = """
+            SELECT * FROM notifications 
+            WHERE user_id = %s 
+            ORDER BY created_at DESC
+            """
+            return db.db.execute_query(query, (user_id,))
+    except Exception as e:
+        print(f"Error getting notifications: {e}")
+        return []
+
+def mark_notification_read(notification_id: int) -> bool:
+    """Mark a notification as read"""
+    try:
+        query = "UPDATE notifications SET is_read = TRUE WHERE id = %s"
+        db.db.execute_single(query, (notification_id,))
+        return True
+    except Exception as e:
+        print(f"Error marking notification as read: {e}")
+        return False
+
+def get_user_id_by_username(username: str) -> int:
+    """Get user ID by username"""
+    try:
+        query = "SELECT id FROM users WHERE username = %s"
+        results = db.db.execute_query(query, (username,))
+        return results[0]['id'] if results else None
+    except Exception as e:
+        print(f"Error getting user ID: {e}")
+        return None

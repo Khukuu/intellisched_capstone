@@ -287,6 +287,35 @@
       <a href="/register" class="small">Create a new account</a>
     </div>
     
+    <!-- Demo Credentials -->
+    <div class="mt-4">
+      <div class="card" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+        <div class="card-body p-3">
+          <h6 class="card-title mb-2" style="font-size: 0.9rem; color: #495057;">
+            <i class="bi bi-info-circle me-1"></i>Demo Credentials
+          </h6>
+          <div class="row text-start">
+            <div class="col-6">
+              <small class="text-muted d-block">Chair:</small>
+              <small class="text-dark">chair / chair123</small>
+            </div>
+            <div class="col-6">
+              <small class="text-muted d-block">Dean:</small>
+              <small class="text-dark">dean / dean123</small>
+            </div>
+            <div class="col-6 mt-2">
+              <small class="text-muted d-block">Secretary:</small>
+              <small class="text-dark">sec / sec123</small>
+            </div>
+            <div class="col-6 mt-2">
+              <small class="text-muted d-block">Admin:</small>
+              <small class="text-dark">admin / admin123</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- Footer INSIDE the card -->
     <footer class="footer text-center">
       <p class="text-muted mb-0" style="font-size:0.95rem;">
@@ -324,6 +353,10 @@
             window.location.href = '/admin';
           } else if (data.role === 'chair') {
             window.location.href = '/chair';
+          } else if (data.role === 'dean') {
+            window.location.href = '/dean';
+          } else if (data.role === 'secretary') {
+            window.location.href = '/secretary';
           } else {
             // Regular users - redirect to main app (which will handle access control)
             window.location.href = '/';
