@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResp
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
-from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db
+from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db, get_pending_users, approve_user, reject_user, check_email_exists
 import os
 import io
 import json
@@ -137,7 +137,8 @@ async def login(payload: dict):
             "token_type": "bearer",
             "username": username,
             "full_name": user.get('full_name'),
-            "role": user.get('role')
+            "role": user.get('role'),
+            "status": user.get('status', 'active')
         }
         
     except HTTPException:
@@ -171,35 +172,59 @@ async def register(payload: dict):
         password = payload.get('password') or ''
         full_name = (payload.get('full_name') or '').strip()
         email = (payload.get('email') or '').strip()
+        role = (payload.get('role') or '').strip()
 
-        if not username or not password:
-            raise HTTPException(status_code=400, detail="Username and password are required")
+        # Validation
+        if not username or not password or not full_name or not email or not role:
+            raise HTTPException(status_code=400, detail="All fields are required")
 
-        # Check if user already exists
-        existing = db.get_user_by_username(username)
-        if existing:
+        # Validate role
+        valid_roles = ['dean', 'chair', 'secretary']
+        if role not in valid_roles:
+            raise HTTPException(status_code=400, detail="Invalid role selected")
+
+        # Validate email format
+        import re
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, email):
+            raise HTTPException(status_code=400, detail="Invalid email format")
+
+        # Validate password strength
+        if len(password) < 8:
+            raise HTTPException(status_code=400, detail="Password must be at least 8 characters long")
+        
+        # Check for at least one uppercase, one lowercase, and one digit
+        if not re.search(r'[A-Z]', password):
+            raise HTTPException(status_code=400, detail="Password must contain at least one uppercase letter")
+        if not re.search(r'[a-z]', password):
+            raise HTTPException(status_code=400, detail="Password must contain at least one lowercase letter")
+        if not re.search(r'\d', password):
+            raise HTTPException(status_code=400, detail="Password must contain at least one digit")
+
+        # Check if username already exists
+        existing_username = db.get_user_by_username(username)
+        if existing_username:
             raise HTTPException(status_code=409, detail="Username already exists")
 
+        # Check if email already exists
+        if check_email_exists(email):
+            raise HTTPException(status_code=409, detail="Email already exists")
+
+        # Create user with pending status
         ok = db.create_user({
             'username': username,
             'password': password,
             'full_name': full_name,
             'email': email,
-            'role': 'user'
+            'role': role,
+            'status': 'pending'
         })
         if not ok:
             raise HTTPException(status_code=500, detail="Could not create user")
 
-        # Auto-login: issue token
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(data={"sub": username}, expires_delta=access_token_expires)
         return {
-            "message": "Account created successfully",
-            "access_token": access_token,
-            "token_type": "bearer",
-            "username": username,
-            "full_name": full_name or None,
-            "role": 'user'
+            "message": "Account created successfully. Your account is pending approval from an administrator. You will receive an email notification once approved.",
+            "status": "pending"
         }
     except HTTPException:
         raise
@@ -219,6 +244,7 @@ async def health_check():
             return {"status": "unhealthy", "database": "error", "message": "Database query failed"}
     except Exception as e:
         return {"status": "unhealthy", "database": "error", "message": f"Database error: {str(e)}"}
+
 
 # Main route - redirect to appropriate dashboard based on role
 @app.get('/')
@@ -817,6 +843,41 @@ async def mark_notification_read_endpoint(notification_id: int, username: str = 
             return JSONResponse(content={'message': 'Notification marked as read'})
         else:
             raise HTTPException(status_code=500, detail="Failed to mark notification as read")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# User management endpoints (Admin only)
+@app.get('/api/pending_users')
+async def get_pending_users_endpoint(username: str = Depends(require_admin_role)):
+    """Get all pending users for admin approval"""
+    try:
+        users = get_pending_users()
+        return JSONResponse(content=users)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/approve_user/{user_id}')
+async def approve_user_endpoint(user_id: int, username: str = Depends(require_admin_role)):
+    """Approve a pending user"""
+    try:
+        success = approve_user(user_id, username)
+        if success:
+            return JSONResponse(content={'message': 'User approved successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to approve user")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/reject_user/{user_id}')
+async def reject_user_endpoint(user_id: int, payload: dict, username: str = Depends(require_admin_role)):
+    """Reject a pending user"""
+    try:
+        reason = payload.get('reason', 'No reason provided')
+        success = reject_user(user_id, username, reason)
+        if success:
+            return JSONResponse(content={'message': 'User rejected successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to reject user")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
