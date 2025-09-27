@@ -95,18 +95,54 @@
                         <div id="userManagementSection" class="mt-4" style="display: none;">
                             <div class="card border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
                                 <div class="card-header border-0 bg-transparent pb-0">
-                                    <h5 class="mb-0">
-                                        <i class="bi bi-people-fill me-2" style="color: #b83a3f;"></i>
-                                        Pending User Approvals
-                                    </h5>
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="bi bi-people-fill me-2" style="color: #b83a3f;"></i>
+                                            User Management
+                                        </h5>
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="refreshUsers()">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Navigation Tabs -->
+                                    <ul class="nav nav-tabs nav-fill" id="userTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active rounded-pill me-1" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                                                <i class="bi bi-clock-history me-1"></i>Pending Approvals
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link rounded-pill" id="all-users-tab" data-bs-toggle="tab" data-bs-target="#all-users" type="button" role="tab">
+                                                <i class="bi bi-people me-1"></i>All Users
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <div class="card-body">
-                                    <div id="pendingUsersContainer">
-                                        <div class="text-center py-4">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
+                                    <div class="tab-content" id="userTabsContent">
+                                        <!-- Pending Users Tab -->
+                                        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+                                            <div id="pendingUsersContainer">
+                                                <div class="text-center py-4">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p class="mt-2 text-muted">Loading pending users...</p>
+                                                </div>
                                             </div>
-                                            <p class="mt-2 text-muted">Loading pending users...</p>
+                                        </div>
+                                        
+                                        <!-- All Users Tab -->
+                                        <div class="tab-pane fade" id="all-users" role="tabpanel">
+                                            <div id="allUsersContainer">
+                                                <div class="text-center py-4">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p class="mt-2 text-muted">Loading all users...</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -214,6 +250,15 @@
                 } else {
                     section.style.display = 'none';
                 }
+            });
+            
+            // Handle tab switching
+            document.getElementById('pending-tab').addEventListener('click', function() {
+                loadPendingUsers();
+            });
+            
+            document.getElementById('all-users-tab').addEventListener('click', function() {
+                loadAllUsers();
             });
         }
         
@@ -366,6 +411,154 @@
             } catch (error) {
                 console.error('Error rejecting user:', error);
                 showAlert('Failed to reject user. Please try again.', 'danger');
+            }
+        }
+        
+        async function loadAllUsers() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch('/api/all_users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const users = await response.json();
+                    displayAllUsers(users);
+                } else {
+                    throw new Error('Failed to load all users');
+                }
+            } catch (error) {
+                document.getElementById('allUsersContainer').innerHTML = `
+                    <div class="alert alert-danger border-0 rounded-4" role="alert" style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545 !important;">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Error loading all users: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        function displayAllUsers(users) {
+            const container = document.getElementById('allUsersContainer');
+            
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-people text-muted" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3 text-muted">No Users Found</h4>
+                        <p class="text-muted fs-5">No users are currently registered in the system.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="row g-4">';
+            users.forEach(user => {
+                const createdDate = new Date(user.created_at).toLocaleDateString();
+                const lastLoginDate = user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never';
+                const roleColors = {
+                    'admin': 'bg-danger',
+                    'dean': 'bg-primary',
+                    'chair': 'bg-info', 
+                    'secretary': 'bg-warning'
+                };
+                const statusColors = {
+                    'active': 'bg-success',
+                    'pending': 'bg-warning'
+                };
+                const roleColor = roleColors[user.role] || 'bg-secondary';
+                const statusColor = statusColors[user.status] || 'bg-secondary';
+                
+                // Don't show delete button for current admin user
+                const currentUsername = localStorage.getItem('username');
+                const isCurrentUser = user.username === currentUsername;
+                
+                html += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm rounded-4 h-100 user-card" style="background: rgba(255,255,255,0.7);">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-person-fill text-white" style="font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0 fw-bold">${user.full_name || user.username}</h6>
+                                        <small class="text-muted">@${user.username}</small>
+                                    </div>
+                                </div>
+                                <div class="mb-3 flex-grow-1">
+                                    <div class="mb-2">
+                                        <i class="bi bi-envelope me-2 text-muted"></i>
+                                        <span class="small">${user.email}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="bi bi-person-badge me-2 text-muted"></i>
+                                        <span class="badge ${roleColor} text-capitalize">${user.role}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="bi bi-circle-fill me-2 text-muted"></i>
+                                        <span class="badge ${statusColor} text-capitalize">${user.status}</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <i class="bi bi-calendar me-2 text-muted"></i>
+                                        <span class="small">Joined: ${createdDate}</span>
+                                    </div>
+                                    <div class="mb-0">
+                                        <i class="bi bi-clock me-2 text-muted"></i>
+                                        <span class="small">Last login: ${lastLoginDate}</span>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    ${isCurrentUser ? 
+                                        '<button class="btn btn-outline-secondary btn-sm rounded-pill" disabled><i class="bi bi-person-check me-1"></i>Current User</button>' :
+                                        `<button class="btn btn-danger btn-sm rounded-pill" onclick="deleteUser(${user.id}, '${user.username}')">
+                                            <i class="bi bi-trash me-1"></i>Delete User
+                                        </button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        async function deleteUser(userId, username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`/api/delete_user/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    showAlert(`User "${username}" deleted successfully`, 'success');
+                    loadAllUsers(); // Refresh the all users list
+                    loadPendingUsers(); // Also refresh pending users in case status changed
+                } else {
+                    const error = await response.json();
+                    showAlert(error.detail || 'Failed to delete user', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error deleting user: ' + error.message, 'danger');
+            }
+        }
+        
+        function refreshUsers() {
+            const activeTab = document.querySelector('#userTabsContent .tab-pane.active');
+            if (activeTab && activeTab.id === 'pending') {
+                loadPendingUsers();
+            } else if (activeTab && activeTab.id === 'all-users') {
+                loadAllUsers();
             }
         }
         

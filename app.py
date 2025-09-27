@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResp
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
-from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db, get_pending_users, approve_user, reject_user, check_email_exists
+from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db, get_pending_users, approve_user, reject_user, check_email_exists, get_all_users, delete_user
 import os
 import io
 import json
@@ -878,6 +878,34 @@ async def reject_user_endpoint(user_id: int, payload: dict, username: str = Depe
             return JSONResponse(content={'message': 'User rejected successfully'})
         else:
             raise HTTPException(status_code=500, detail="Failed to reject user")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/all_users')
+async def get_all_users_endpoint(username: str = Depends(require_admin_role)):
+    """Get all users for admin management"""
+    try:
+        users = get_all_users()
+        return JSONResponse(content=users)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/delete_user/{user_id}')
+async def delete_user_endpoint(user_id: int, username: str = Depends(require_admin_role)):
+    """Delete a user (admin only)"""
+    try:
+        # Prevent admin from deleting themselves
+        admin_user = db.get_user_by_username(username)
+        if admin_user and admin_user.get('id') == user_id:
+            raise HTTPException(status_code=400, detail="Cannot delete your own account")
+        
+        success = delete_user(user_id, username)
+        if success:
+            return JSONResponse(content={'message': 'User deleted successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to delete user")
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
