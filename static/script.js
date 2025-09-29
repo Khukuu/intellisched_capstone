@@ -1,4 +1,5 @@
 const downloadBtn = document.getElementById('downloadBtn');
+const submitBtn = document.getElementById('submitBtn');
 downloadBtn.disabled = true;
 
 const scheduleSection = document.getElementById('schedule-section');
@@ -411,6 +412,40 @@ if (loadBtn) {
   });
 }
 
+// Submit generated schedule for approval (Chair)
+async function submitForApproval() {
+    if (!Array.isArray(lastGeneratedSchedule) || lastGeneratedSchedule.length === 0) {
+      alert('No schedule to submit. Generate a schedule first.');
+      return;
+    }
+    const name = (saveNameInput && saveNameInput.value.trim()) || 'Generated Schedule';
+    try {
+      const body = {
+        name,
+        semester: semesterSelect ? semesterSelect.value : undefined,
+        numSectionsYear1: parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10),
+        numSectionsYear2: parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10),
+        numSectionsYear3: parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10),
+        numSectionsYear4: parseInt(elValue(document.getElementById('numSectionsYear4')) || 0, 10)
+      };
+      const resp = await fetch('/schedules/generate', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(body)
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.detail || 'Failed to submit schedule');
+      }
+      lastSavedId = data.id || '';
+      alert('Schedule submitted for approval.');
+      refreshSavedSchedulesList(lastSavedId);
+    } catch (e) {
+      console.error(e);
+      alert('Error submitting schedule.');
+    }
+}
+
 async function refreshSavedSchedulesList(selectId) {
   try {
           const resp = await fetch('/saved_schedules', {
@@ -424,8 +459,9 @@ async function refreshSavedSchedulesList(selectId) {
       opt.value = item.id;
       const labelName = item.name ? `${item.name}` : `${item.id}`;
       const extra = item.semester ? `S${item.semester}` : '';
+      const status = item.status ? ` [${String(item.status).toUpperCase()}]` : '';
       const count = typeof item.count === 'number' ? ` (${item.count})` : '';
-      opt.textContent = `${labelName} ${extra} ${count}`.trim();
+      opt.textContent = `${labelName} ${extra} ${count}${status}`.trim();
       savedSchedulesSelect.appendChild(opt);
     });
     if (selectId) savedSchedulesSelect.value = selectId;

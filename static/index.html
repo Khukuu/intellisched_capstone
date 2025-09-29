@@ -112,9 +112,18 @@
                 <button id="loadBtn" class="btn btn-light border-0 shadow-sm">Load</button>
               </div>
             </div>
-            <div class="col-auto">
-              <button id="generateBtn" class="btn btn-primary" type="button"><i class="bi bi-play-fill me-1"></i> Generate</button>
-              <button id="downloadBtn" class="btn btn-light border-0 shadow-sm ms-2"><i class="bi bi-download me-1"></i> CSV</button>
+            <div class="col-12">
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <button id="generateBtn" class="btn btn-primary rounded-pill flex-shrink-0 w-100 w-md-auto" type="button">
+                  <i class="bi bi-play-fill me-1"></i> Generate
+                </button>
+                <button id="downloadBtn" class="btn btn-light border-0 shadow-sm rounded-pill flex-shrink-0 w-100 w-md-auto">
+                  <i class="bi bi-download me-1"></i> CSV
+                </button>
+                <button id="submitBtn" class="btn btn-brand border-0 shadow-sm rounded-pill flex-shrink-0 w-100 w-md-auto" type="button" onclick="submitForApproval()">
+                  <i class="bi bi-send-check me-1"></i> Submit for Approval
+                </button>
+              </div>
             </div>
           </div>
         </div>

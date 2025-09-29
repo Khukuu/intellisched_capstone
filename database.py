@@ -593,7 +593,20 @@ def get_pending_schedules() -> List[Dict[str, Any]]:
     WHERE status = 'pending' 
     ORDER BY created_at DESC
     """
-    return db.db.execute_query(query)
+    rows = db.db.execute_query(query)
+    # Convert datetime fields to ISO strings for JSON serialization
+    for r in rows:
+        if 'created_at' in r and r['created_at']:
+            try:
+                r['created_at'] = r['created_at'].isoformat()
+            except Exception:
+                pass
+        if 'approved_at' in r and r.get('approved_at'):
+            try:
+                r['approved_at'] = r['approved_at'].isoformat()
+            except Exception:
+                pass
+    return rows
 
 def get_approved_schedules() -> List[Dict[str, Any]]:
     """Get all approved schedules"""
@@ -602,7 +615,19 @@ def get_approved_schedules() -> List[Dict[str, Any]]:
     WHERE status = 'approved' 
     ORDER BY approved_at DESC
     """
-    return db.db.execute_query(query)
+    rows = db.db.execute_query(query)
+    for r in rows:
+        if 'created_at' in r and r['created_at']:
+            try:
+                r['created_at'] = r['created_at'].isoformat()
+            except Exception:
+                pass
+        if 'approved_at' in r and r.get('approved_at'):
+            try:
+                r['approved_at'] = r['approved_at'].isoformat()
+            except Exception:
+                pass
+    return rows
 
 def approve_schedule(schedule_id: str, approved_by: str, comments: str = None) -> bool:
     """Approve a schedule"""

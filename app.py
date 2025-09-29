@@ -3,7 +3,25 @@ from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResp
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
-from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db, get_pending_users, approve_user, reject_user, check_email_exists, get_all_users, delete_user
+from database import (
+    db,
+    load_subjects_from_db,
+    load_teachers_from_db,
+    load_rooms_from_db,
+    load_sections_from_db,
+    get_pending_users,
+    approve_user,
+    reject_user,
+    check_email_exists,
+    get_all_users,
+    delete_user,
+    create_schedule_approval,
+    get_pending_schedules,
+    get_approved_schedules,
+    approve_schedule,
+    reject_schedule,
+    get_schedule_approval_status,
+)
 import os
 import io
 import json
@@ -370,6 +388,29 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         return JSONResponse(content=[])
 
     result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year)
+
+    # If request explicitly asks to persist as pending schedule (Chair flow)
+    if payload.get('persist', False):
+        try:
+            name = (payload.get('name') or 'Generated Schedule')
+            semester_int = int(semester_filter) if semester_filter else None
+            # Create synthetic id based on timestamp like saved schedules
+            uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+            created = create_schedule_approval(uid, name, semester_int or 0, username)
+            if not created:
+                print('Warning: failed to create schedule approval record')
+            return JSONResponse(content={
+                'id': uid,
+                'name': name,
+                'status': 'pending',
+                'semester': semester_int,
+                'schedule': result,
+            })
+        except Exception as e:
+            # Fall back to returning just the result
+            print(f"Warning: persist schedule failed: {e}")
+            return JSONResponse(content=result)
+
     return JSONResponse(content=result)
 
 def _ensure_saved_dir():
@@ -396,6 +437,8 @@ def _list_saved_summaries():
                 'semester': data.get('semester'),
                 'created_at': data.get('created_at'),
                 'count': len(data.get('schedule') or []),
+                # include approval status if exists
+                'status': (lambda sid: (get_schedule_approval_status(sid) or {}).get('status'))(data.get('id') or ''),
             })
         except Exception:
             # Skip unreadable files
@@ -403,6 +446,69 @@ def _list_saved_summaries():
     # Sort newest first
     items.sort(key=lambda x: x.get('created_at') or '', reverse=True)
     return items
+@app.post('/schedules/generate')
+async def generate_and_submit_schedule(payload: dict, username: str = Depends(require_chair_role)):
+    """Chair generates and submits schedule for approval (status=pending)."""
+    # Reuse existing generation logic by calling /schedule path here
+    subjects = load_subjects_from_db()
+    teachers = load_teachers_from_db()
+    rooms = load_rooms_from_db()
+    semester_filter = payload.get('semester')
+
+    desired_sections_per_year = {
+        1: payload.get('numSectionsYear1', 0),
+        2: payload.get('numSectionsYear2', 0),
+        3: payload.get('numSectionsYear3', 0),
+        4: payload.get('numSectionsYear4', 0),
+    }
+
+    result = generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)
+    name = (payload.get('name') or 'Generated Schedule')
+    semester_int = int(semester_filter) if semester_filter else None
+    uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    create_schedule_approval(uid, name, semester_int or 0, username)
+    return JSONResponse(content={'id': uid, 'name': name, 'status': 'pending', 'semester': semester_int, 'schedule': result})
+
+@app.get('/schedules/pending')
+async def list_pending_schedules(username: str = Depends(require_role(['dean']))):
+    """Dean views all pending schedules (grouping is done client-side)."""
+    items = get_pending_schedules()
+    return JSONResponse(content=items)
+
+@app.get('/api/pending_schedules')
+async def list_pending_schedules_alias(username: str = Depends(require_role(['dean']))):
+    items = get_pending_schedules()
+    return JSONResponse(content=items)
+
+@app.post('/schedules/{schedule_id}/approve')
+async def approve_schedule_endpoint(schedule_id: str, payload: dict = None, username: str = Depends(require_role(['dean']))):
+    comments = (payload or {}).get('comments') if isinstance(payload, dict) else None
+    ok = approve_schedule(schedule_id, username, comments)
+    if not ok:
+        raise HTTPException(status_code=500, detail='Failed to approve schedule')
+    return JSONResponse(content={'message': 'Schedule approved', 'id': schedule_id})
+
+@app.post('/schedules/{schedule_id}/deny')
+async def deny_schedule_endpoint(schedule_id: str, payload: dict = None, username: str = Depends(require_role(['dean']))):
+    comments = (payload or {}).get('comments') if isinstance(payload, dict) else None
+    ok = reject_schedule(schedule_id, username, comments)
+    if not ok:
+        raise HTTPException(status_code=500, detail='Failed to deny schedule')
+    return JSONResponse(content={'message': 'Schedule denied', 'id': schedule_id})
+
+# Aliases for dean.html
+@app.post('/api/approve_schedule/{schedule_id}')
+async def approve_schedule_endpoint_alias(schedule_id: str, payload: dict, username: str = Depends(require_role(['dean']))):
+    return await approve_schedule_endpoint(schedule_id, payload, username)  # type: ignore
+
+@app.post('/api/reject_schedule/{schedule_id}')
+async def reject_schedule_endpoint_alias(schedule_id: str, payload: dict, username: str = Depends(require_role(['dean']))):
+    return await deny_schedule_endpoint(schedule_id, payload, username)  # type: ignore
+
+@app.get('/api/approved_schedules')
+async def list_approved_schedules_alias(username: str = Depends(require_role(['dean']))):
+    items = get_approved_schedules()
+    return JSONResponse(content=items)
 
 @app.get('/saved_schedules')
 async def saved_schedules(username: str = Depends(require_chair_role)):
