@@ -91,8 +91,9 @@ class ScheduleDatabase:
             password_hash VARCHAR(255) NOT NULL,
             salt VARCHAR(255) NOT NULL,
             full_name VARCHAR(255),
-            email VARCHAR(255),
+            email VARCHAR(255) UNIQUE,
             role VARCHAR(20) DEFAULT 'user',
+            status VARCHAR(20) DEFAULT 'pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             last_login TIMESTAMP
         );
@@ -194,9 +195,9 @@ class ScheduleDatabase:
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
                 self.db.execute_single("""
-                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, ('admin', password_hash, salt, 'Administrator', 'admin@intellisched.com', 'admin'))
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, ('admin', password_hash, salt, 'Administrator', 'admin@intellisched.com', 'admin', 'active'))
                 
                 print("✅ Default admin user created (username: admin, password: admin123)")
             
@@ -209,9 +210,9 @@ class ScheduleDatabase:
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
                 self.db.execute_single("""
-                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, ('chair', password_hash, salt, 'Department Chair', 'chair@intellisched.com', 'chair'))
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, ('chair', password_hash, salt, 'Department Chair', 'chair@intellisched.com', 'chair', 'active'))
                 
                 print("✅ Default chair user created (username: chair, password: chair123)")
             
@@ -224,9 +225,9 @@ class ScheduleDatabase:
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
                 self.db.execute_single("""
-                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, ('dean', password_hash, salt, 'Dean', 'dean@intellisched.com', 'dean'))
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, ('dean', password_hash, salt, 'Dean', 'dean@intellisched.com', 'dean', 'active'))
                 
                 print("✅ Default dean user created (username: dean, password: dean123)")
             
@@ -239,9 +240,9 @@ class ScheduleDatabase:
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
                 self.db.execute_single("""
-                    INSERT INTO users (username, password_hash, salt, full_name, email, role)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, ('sec', password_hash, salt, 'Secretary', 'secretary@intellisched.com', 'secretary'))
+                    INSERT INTO users (username, password_hash, salt, full_name, email, role, status)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, ('sec', password_hash, salt, 'Secretary', 'secretary@intellisched.com', 'secretary', 'active'))
                 
                 print("✅ Default secretary user created (username: sec, password: sec123)")
                 
@@ -263,6 +264,10 @@ class ScheduleDatabase:
             input_hash = hashlib.sha256((password + salt).encode()).hexdigest()
             
             if input_hash == stored_hash:
+                # Check if user is active
+                if user.get('status') != 'active':
+                    return None
+                
                 # Update last login
                 self.db.execute_single("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = %s", (user['id'],))
                 
@@ -272,7 +277,8 @@ class ScheduleDatabase:
                     'username': user['username'],
                     'full_name': user['full_name'],
                     'email': user['email'],
-                    'role': user['role']
+                    'role': user['role'],
+                    'status': user.get('status', 'pending')
                 }
             return None
         except Exception as e:
@@ -291,7 +297,7 @@ class ScheduleDatabase:
     def get_user_by_username(self, username: str) -> Dict[str, Any]:
         """Get user by username (without sensitive data)"""
         try:
-            user = self.db.execute_query("SELECT id, username, full_name, email, role, created_at, last_login FROM users WHERE username = %s", (username,))
+            user = self.db.execute_query("SELECT id, username, full_name, email, role, status, created_at, last_login FROM users WHERE username = %s", (username,))
             return user[0] if user else None
         except Exception as e:
             print(f"Error getting user: {e}")
@@ -305,15 +311,16 @@ class ScheduleDatabase:
             password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
             
             self.db.execute_single("""
-                INSERT INTO users (username, password_hash, salt, full_name, email, role)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO users (username, password_hash, salt, full_name, email, role, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """, (
                 user_data['username'],
                 password_hash,
                 salt,
                 user_data.get('full_name', ''),
                 user_data.get('email', ''),
-                user_data.get('role', 'user')
+                user_data.get('role', 'user'),
+                user_data.get('status', 'pending')
             ))
             return True
         except Exception as e:
@@ -719,3 +726,152 @@ def get_user_id_by_username(username: str) -> int:
     except Exception as e:
         print(f"Error getting user ID: {e}")
         return None
+
+# User management functions
+def get_pending_users() -> List[Dict[str, Any]]:
+    """Get all pending users for admin approval"""
+    try:
+        query = """
+        SELECT id, username, full_name, email, role, created_at 
+        FROM users 
+        WHERE status = 'pending' 
+        ORDER BY created_at DESC
+        """
+        users = db.db.execute_query(query)
+        
+        # Convert datetime objects to strings for JSON serialization
+        for user in users:
+            if 'created_at' in user and user['created_at']:
+                user['created_at'] = user['created_at'].isoformat()
+        
+        return users
+    except Exception as e:
+        print(f"Error getting pending users: {e}")
+        return []
+
+def approve_user(user_id: int, approved_by: str) -> bool:
+    """Approve a pending user"""
+    try:
+        # Update user status to active
+        query = "UPDATE users SET status = 'active' WHERE id = %s AND status = 'pending'"
+        db.db.execute_single(query, (user_id,))
+        
+        # Get user details for notification
+        user_query = "SELECT username, full_name, email FROM users WHERE id = %s"
+        user_result = db.db.execute_query(user_query, (user_id,))
+        
+        if user_result:
+            user = user_result[0]
+            # Create notification for the approved user
+            create_notification(
+                user_id,
+                "Account Approved",
+                f"Your account has been approved by {approved_by}. You can now log in to IntelliSched.",
+                "success"
+            )
+        
+        return True
+    except Exception as e:
+        print(f"Error approving user: {e}")
+        return False
+
+def reject_user(user_id: int, rejected_by: str, reason: str = None) -> bool:
+    """Reject a pending user"""
+    try:
+        # Get user details before deletion
+        user_query = "SELECT username, full_name, email FROM users WHERE id = %s"
+        user_result = db.db.execute_query(user_query, (user_id,))
+        
+        # Delete the user
+        query = "DELETE FROM users WHERE id = %s AND status = 'pending'"
+        db.db.execute_single(query, (user_id,))
+        
+        return True
+    except Exception as e:
+        print(f"Error rejecting user: {e}")
+        return False
+
+def get_user_by_email(email: str) -> Dict[str, Any]:
+    """Get user by email"""
+    try:
+        query = "SELECT id, username, full_name, email, role, status, created_at FROM users WHERE email = %s"
+        results = db.db.execute_query(query, (email,))
+        return results[0] if results else None
+    except Exception as e:
+        print(f"Error getting user by email: {e}")
+        return None
+
+def check_email_exists(email: str) -> bool:
+    """Check if email already exists"""
+    try:
+        query = "SELECT id FROM users WHERE email = %s"
+        results = db.db.execute_query(query, (email,))
+        return len(results) > 0
+    except Exception as e:
+        print(f"Error checking email: {e}")
+        return False
+
+def get_all_users() -> List[Dict[str, Any]]:
+    """Get all users for admin management"""
+    try:
+        query = """
+        SELECT id, username, full_name, email, role, status, created_at, last_login 
+        FROM users 
+        ORDER BY created_at DESC
+        """
+        users = db.db.execute_query(query)
+        
+        # Convert datetime objects to strings for JSON serialization
+        for user in users:
+            if 'created_at' in user and user['created_at']:
+                user['created_at'] = user['created_at'].isoformat()
+            if 'last_login' in user and user['last_login']:
+                user['last_login'] = user['last_login'].isoformat()
+        
+        return users
+    except Exception as e:
+        print(f"Error getting all users: {e}")
+        return []
+
+def delete_user(user_id: int, admin_username: str) -> bool:
+    """Delete a user from the database"""
+    try:
+        # Get user info for logging
+        user = db.db.execute_query("SELECT username, full_name, role FROM users WHERE id = %s", (user_id,))
+        if not user:
+            print(f"User with ID {user_id} not found")
+            return False
+        
+        user_info = user[0]
+        
+        # Delete related records first (notifications, schedule_approvals, etc.)
+        # Delete notifications associated with this user
+        try:
+            db.db.execute_single("DELETE FROM notifications WHERE user_id = %s", (user_id,))
+            print(f"Deleted notifications for user {user_id}")
+        except Exception as e:
+            print(f"Warning: Could not delete notifications for user {user_id}: {e}")
+        
+        # Delete schedule approvals created by this user
+        try:
+            db.db.execute_single("DELETE FROM schedule_approvals WHERE created_by = %s", (user_info['username'],))
+            print(f"Deleted schedule approvals for user {user_id}")
+        except Exception as e:
+            print(f"Warning: Could not delete schedule approvals for user {user_id}: {e}")
+        
+        # Delete schedule approvals approved by this user (set to NULL)
+        try:
+            db.db.execute_single("UPDATE schedule_approvals SET approved_by = NULL WHERE approved_by = %s", (user_info['username'],))
+            print(f"Cleared approval records for user {user_id}")
+        except Exception as e:
+            print(f"Warning: Could not clear approval records for user {user_id}: {e}")
+        
+        # Finally, delete the user
+        db.db.execute_single("DELETE FROM users WHERE id = %s", (user_id,))
+        
+        print(f"User deleted by {admin_username}: {user_info['username']} ({user_info['full_name']}) - Role: {user_info['role']}")
+        return True
+        
+    except Exception as e:
+        print(f"Error deleting user: {e}")
+        return False

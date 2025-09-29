@@ -169,16 +169,28 @@
         <input type="text" class="form-control" id="reg_username" required placeholder="Choose a username">
       </div>
       <div class="mb-3">
-        <label for="reg_full_name" class="form-label"><b>Full Name</b> <span class="text-muted small">(optional)</span></label>
-        <input type="text" class="form-control" id="reg_full_name" placeholder="Your full name">
+        <label for="reg_full_name" class="form-label"><b>Full Name</b></label>
+        <input type="text" class="form-control" id="reg_full_name" required placeholder="Your full name">
       </div>
       <div class="mb-3">
-        <label for="reg_email" class="form-label"><b>Email</b> <span class="text-muted small">(optional)</span></label>
-        <input type="email" class="form-control" id="reg_email" placeholder="you@example.com">
+        <label for="reg_email" class="form-label"><b>Email</b></label>
+        <input type="email" class="form-control" id="reg_email" required placeholder="you@example.com">
+      </div>
+      <div class="mb-3">
+        <label for="reg_role" class="form-label"><b>Role</b></label>
+        <select class="form-control" id="reg_role" required>
+          <option value="">Select your role</option>
+          <option value="dean">Dean</option>
+          <option value="chair">Chair</option>
+          <option value="secretary">Secretary</option>
+        </select>
       </div>
       <div class="mb-3">
         <label for="reg_password" class="form-label"><b>Password</b></label>
-        <input type="password" class="form-control" id="reg_password" required placeholder="Create a password (min 6 chars)">
+        <input type="password" class="form-control" id="reg_password" required placeholder="Create a strong password (min 8 chars)">
+        <div class="form-text">
+          Password must contain at least 8 characters with uppercase, lowercase, and numbers.
+        </div>
       </div>
       <div class="mb-4">
         <label for="reg_password2" class="form-label"><b>Confirm Password</b></label>
@@ -201,28 +213,54 @@
       const username = document.getElementById('reg_username').value.trim();
       const full_name = document.getElementById('reg_full_name').value.trim();
       const email = document.getElementById('reg_email').value.trim();
+      const role = document.getElementById('reg_role').value;
       const password = document.getElementById('reg_password').value;
       const password2 = document.getElementById('reg_password2').value;
 
-      if (!username || !password) { return showAlert('Username and password are required.', 'danger'); }
-      if (password.length < 6) { return showAlert('Password must be at least 6 characters.', 'danger'); }
-      if (password !== password2) { return showAlert('Passwords do not match.', 'danger'); }
+      // Validation
+      if (!username || !full_name || !email || !role || !password) { 
+        return showAlert('All fields are required.', 'danger'); 
+      }
+      
+      if (password.length < 8) { 
+        return showAlert('Password must be at least 8 characters.', 'danger'); 
+      }
+      
+      // Password strength validation
+      if (!/[A-Z]/.test(password)) {
+        return showAlert('Password must contain at least one uppercase letter.', 'danger');
+      }
+      if (!/[a-z]/.test(password)) {
+        return showAlert('Password must contain at least one lowercase letter.', 'danger');
+      }
+      if (!/\d/.test(password)) {
+        return showAlert('Password must contain at least one number.', 'danger');
+      }
+      
+      if (password !== password2) { 
+        return showAlert('Passwords do not match.', 'danger'); 
+      }
+
+      // Email validation
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(email)) {
+        return showAlert('Please enter a valid email address.', 'danger');
+      }
 
       try {
         const resp = await fetch('/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, full_name, email, password })
+          body: JSON.stringify({ username, full_name, email, role, password })
         });
         const data = await resp.json();
         if (!resp.ok) {
           return showAlert(data.detail || 'Registration failed.', 'danger');
         }
-        // Auto-login
-        localStorage.setItem('authToken', data.access_token);
-        localStorage.setItem('username', data.username);
-        showAlert('Account created! Redirecting…', 'success');
-        setTimeout(() => window.location.href = '/', 900);
+        
+        // Show success message and redirect to login
+        showAlert(data.message, 'success');
+        setTimeout(() => window.location.href = '/login', 3000);
       } catch (err) {
         showAlert('Network error. Please try again.', 'danger');
       }
