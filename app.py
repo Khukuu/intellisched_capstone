@@ -449,7 +449,8 @@ def _list_saved_summaries():
 @app.post('/schedules/generate')
 async def generate_and_submit_schedule(payload: dict, username: str = Depends(require_chair_role)):
     """Chair generates and submits schedule for approval (status=pending)."""
-    # Reuse existing generation logic by calling /schedule path here
+    # Prefer client-provided schedule when available; fall back to server generation
+    client_schedule = payload.get('schedule')
     subjects = load_subjects_from_db()
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
@@ -462,10 +463,31 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
         4: payload.get('numSectionsYear4', 0),
     }
 
-    result = generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)
+    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)
     name = (payload.get('name') or 'Generated Schedule')
     semester_int = int(semester_filter) if semester_filter else None
     uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    # Persist generated schedule to saved_schedules so Dean can view by ID
+    try:
+        saved_dir = _ensure_saved_dir()
+        safe_name = _safe_filename_part(name)
+        filename = f"{uid}_{safe_name}.json"
+        path = os.path.join(saved_dir, filename)
+        created_at = datetime.utcnow().isoformat()
+        data = {
+            'id': uid,
+            'name': name,
+            'semester': semester_int,
+            'created_at': created_at,
+            'schedule': result,
+        }
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        # Non-fatal: still proceed with approval record
+        print(f"⚠️ Could not persist schedule file for {uid}: {e}")
+
+    # Create approval record
     create_schedule_approval(uid, name, semester_int or 0, username)
     return JSONResponse(content={'id': uid, 'name': name, 'status': 'pending', 'semester': semester_int, 'schedule': result})
 
@@ -552,6 +574,19 @@ async def load_schedule(id: str, username: str = Depends(require_chair_role)):
     saved_dir = _ensure_saved_dir()
     # Find file by id prefix
     candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(id) and fn.endswith('.json')]
+    if not candidates:
+        raise HTTPException(status_code=404, detail='Saved schedule not found')
+    fpath = os.path.join(saved_dir, candidates[0])
+    with open(fpath, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return JSONResponse(content=data)
+
+# Dean view: fetch schedule details by id
+@app.get('/api/schedule/{schedule_id}')
+async def get_schedule_for_dean(schedule_id: str, username: str = Depends(require_role(['dean']))):
+    """Allow Dean to view a saved schedule by id."""
+    saved_dir = _ensure_saved_dir()
+    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
     if not candidates:
         raise HTTPException(status_code=404, detail='Saved schedule not found')
     fpath = os.path.join(saved_dir, candidates[0])

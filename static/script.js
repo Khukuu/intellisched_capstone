@@ -346,33 +346,9 @@ downloadBtn.onclick = function() {
 
 // Save current generated schedule
 if (saveBtn) {
+  // Repurpose Save button to submit for approval
   saveBtn.addEventListener('click', async () => {
-    if (!Array.isArray(lastGeneratedSchedule) || lastGeneratedSchedule.length === 0) {
-      alert('No schedule to save. Generate a schedule first.');
-      return;
-    }
-    const name = (saveNameInput && saveNameInput.value.trim()) || '';
-    try {
-      const resp = await fetch('/save_schedule', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          name,
-          semester: semesterSelect ? semesterSelect.value : undefined,
-          schedule: lastGeneratedSchedule
-        })
-      });
-      const res = await resp.json();
-      if (!resp.ok) {
-        throw new Error(res.detail || 'Failed to save schedule');
-      }
-      lastSavedId = res.id || '';
-      refreshSavedSchedulesList(lastSavedId);
-      alert('Schedule saved.');
-    } catch (e) {
-      console.error(e);
-      alert('Error saving schedule.');
-    }
+    await submitForApproval();
   });
 }
 
@@ -423,6 +399,7 @@ async function submitForApproval() {
       const body = {
         name,
         semester: semesterSelect ? semesterSelect.value : undefined,
+      schedule: lastGeneratedSchedule,
         numSectionsYear1: parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10),
         numSectionsYear2: parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10),
         numSectionsYear3: parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10),

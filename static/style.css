@@ -231,6 +231,13 @@ body {
   color: white;
 }
 
+/* Responsive stacking for control cluster on small screens */
+@media (max-width: 575.98px) {
+  .controls-stack > * {
+    width: 100% !important;
+  }
+}
+
 /* Consistent modal styling */
 .modal-content.card-mac-style {
   border-radius: 1rem;
