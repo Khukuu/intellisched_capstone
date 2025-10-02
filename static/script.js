@@ -22,6 +22,7 @@ const saveBtn = document.getElementById('saveBtn');
 const saveNameInput = document.getElementById('saveNameInput');
 const savedSchedulesSelect = document.getElementById('savedSchedulesSelect');
 const loadBtn = document.getElementById('loadBtn');
+const deleteBtn = null;
 
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
@@ -69,12 +70,16 @@ function showSection(sectionId) {
   scheduleNavLink.classList.remove('active');
   dataNavLink.classList.remove('active');
 
+  const resultsCard = document.getElementById('results-card');
+
   if (sectionId === 'schedule-section') {
     scheduleSection.style.display = 'block';
     scheduleNavLink.classList.add('active');
+    if (resultsCard) resultsCard.style.display = 'block';
   } else if (sectionId === 'data-management-section') {
     dataManagementSection.style.display = 'block';
     dataNavLink.classList.add('active');
+    if (resultsCard) resultsCard.style.display = 'none';
     loadDataManagementTables(); // Load data when showing this section
   }
 }
@@ -387,6 +392,9 @@ if (loadBtn) {
     }
   });
 }
+
+// Delete selected saved schedule
+// delete removed by revert
 
 // Submit generated schedule for approval (Chair)
 async function submitForApproval() {
