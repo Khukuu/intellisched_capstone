@@ -60,11 +60,17 @@
                         
                         <!-- Pending Schedules Section -->
                         <div class="card border-0 shadow-sm rounded-4 mb-4" style="background: rgba(255,255,255,0.7);">
-                            <div class="card-header border-0 bg-transparent pb-0">
+                            <div class="card-header border-0 bg-transparent pb-0 d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">
                                     <i class="bi bi-clock-history-fill me-2" style="color: #b83a3f;"></i>
                                     Pending Approvals
                                 </h5>
+                                <div class="d-flex align-items-center gap-2">
+                                    <small class="text-muted" id="pendingLastUpdate">Last updated: --</small>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="loadPendingSchedules()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div id="pendingSchedules">
@@ -79,11 +85,17 @@
                         
                         <!-- Approved Schedules Section -->
                         <div class="card border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
-                            <div class="card-header border-0 bg-transparent pb-0">
+                            <div class="card-header border-0 bg-transparent pb-0 d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">
                                     <i class="bi bi-check-circle-fill me-2" style="color: #b83a3f;"></i>
                                     Approved Schedules
                                 </h5>
+                                <div class="d-flex align-items-center gap-2">
+                                    <small class="text-muted" id="approvedLastUpdate">Last updated: --</small>
+                                    <button class="btn btn-sm btn-outline-success" onclick="loadApprovedSchedules()">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
                                 <div id="approvedSchedules">
@@ -128,6 +140,54 @@
                     <button type="button" class="btn btn-danger" id="rejectBtn">
                         <i class="bi bi-x-circle me-1"></i>Reject
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Schedule Modal -->
+    <div class="modal fade" id="viewScheduleModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content card-mac-style">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title">
+                        <i class="bi bi-eye text-primary me-2"></i>
+                        Schedule Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" id="viewTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="table-tab" data-bs-toggle="tab" data-bs-target="#viewTable" type="button" role="tab">Table</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="timetable-tab" data-bs-toggle="tab" data-bs-target="#viewTimetable" type="button" role="tab">Timetable</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="viewTable" role="tabpanel">
+                            <div id="viewScheduleContent">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="viewTimetable" role="tabpanel">
+                            <div id="viewScheduleTimetable">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -200,6 +260,21 @@
             
             loadPendingSchedules();
             loadApprovedSchedules();
+            
+            // Auto-refresh every 10 seconds to catch deleted schedules
+            setInterval(() => {
+                loadPendingSchedules();
+                loadApprovedSchedules();
+            }, 10000);
+            
+            // Also refresh when the page becomes visible again (user switches back to tab)
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    console.log('Page became visible, refreshing schedules...');
+                    loadPendingSchedules();
+                    loadApprovedSchedules();
+                }
+            });
         });
         
         function getAuthHeaders() {
@@ -212,11 +287,21 @@
         
         async function loadPendingSchedules() {
             try {
-                const response = await fetch('/api/pending_schedules', {
+                const response = await fetch(`/api/pending_schedules?t=${Date.now()}`, {
                     headers: getAuthHeaders()
                 });
                 const schedules = await response.json();
                 renderSchedules(schedules, 'pendingSchedules', true);
+                
+                // Show last updated time
+                const now = new Date().toLocaleTimeString();
+                console.log(`Pending schedules refreshed at ${now}`);
+                
+                // Update the last updated timestamp
+                const lastUpdateElement = document.getElementById('pendingLastUpdate');
+                if (lastUpdateElement) {
+                    lastUpdateElement.textContent = `Last updated: ${now}`;
+                }
             } catch (error) {
                 console.error('Error loading pending schedules:', error);
                 document.getElementById('pendingSchedules').innerHTML = '<p class="text-danger">Error loading pending schedules.</p>';
@@ -230,6 +315,13 @@
                 });
                 const schedules = await response.json();
                 renderSchedules(schedules, 'approvedSchedules', false);
+                
+                // Update the last updated timestamp
+                const now = new Date().toLocaleTimeString();
+                const lastUpdateElement = document.getElementById('approvedLastUpdate');
+                if (lastUpdateElement) {
+                    lastUpdateElement.textContent = `Last updated: ${now}`;
+                }
             } catch (error) {
                 console.error('Error loading approved schedules:', error);
                 document.getElementById('approvedSchedules').innerHTML = '<p class="text-danger">Error loading approved schedules.</p>';
@@ -274,7 +366,16 @@
                                             <i class="bi bi-x"></i> Reject
                                         </button>
                                     </div>
-                                ` : ''}
+                                ` : (schedule.status === 'approved' ? `
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewSchedule('${schedule.schedule_id}')">
+                                            <i class="bi bi-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteApprovedSchedule('${schedule.schedule_id}')">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                ` : '')}
                             </div>
                         </div>
                     </div>
@@ -340,9 +441,146 @@
             }
         }
         
-        function viewSchedule(scheduleId) {
-            // For now, just show an alert. In a real implementation, this would open a detailed view
-            alert(`Viewing schedule: ${scheduleId}`);
+        async function viewSchedule(scheduleId) {
+            try {
+                const modal = new bootstrap.Modal(document.getElementById('viewScheduleModal'));
+                const container = document.getElementById('viewScheduleContent');
+                container.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                modal.show();
+
+                const resp = await fetch(`/api/schedule/${encodeURIComponent(scheduleId)}?t=${Date.now()}`, {
+                    headers: getAuthHeaders()
+                });
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({}));
+                    if (resp.status === 404) {
+                        throw new Error('Schedule not found or has been deleted by the chair');
+                    }
+                    throw new Error(err.detail || 'Failed to load schedule');
+                }
+                const data = await resp.json();
+                const rows = Array.isArray(data.schedule) ? data.schedule : [];
+
+                // Build table view
+                let tableHtml = '';
+                tableHtml += `<div class=\"mb-3\"><strong>Name:</strong> ${data.name || ''} &nbsp; <strong>Semester:</strong> ${data.semester || ''}</div>`;
+                tableHtml += '<div class=\"table-responsive\"><table class=\"table table-striped table-bordered\"><thead><tr>'+
+                             '<th>Section</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th>'+
+                             '</tr></thead><tbody>';
+                for (const row of rows) {
+                    const subj = row.subject_name || row.subject_code || '';
+                    const timeRange = computeEventTimeRange(row);
+                    tableHtml += `<tr>`+
+                                 `<td>${row.section_id || ''}</td>`+
+                                 `<td>${subj}</td>`+
+                                 `<td>${row.type || ''}</td>`+
+                                 `<td>${row.teacher_name || ''}</td>`+
+                                 `<td>${row.room_id || ''}</td>`+
+                                 `<td>${row.day || ''}</td>`+
+                                 `<td>${timeRange}</td>`+
+                                 `</tr>`;
+                }
+                if (rows.length === 0) {
+                    tableHtml += '<tr><td colspan=\"7\" class=\"text-center text-muted\">No data.</td></tr>';
+                }
+                tableHtml += '</tbody></table></div>';
+                container.innerHTML = tableHtml;
+
+                // Build timetable view
+                const ttContainer = document.getElementById('viewScheduleTimetable');
+                const dayLabels = ["Mon","Tue","Wed","Thu","Fri","Sat"];
+                const timetable = Array.from({length: timeSlotLabels.length}, () => Array.from({length: dayLabels.length}, () => []));
+                rows.forEach(ev => {
+                    const d = dayLabels.indexOf(ev.day);
+                    const s = timeSlotLabels.indexOf(ev.start_time_slot);
+                    const dur = parseInt(ev.duration_slots, 10) || 0;
+                    if (d !== -1 && s !== -1 && dur > 0) {
+                        for (let i = 0; i < dur && (s + i) < timeSlotLabels.length; i++) {
+                            timetable[s + i][d].push(ev);
+                        }
+                    }
+                });
+                let tthtml = '<div class=\"table-responsive\"><table class=\"table table-bordered\"><thead><tr><th>Time Slot</th>';
+                for (const day of dayLabels) tthtml += `<th>${day}</th>`;
+                tthtml += '</tr></thead><tbody>';
+                for (let t = 0; t < timeSlotLabels.length; t++) {
+                    tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
+                    for (let d = 0; d < dayLabels.length; d++) {
+                        const eventsInCell = timetable[t][d];
+                        if (eventsInCell.length === 0) { tthtml += '<td></td>'; continue; }
+                        const startsHere = eventsInCell.filter(e => timeSlotLabels.indexOf(e.start_time_slot) === t);
+                        if (startsHere.length > 0) {
+                            const e = startsHere[0];
+                            const span = Math.min(parseInt(e.duration_slots, 10) || 1, timeSlotLabels.length - t);
+                            const subj = e.subject_name || e.subject_code || '';
+                            const range = computeEventTimeRange(e);
+                            tthtml += `<td rowspan=\"${span}\">`+
+                                      `<b>${subj}</b><br><small>(${range})</small><br>`+
+                                      `${e.section_id || ''}<br>${e.teacher_name || ''}<br>${e.room_id || ''}`+
+                                      `</td>`;
+                            for (let k = 1; k < span; k++) {
+                                // mark following rows to skip cell for this day
+                                if (!timetable[t + k]) break;
+                                timetable[t + k][d] = [];
+                            }
+                        } else {
+                            tthtml += '<td></td>';
+                        }
+                    }
+                    tthtml += '</tr>';
+                }
+                tthtml += '</tbody></table></div>';
+                ttContainer.innerHTML = tthtml;
+            } catch (e) {
+                console.error(e);
+                const container = document.getElementById('viewScheduleContent');
+                container.innerHTML = `<div class="alert alert-danger">${e.message || 'Error loading schedule.'}</div>`;
+            }
+        }
+        
+        async function deleteApprovedSchedule(scheduleId) {
+            if (!confirm('Are you sure you want to delete this approved schedule? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/schedule/${encodeURIComponent(scheduleId)}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    alert('Approved schedule deleted successfully!');
+                    // Refresh both lists
+                    loadPendingSchedules();
+                    loadApprovedSchedules();
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail || 'Failed to delete schedule'}`);
+                }
+            } catch (error) {
+                console.error('Error deleting approved schedule:', error);
+                alert('Error deleting schedule. Please try again.');
+            }
+        }
+
+        // Utility used by viewSchedule to compute end time
+        const timeSlotLabels = [
+          "08:00-08:30","08:30-09:00","09:00-09:30","09:30-10:00",
+          "10:00-10:30","10:30-11:00","11:00-11:30","11:30-12:00",
+          "13:00-13:30","13:30-14:00","14:00-14:30","14:30-15:00",
+          "15:00-15:30","15:30-16:00","16:00-16:30","16:30-17:00",
+          "17:00-17:30","17:30-18:00","18:00-18:30","18:30-19:00",
+          "19:00-19:30","19:30-20:00"
+        ];
+        function computeEventTimeRange(event) {
+          const startIdx = timeSlotLabels.indexOf(event.start_time_slot);
+          const dur = parseInt(event.duration_slots, 10) || 0;
+          if (startIdx < 0 || dur <= 0) return event.start_time_slot || '';
+          const startStart = (event.start_time_slot || '').split('-')[0];
+          const endIdx = Math.min(timeSlotLabels.length - 1, startIdx + dur - 1);
+          const endEnd = (timeSlotLabels[endIdx] || '').split('-')[1] || '';
+          return `${startStart}-${endEnd}`;
         }
         
         // Logout functionality

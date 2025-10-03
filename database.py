@@ -593,7 +593,22 @@ def get_pending_schedules() -> List[Dict[str, Any]]:
     WHERE status = 'pending' 
     ORDER BY created_at DESC
     """
-    return db.db.execute_query(query)
+    print(f"Executing query: {query}")
+    rows = db.db.execute_query(query)
+    print(f"Found {len(rows)} pending schedules in database")
+    # Convert datetime fields to ISO strings for JSON serialization
+    for r in rows:
+        if 'created_at' in r and r['created_at']:
+            try:
+                r['created_at'] = r['created_at'].isoformat()
+            except Exception:
+                pass
+        if 'approved_at' in r and r.get('approved_at'):
+            try:
+                r['approved_at'] = r['approved_at'].isoformat()
+            except Exception:
+                pass
+    return rows
 
 def get_approved_schedules() -> List[Dict[str, Any]]:
     """Get all approved schedules"""
@@ -602,7 +617,19 @@ def get_approved_schedules() -> List[Dict[str, Any]]:
     WHERE status = 'approved' 
     ORDER BY approved_at DESC
     """
-    return db.db.execute_query(query)
+    rows = db.db.execute_query(query)
+    for r in rows:
+        if 'created_at' in r and r['created_at']:
+            try:
+                r['created_at'] = r['created_at'].isoformat()
+            except Exception:
+                pass
+        if 'approved_at' in r and r.get('approved_at'):
+            try:
+                r['approved_at'] = r['approved_at'].isoformat()
+            except Exception:
+                pass
+    return rows
 
 def approve_schedule(schedule_id: str, approved_by: str, comments: str = None) -> bool:
     """Approve a schedule"""
@@ -671,6 +698,28 @@ def get_schedule_approval_status(schedule_id: str) -> Dict[str, Any]:
     query = "SELECT * FROM schedule_approvals WHERE schedule_id = %s"
     results = db.db.execute_query(query, (schedule_id,))
     return results[0] if results else None
+
+def delete_schedule_approval(schedule_id: str) -> None:
+    """Delete a schedule approval record"""
+    try:
+        # First check if the record exists
+        check_query = "SELECT * FROM schedule_approvals WHERE schedule_id = %s"
+        existing = db.db.execute_query(check_query, (schedule_id,))
+        print(f"Before deletion: Found {len(existing)} records for schedule_id: {schedule_id}")
+        
+        # Use execute_single for DELETE operations to ensure transaction is committed
+        query = "DELETE FROM schedule_approvals WHERE schedule_id = %s"
+        db.db.execute_single(query, (schedule_id,))
+        print(f"Executed DELETE query for schedule_id: {schedule_id}")
+        
+        # Verify deletion
+        remaining = db.db.execute_query(check_query, (schedule_id,))
+        print(f"After deletion: Found {len(remaining)} records for schedule_id: {schedule_id}")
+        
+        return True
+    except Exception as e:
+        print(f"Error deleting schedule approval record for {schedule_id}: {e}")
+        return False
 
 # Notification functions
 def create_notification(user_id: int, title: str, message: str, notification_type: str = 'info') -> bool:

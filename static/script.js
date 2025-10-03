@@ -1,4 +1,5 @@
 const downloadBtn = document.getElementById('downloadBtn');
+const submitBtn = document.getElementById('submitBtn');
 downloadBtn.disabled = true;
 
 const scheduleSection = document.getElementById('schedule-section');
@@ -19,8 +20,7 @@ const roomDropdown = document.getElementById('roomDropdown');
 const viewMode = document.getElementById('viewMode');
 const saveBtn = document.getElementById('saveBtn');
 const saveNameInput = document.getElementById('saveNameInput');
-const savedSchedulesSelect = document.getElementById('savedSchedulesSelect');
-const loadBtn = document.getElementById('loadBtn');
+// Saved schedule controls removed - now handled in separate page
 
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
@@ -68,12 +68,16 @@ function showSection(sectionId) {
   scheduleNavLink.classList.remove('active');
   dataNavLink.classList.remove('active');
 
+  const resultsCard = document.getElementById('results-card');
+
   if (sectionId === 'schedule-section') {
     scheduleSection.style.display = 'block';
     scheduleNavLink.classList.add('active');
+    if (resultsCard) resultsCard.style.display = 'block';
   } else if (sectionId === 'data-management-section') {
     dataManagementSection.style.display = 'block';
     dataNavLink.classList.add('active');
+    if (resultsCard) resultsCard.style.display = 'none';
     loadDataManagementTables(); // Load data when showing this section
   }
 }
@@ -323,7 +327,7 @@ document.getElementById('generateBtn').onclick = async function() {
 
     populateFilters(lastGeneratedSchedule);
     renderScheduleAndTimetable(lastGeneratedSchedule);
-    refreshSavedSchedulesList();
+      // Saved schedule list refresh moved to separate page
   } catch (e) {
     console.error('Error generating schedule', e);
     document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error generating schedule. See console.</div>';
@@ -345,97 +349,52 @@ downloadBtn.onclick = function() {
 
 // Save current generated schedule
 if (saveBtn) {
+  // Repurpose Save button to submit for approval
   saveBtn.addEventListener('click', async () => {
-    if (!Array.isArray(lastGeneratedSchedule) || lastGeneratedSchedule.length === 0) {
-      alert('No schedule to save. Generate a schedule first.');
-      return;
-    }
-    const name = (saveNameInput && saveNameInput.value.trim()) || '';
-    try {
-      const resp = await fetch('/save_schedule', {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          name,
-          semester: semesterSelect ? semesterSelect.value : undefined,
-          schedule: lastGeneratedSchedule
-        })
-      });
-      const res = await resp.json();
-      if (!resp.ok) {
-        throw new Error(res.detail || 'Failed to save schedule');
-      }
-      lastSavedId = res.id || '';
-      refreshSavedSchedulesList(lastSavedId);
-      alert('Schedule saved.');
-    } catch (e) {
-      console.error(e);
-      alert('Error saving schedule.');
-    }
+    await submitForApproval();
   });
 }
 
 // (modal removed) no delegated handlers needed
 
-// Load selected saved schedule
-if (loadBtn) {
-  loadBtn.addEventListener('click', async () => {
-    const id = savedSchedulesSelect ? savedSchedulesSelect.value : '';
-    if (!id) {
-      alert('Select a saved schedule first.');
+// Saved schedule load/delete functionality moved to separate page
+
+// Submit generated schedule for approval (Chair)
+async function submitForApproval() {
+    if (!Array.isArray(lastGeneratedSchedule) || lastGeneratedSchedule.length === 0) {
+      alert('No schedule to submit. Generate a schedule first.');
       return;
     }
+    const name = (saveNameInput && saveNameInput.value.trim()) || 'Generated Schedule';
     try {
-      // Load rooms data first to populate room mapping
-      await loadRoomsTable();
-      
-      const resp = await fetch(`/load_schedule?id=${encodeURIComponent(id)}`, {
-        headers: getAuthHeaders()
+      const body = {
+        name,
+        semester: semesterSelect ? semesterSelect.value : undefined,
+      schedule: lastGeneratedSchedule,
+        numSectionsYear1: parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10),
+        numSectionsYear2: parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10),
+        numSectionsYear3: parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10),
+        numSectionsYear4: parseInt(elValue(document.getElementById('numSectionsYear4')) || 0, 10)
+      };
+      const resp = await fetch('/schedules/generate', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(body)
       });
       const data = await resp.json();
       if (!resp.ok) {
-        throw new Error(data.detail || 'Failed to load schedule');
+        throw new Error(data.detail || 'Failed to submit schedule');
       }
-      const sched = Array.isArray(data.schedule) ? data.schedule : [];
-      lastGeneratedSchedule = sched;
-      lastSavedId = data.id || id;
-      if (semesterSelect && data.semester) semesterSelect.value = String(data.semester);
-      renderScheduleAndTimetable(lastGeneratedSchedule);
-      populateFilters(lastGeneratedSchedule);
-      applyViewMode();
-      alert('Schedule loaded.');
+      lastSavedId = data.id || '';
+      alert('Schedule submitted for approval.');
+      // Saved schedule list refresh moved to separate page
     } catch (e) {
       console.error(e);
-      alert('Error loading saved schedule.');
+      alert('Error submitting schedule.');
     }
-  });
 }
 
-async function refreshSavedSchedulesList(selectId) {
-  try {
-          const resp = await fetch('/saved_schedules', {
-        headers: getAuthHeaders()
-      });
-    const items = await resp.json();
-    if (!savedSchedulesSelect) return;
-    savedSchedulesSelect.innerHTML = '<option value="">Select saved schedule…</option>';
-    items.forEach(item => {
-      const opt = document.createElement('option');
-      opt.value = item.id;
-      const labelName = item.name ? `${item.name}` : `${item.id}`;
-      const extra = item.semester ? `S${item.semester}` : '';
-      const count = typeof item.count === 'number' ? ` (${item.count})` : '';
-      opt.textContent = `${labelName} ${extra} ${count}`.trim();
-      savedSchedulesSelect.appendChild(opt);
-    });
-    if (selectId) savedSchedulesSelect.value = selectId;
-  } catch (e) {
-    console.warn('Could not load saved schedules:', e);
-  }
-}
-
-// Load saved list on page open
-refreshSavedSchedulesList();
+// Saved schedule list functionality moved to separate page
 
 
 function populateFilters(data) {

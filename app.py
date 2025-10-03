@@ -3,7 +3,26 @@ from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResp
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
-from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db, get_pending_users, approve_user, reject_user, check_email_exists, get_all_users, delete_user
+from database import (
+    db,
+    load_subjects_from_db,
+    load_teachers_from_db,
+    load_rooms_from_db,
+    load_sections_from_db,
+    get_pending_users,
+    approve_user,
+    reject_user,
+    check_email_exists,
+    get_all_users,
+    delete_user,
+    create_schedule_approval,
+    get_pending_schedules,
+    get_approved_schedules,
+    approve_schedule,
+    reject_schedule,
+    get_schedule_approval_status,
+    delete_schedule_approval,
+)
 import os
 import io
 import json
@@ -116,15 +135,15 @@ async def login(payload: dict):
         if not username or not password:
             raise HTTPException(status_code=400, detail="Username and password are required")
         
-        print(f"🔐 Login attempt for user: {username}")
+        print(f"Login attempt for user: {username}")
         
         # Verify credentials
         user = db.verify_user_credentials(username, password)
         if not user:
-            print(f"❌ Login failed for user {username}: Invalid credentials")
+            print(f"Login failed for user {username}: Invalid credentials")
             raise HTTPException(status_code=401, detail="Invalid username or password")
         
-        print(f"✅ Login successful for user {username}")
+        print(f"Login successful for user {username}")
         
         # Create access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -145,7 +164,7 @@ async def login(payload: dict):
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"❌ Unexpected error during login: {e}")
+        print(f"Unexpected error during login: {e}")
         print(f"   Error type: {type(e).__name__}")
         import traceback
         traceback.print_exc()
@@ -315,6 +334,14 @@ async def secretary_dashboard():
     
     return FileResponse(secretary_path, media_type='text/html')
 
+@app.get('/saved-schedules')
+async def saved_schedules_page():
+    """Saved schedules management page for chair users"""
+    saved_schedules_path = os.path.join('static', 'saved-schedules.html')
+    if not os.path.exists(saved_schedules_path):
+        raise HTTPException(status_code=404, detail='Saved schedules page not found')
+    return FileResponse(saved_schedules_path, media_type='text/html')
+
 
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(require_chair_role)):
@@ -370,6 +397,29 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         return JSONResponse(content=[])
 
     result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year)
+
+    # If request explicitly asks to persist as pending schedule (Chair flow)
+    if payload.get('persist', False):
+        try:
+            name = (payload.get('name') or 'Generated Schedule')
+            semester_int = int(semester_filter) if semester_filter else None
+            # Create synthetic id based on timestamp like saved schedules
+            uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+            created = create_schedule_approval(uid, name, semester_int or 0, username)
+            if not created:
+                print('Warning: failed to create schedule approval record')
+            return JSONResponse(content={
+                'id': uid,
+                'name': name,
+                'status': 'pending',
+                'semester': semester_int,
+                'schedule': result,
+            })
+        except Exception as e:
+            # Fall back to returning just the result
+            print(f"Warning: persist schedule failed: {e}")
+            return JSONResponse(content=result)
+
     return JSONResponse(content=result)
 
 def _ensure_saved_dir():
@@ -396,6 +446,8 @@ def _list_saved_summaries():
                 'semester': data.get('semester'),
                 'created_at': data.get('created_at'),
                 'count': len(data.get('schedule') or []),
+                # include approval status if exists
+                'status': (lambda sid: (get_schedule_approval_status(sid) or {}).get('status'))(data.get('id') or ''),
             })
         except Exception:
             # Skip unreadable files
@@ -403,10 +455,171 @@ def _list_saved_summaries():
     # Sort newest first
     items.sort(key=lambda x: x.get('created_at') or '', reverse=True)
     return items
+@app.post('/schedules/generate')
+async def generate_and_submit_schedule(payload: dict, username: str = Depends(require_chair_role)):
+    """Chair generates and submits schedule for approval (status=pending)."""
+    # Prefer client-provided schedule when available; fall back to server generation
+    client_schedule = payload.get('schedule')
+    subjects = load_subjects_from_db()
+    teachers = load_teachers_from_db()
+    rooms = load_rooms_from_db()
+    semester_filter = payload.get('semester')
+
+    desired_sections_per_year = {
+        1: payload.get('numSectionsYear1', 0),
+        2: payload.get('numSectionsYear2', 0),
+        3: payload.get('numSectionsYear3', 0),
+        4: payload.get('numSectionsYear4', 0),
+    }
+
+    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)
+    name = (payload.get('name') or 'Generated Schedule')
+    semester_int = int(semester_filter) if semester_filter else None
+    uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    # Persist generated schedule to saved_schedules so Dean can view by ID
+    try:
+        saved_dir = _ensure_saved_dir()
+        safe_name = _safe_filename_part(name)
+        filename = f"{uid}_{safe_name}.json"
+        path = os.path.join(saved_dir, filename)
+        created_at = datetime.utcnow().isoformat()
+        data = {
+            'id': uid,
+            'name': name,
+            'semester': semester_int,
+            'created_at': created_at,
+            'schedule': result,
+        }
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        # Non-fatal: still proceed with approval record
+        print(f"Warning: Could not persist schedule file for {uid}: {e}")
+
+    # Create approval record
+    create_schedule_approval(uid, name, semester_int or 0, username)
+    return JSONResponse(content={'id': uid, 'name': name, 'status': 'pending', 'semester': semester_int, 'schedule': result})
+
+@app.get('/schedules/pending')
+async def list_pending_schedules(username: str = Depends(require_role(['dean']))):
+    """Dean views all pending schedules (grouping is done client-side)."""
+    items = get_pending_schedules()
+    return JSONResponse(content=items)
+
+@app.get('/api/pending_schedules')
+async def list_pending_schedules_alias(username: str = Depends(require_role(['dean']))):
+    items = get_pending_schedules()
+    return JSONResponse(content=items)
+
+@app.post('/schedules/{schedule_id}/approve')
+async def approve_schedule_endpoint(schedule_id: str, payload: dict = None, username: str = Depends(require_role(['dean']))):
+    comments = (payload or {}).get('comments') if isinstance(payload, dict) else None
+    ok = approve_schedule(schedule_id, username, comments)
+    if not ok:
+        raise HTTPException(status_code=500, detail='Failed to approve schedule')
+    return JSONResponse(content={'message': 'Schedule approved', 'id': schedule_id})
+
+@app.post('/schedules/{schedule_id}/deny')
+async def deny_schedule_endpoint(schedule_id: str, payload: dict = None, username: str = Depends(require_role(['dean']))):
+    comments = (payload or {}).get('comments') if isinstance(payload, dict) else None
+    ok = reject_schedule(schedule_id, username, comments)
+    if not ok:
+        raise HTTPException(status_code=500, detail='Failed to deny schedule')
+    return JSONResponse(content={'message': 'Schedule denied', 'id': schedule_id})
+
+# Aliases for dean.html
+@app.post('/api/approve_schedule/{schedule_id}')
+async def approve_schedule_endpoint_alias(schedule_id: str, payload: dict, username: str = Depends(require_role(['dean']))):
+    return await approve_schedule_endpoint(schedule_id, payload, username)  # type: ignore
+
+@app.post('/api/reject_schedule/{schedule_id}')
+async def reject_schedule_endpoint_alias(schedule_id: str, payload: dict, username: str = Depends(require_role(['dean']))):
+    return await deny_schedule_endpoint(schedule_id, payload, username)  # type: ignore
+
+@app.get('/api/approved_schedules')
+async def list_approved_schedules_alias(username: str = Depends(require_role(['dean']))):
+    items = get_approved_schedules()
+    return JSONResponse(content=items)
 
 @app.get('/saved_schedules')
 async def saved_schedules(username: str = Depends(require_chair_role)):
     return JSONResponse(content=_list_saved_summaries())
+
+@app.delete('/saved_schedules/{schedule_id}')
+async def delete_saved_schedule(schedule_id: str, username: str = Depends(require_chair_role)):
+    """Delete a saved schedule JSON by id prefix and remove approval record if exists.
+    This ensures the schedule is no longer visible to the dean."""
+    saved_dir = _ensure_saved_dir()
+    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
+    if not candidates:
+        raise HTTPException(status_code=404, detail='Saved schedule not found')
+    fpath = os.path.join(saved_dir, candidates[0])
+    try:
+        os.remove(fpath)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Failed to delete schedule file: {e}')
+
+    # Delete the schedule approval record so it's no longer visible to dean
+    print(f"Attempting to delete schedule approval record for {schedule_id}")
+    approval_deleted = delete_schedule_approval(schedule_id)
+    if approval_deleted:
+        print(f"Successfully deleted schedule approval record for {schedule_id}")
+    else:
+        print(f"Warning: Could not delete schedule approval record for {schedule_id}")
+        # Don't fail the entire operation if approval record deletion fails
+    
+    # Verify deletion by checking if record still exists
+    remaining_status = get_schedule_approval_status(schedule_id)
+    if remaining_status:
+        print(f"ERROR: Schedule approval record still exists after deletion attempt: {remaining_status}")
+        print(f"This means the deletion failed! Schedule {schedule_id} will still be visible to dean.")
+    else:
+        print(f"Confirmed: Schedule approval record successfully deleted for {schedule_id}")
+        print(f"Schedule {schedule_id} should no longer be visible to dean.")
+
+    return JSONResponse(content={'message': 'Saved schedule deleted', 'id': schedule_id})
+
+@app.delete('/api/schedule/{schedule_id}')
+async def delete_schedule_endpoint(schedule_id: str, username: str = Depends(require_role(['dean', 'chair']))):
+    """Delete a schedule (both file and approval record) - accessible by dean and chair"""
+    # Check if schedule exists
+    approval_status = get_schedule_approval_status(schedule_id)
+    if not approval_status:
+        raise HTTPException(status_code=404, detail='Schedule not found')
+    
+    # Check if user has permission to delete this schedule
+    user_role = db.get_user_by_username(username).get('role')
+    schedule_status = approval_status.get('status')
+    
+    # Chair can delete any schedule they created or any pending schedule
+    # Dean can delete any approved schedule
+    if user_role == 'chair':
+        if approval_status.get('created_by') != username and schedule_status != 'pending':
+            raise HTTPException(status_code=403, detail='You can only delete schedules you created or pending schedules')
+    elif user_role == 'dean':
+        if schedule_status != 'approved':
+            raise HTTPException(status_code=403, detail='Dean can only delete approved schedules')
+    
+    # Delete the schedule file
+    saved_dir = _ensure_saved_dir()
+    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
+    if candidates:
+        fpath = os.path.join(saved_dir, candidates[0])
+        try:
+            os.remove(fpath)
+            print(f"Deleted schedule file: {fpath}")
+        except Exception as e:
+            print(f"Warning: Could not delete schedule file: {e}")
+    
+    # Delete the schedule approval record
+    print(f"Attempting to delete schedule approval record for {schedule_id}")
+    approval_deleted = delete_schedule_approval(schedule_id)
+    if approval_deleted:
+        print(f"Successfully deleted schedule approval record for {schedule_id}")
+    else:
+        print(f"Warning: Could not delete schedule approval record for {schedule_id}")
+    
+    return JSONResponse(content={'message': 'Schedule deleted successfully', 'id': schedule_id})
 
 @app.post('/save_schedule')
 async def save_schedule(payload: dict, username: str = Depends(require_chair_role)):
@@ -435,9 +648,9 @@ async def save_schedule(payload: dict, username: str = Depends(require_chair_rol
     try:
         from database import create_schedule_approval
         create_schedule_approval(uid, name, semester, username)
-        print(f"✅ Schedule approval request created for {uid}")
+        print(f"Schedule approval request created for {uid}")
     except Exception as e:
-        print(f"⚠️ Could not create approval request: {e}")
+        print(f"Warning: Could not create approval request: {e}")
     
     return JSONResponse(content={'id': uid, 'name': name, 'semester': semester, 'created_at': created_at})
 
@@ -448,6 +661,25 @@ async def load_schedule(id: str, username: str = Depends(require_chair_role)):
     candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(id) and fn.endswith('.json')]
     if not candidates:
         raise HTTPException(status_code=404, detail='Saved schedule not found')
+    fpath = os.path.join(saved_dir, candidates[0])
+    with open(fpath, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    return JSONResponse(content=data)
+
+# Dean view: fetch schedule details by id
+@app.get('/api/schedule/{schedule_id}')
+async def get_schedule_for_dean(schedule_id: str, username: str = Depends(require_role(['dean']))):
+    """Allow Dean to view a saved schedule by id. Only if the schedule approval record still exists."""
+    # First check if the schedule approval record still exists
+    approval_status = get_schedule_approval_status(schedule_id)
+    if not approval_status:
+        raise HTTPException(status_code=404, detail='Schedule not found or has been deleted')
+    
+    # Then try to load the schedule file
+    saved_dir = _ensure_saved_dir()
+    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
+    if not candidates:
+        raise HTTPException(status_code=404, detail='Schedule file not found')
     fpath = os.path.join(saved_dir, candidates[0])
     with open(fpath, 'r', encoding='utf-8') as f:
         data = json.load(f)
@@ -752,8 +984,12 @@ async def get_pending_schedules_endpoint(username: str = Depends(require_dean_ro
     try:
         from database import get_pending_schedules
         schedules = get_pending_schedules()
+        print(f"Dean requesting pending schedules. Found {len(schedules)} schedules:")
+        for schedule in schedules:
+            print(f"  - Schedule ID: {schedule.get('schedule_id')}, Status: {schedule.get('status')}")
         return JSONResponse(content=schedules)
     except Exception as e:
+        print(f"Error getting pending schedules: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/api/approved_schedules')
@@ -802,6 +1038,21 @@ async def get_schedule_approval_status_endpoint(schedule_id: str, username: str 
         status = get_schedule_approval_status(schedule_id)
         return JSONResponse(content=status)
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/debug/all_schedules')
+async def debug_all_schedules(username: str = Depends(require_dean_role)):
+    """Debug endpoint to see all schedules in database"""
+    try:
+        from database import db
+        query = "SELECT * FROM schedule_approvals ORDER BY created_at DESC"
+        all_schedules = db.db.execute_query(query)
+        print(f"DEBUG: All schedules in database: {len(all_schedules)}")
+        for schedule in all_schedules:
+            print(f"  - ID: {schedule.get('schedule_id')}, Status: {schedule.get('status')}, Name: {schedule.get('schedule_name')}")
+        return JSONResponse(content=all_schedules)
+    except Exception as e:
+        print(f"DEBUG ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Notification endpoints

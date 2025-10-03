@@ -11,6 +11,19 @@
   font-weight: 600;
 }
 
+/* Brand button utility */
+.btn-brand {
+  background-color: #b83a3f !important;
+  border-color: #b83a3f !important;
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(184, 58, 63, 0.18), inset 0 -1px 0 rgba(255,255,255,0.06);
+}
+.btn-brand:hover, .btn-brand:focus {
+  background-color: #a13337 !important;
+  border-color: #a13337 !important;
+  color: #fff !important;
+}
+
 .btn-outline-light {
   color: #fff !important;
   background-color: rgba(255,255,255,0.06) !important;
@@ -216,6 +229,13 @@ body {
   background-color: #b83a3f;
   border-color: #b83a3f;
   color: white;
+}
+
+/* Responsive stacking for control cluster on small screens */
+@media (max-width: 575.98px) {
+  .controls-stack > * {
+    width: 100% !important;
+  }
 }
 
 /* Consistent modal styling */

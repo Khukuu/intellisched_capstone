@@ -40,10 +40,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#" id="scheduleNavLink">Schedule</a>
+            <a class="nav-link active" aria-current="page" href="#" id="scheduleNavLink">Generate</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" id="dataNavLink">Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/saved-schedules">Schedules</a>
           </li>
         </ul>
         <div class="d-flex align-items-center">
@@ -103,18 +106,20 @@
           </div>
           <div class="row g-2 mb-3 align-items-center">
             <div class="col-12 mb-3">
-              <div class="d-flex align-items-center gap-2">
-                <input type="text" id="saveNameInput" class="form-control" style="max-width: 200px;" placeholder="Schedule name (optional)" />
-                <button id="saveBtn" class="btn btn-light border-0 shadow-sm">Save</button>
-                <select id="savedSchedulesSelect" class="form-select" style="min-width: 200px;">
-                  <option value="">Select saved schedule…</option>
-                </select>
-                <button id="loadBtn" class="btn btn-light border-0 shadow-sm">Load</button>
+              <div class="d-flex align-items-center gap-2 flex-wrap controls-stack">
+                <input type="text" id="saveNameInput" class="form-control flex-grow-1" placeholder="Schedule name (optional)" />
+                <button id="saveBtn" class="btn btn-brand border-0 shadow-sm rounded-pill flex-shrink-0 w-100 w-md-auto"><i class="bi bi-send-check me-1"></i> Submit for Approval</button>
               </div>
             </div>
-            <div class="col-auto">
-              <button id="generateBtn" class="btn btn-primary" type="button"><i class="bi bi-play-fill me-1"></i> Generate</button>
-              <button id="downloadBtn" class="btn btn-light border-0 shadow-sm ms-2"><i class="bi bi-download me-1"></i> CSV</button>
+            <div class="col-12">
+              <div class="d-flex flex-wrap align-items-center gap-2">
+                <button id="generateBtn" class="btn btn-primary rounded-pill flex-shrink-0 w-100 w-md-auto" type="button">
+                  <i class="bi bi-play-fill me-1"></i> Generate
+                </button>
+                <button id="downloadBtn" class="btn btn-light border-0 shadow-sm rounded-pill flex-shrink-0 w-100 w-md-auto">
+                  <i class="bi bi-download me-1"></i> CSV
+                </button>
+              </div>
             </div>
           </div>
         </div>
