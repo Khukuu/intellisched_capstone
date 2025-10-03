@@ -135,15 +135,15 @@ async def login(payload: dict):
         if not username or not password:
             raise HTTPException(status_code=400, detail="Username and password are required")
         
-        print(f"🔐 Login attempt for user: {username}")
+        print(f"Login attempt for user: {username}")
         
         # Verify credentials
         user = db.verify_user_credentials(username, password)
         if not user:
-            print(f"❌ Login failed for user {username}: Invalid credentials")
+            print(f"Login failed for user {username}: Invalid credentials")
             raise HTTPException(status_code=401, detail="Invalid username or password")
         
-        print(f"✅ Login successful for user {username}")
+        print(f"Login successful for user {username}")
         
         # Create access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -164,7 +164,7 @@ async def login(payload: dict):
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"❌ Unexpected error during login: {e}")
+        print(f"Unexpected error during login: {e}")
         print(f"   Error type: {type(e).__name__}")
         import traceback
         traceback.print_exc()
@@ -486,7 +486,7 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         # Non-fatal: still proceed with approval record
-        print(f"⚠️ Could not persist schedule file for {uid}: {e}")
+        print(f"Warning: Could not persist schedule file for {uid}: {e}")
 
     # Create approval record
     create_schedule_approval(uid, name, semester_int or 0, username)
@@ -584,9 +584,9 @@ async def save_schedule(payload: dict, username: str = Depends(require_chair_rol
     try:
         from database import create_schedule_approval
         create_schedule_approval(uid, name, semester, username)
-        print(f"✅ Schedule approval request created for {uid}")
+        print(f"Schedule approval request created for {uid}")
     except Exception as e:
-        print(f"⚠️ Could not create approval request: {e}")
+        print(f"Warning: Could not create approval request: {e}")
     
     return JSONResponse(content={'id': uid, 'name': name, 'semester': semester, 'created_at': created_at})
 
