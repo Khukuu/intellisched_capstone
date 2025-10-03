@@ -20,9 +20,7 @@ const roomDropdown = document.getElementById('roomDropdown');
 const viewMode = document.getElementById('viewMode');
 const saveBtn = document.getElementById('saveBtn');
 const saveNameInput = document.getElementById('saveNameInput');
-const savedSchedulesSelect = document.getElementById('savedSchedulesSelect');
-const loadBtn = document.getElementById('loadBtn');
-const deleteBtn = document.getElementById('deleteBtn');
+// Saved schedule controls removed - now handled in separate page
 
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
@@ -329,7 +327,7 @@ document.getElementById('generateBtn').onclick = async function() {
 
     populateFilters(lastGeneratedSchedule);
     renderScheduleAndTimetable(lastGeneratedSchedule);
-    refreshSavedSchedulesList();
+      // Saved schedule list refresh moved to separate page
   } catch (e) {
     console.error('Error generating schedule', e);
     document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error generating schedule. See console.</div>';
@@ -359,73 +357,7 @@ if (saveBtn) {
 
 // (modal removed) no delegated handlers needed
 
-// Load selected saved schedule
-if (loadBtn) {
-  loadBtn.addEventListener('click', async () => {
-    const id = savedSchedulesSelect ? savedSchedulesSelect.value : '';
-    if (!id) {
-      alert('Select a saved schedule first.');
-      return;
-    }
-    try {
-      // Load rooms data first to populate room mapping
-      await loadRoomsTable();
-      
-      const resp = await fetch(`/load_schedule?id=${encodeURIComponent(id)}`, {
-        headers: getAuthHeaders()
-      });
-      const data = await resp.json();
-      if (!resp.ok) {
-        throw new Error(data.detail || 'Failed to load schedule');
-      }
-      const sched = Array.isArray(data.schedule) ? data.schedule : [];
-      lastGeneratedSchedule = sched;
-      lastSavedId = data.id || id;
-      if (semesterSelect && data.semester) semesterSelect.value = String(data.semester);
-      renderScheduleAndTimetable(lastGeneratedSchedule);
-      populateFilters(lastGeneratedSchedule);
-      applyViewMode();
-      alert('Schedule loaded.');
-    } catch (e) {
-      console.error(e);
-      alert('Error loading saved schedule.');
-    }
-  });
-}
-
-// Delete selected saved schedule
-if (deleteBtn) {
-  deleteBtn.addEventListener('click', async () => {
-    const id = savedSchedulesSelect ? savedSchedulesSelect.value : '';
-    if (!id) {
-      alert('Select a saved schedule to delete.');
-      return;
-    }
-    if (!confirm('Delete this saved schedule? This action cannot be undone.')) return;
-    try {
-      const resp = await fetch(`/saved_schedules/${encodeURIComponent(id)}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-      const data = await resp.json().catch(() => ({}));
-      if (!resp.ok) throw new Error(data.detail || 'Failed to delete');
-      alert('Saved schedule deleted.');
-      if (lastSavedId === id) lastSavedId = '';
-      refreshSavedSchedulesList();
-      // Clear rendered views if nothing loaded/generated
-      if (!lastSavedId && (!lastGeneratedSchedule || lastGeneratedSchedule.length === 0)) {
-        const resultDiv = document.getElementById('result');
-        const timetableDiv = document.getElementById('timetable');
-        if (resultDiv) resultDiv.innerHTML = '<div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 200px;">No schedule generated yet. Click <strong>Generate</strong> to create one.</div>';
-        if (timetableDiv) timetableDiv.innerHTML = '<div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 200px;">Timetable will appear here after generation.</div>';
-        if (downloadBtn) downloadBtn.disabled = true;
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Error deleting saved schedule.');
-    }
-  });
-}
+// Saved schedule load/delete functionality moved to separate page
 
 // Submit generated schedule for approval (Chair)
 async function submitForApproval() {
@@ -455,39 +387,14 @@ async function submitForApproval() {
       }
       lastSavedId = data.id || '';
       alert('Schedule submitted for approval.');
-      refreshSavedSchedulesList(lastSavedId);
+      // Saved schedule list refresh moved to separate page
     } catch (e) {
       console.error(e);
       alert('Error submitting schedule.');
     }
 }
 
-async function refreshSavedSchedulesList(selectId) {
-  try {
-          const resp = await fetch('/saved_schedules', {
-        headers: getAuthHeaders()
-      });
-    const items = await resp.json();
-    if (!savedSchedulesSelect) return;
-    savedSchedulesSelect.innerHTML = '<option value="">Select saved schedule…</option>';
-    items.forEach(item => {
-      const opt = document.createElement('option');
-      opt.value = item.id;
-      const labelName = item.name ? `${item.name}` : `${item.id}`;
-      const extra = item.semester ? `S${item.semester}` : '';
-      const status = item.status ? ` [${String(item.status).toUpperCase()}]` : '';
-      const count = typeof item.count === 'number' ? ` (${item.count})` : '';
-      opt.textContent = `${labelName} ${extra} ${count}${status}`.trim();
-      savedSchedulesSelect.appendChild(opt);
-    });
-    if (selectId) savedSchedulesSelect.value = selectId;
-  } catch (e) {
-    console.warn('Could not load saved schedules:', e);
-  }
-}
-
-// Load saved list on page open
-refreshSavedSchedulesList();
+// Saved schedule list functionality moved to separate page
 
 
 function populateFilters(data) {

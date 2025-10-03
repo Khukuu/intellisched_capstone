@@ -40,10 +40,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#" id="scheduleNavLink">Schedule</a>
+            <a class="nav-link active" aria-current="page" href="#" id="scheduleNavLink">Generate</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" id="dataNavLink">Data</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/saved-schedules">Schedules</a>
           </li>
         </ul>
         <div class="d-flex align-items-center">
@@ -106,11 +109,6 @@
               <div class="d-flex align-items-center gap-2 flex-wrap controls-stack">
                 <input type="text" id="saveNameInput" class="form-control flex-grow-1" placeholder="Schedule name (optional)" />
                 <button id="saveBtn" class="btn btn-brand border-0 shadow-sm rounded-pill flex-shrink-0 w-100 w-md-auto"><i class="bi bi-send-check me-1"></i> Submit for Approval</button>
-                <select id="savedSchedulesSelect" class="form-select flex-grow-1 w-100 w-md-auto">
-                  <option value="">Select saved schedule…</option>
-                </select>
-                <button id="loadBtn" class="btn btn-light border-0 shadow-sm flex-shrink-0 w-100 w-md-auto">Load</button>
-                <button id="deleteBtn" class="btn btn-outline-danger border-0 shadow-sm flex-shrink-0 w-100 w-md-auto"><i class="bi bi-trash me-1"></i> Delete</button>
               </div>
             </div>
             <div class="col-12">
