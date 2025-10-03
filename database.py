@@ -697,6 +697,11 @@ def get_schedule_approval_status(schedule_id: str) -> Dict[str, Any]:
     results = db.db.execute_query(query, (schedule_id,))
     return results[0] if results else None
 
+def delete_schedule_approval(schedule_id: str) -> None:
+    """Delete a schedule approval record"""
+    query = "DELETE FROM schedule_approvals WHERE schedule_id = %s"
+    db.db.execute_query(query, (schedule_id,))
+
 # Notification functions
 def create_notification(user_id: int, title: str, message: str, notification_type: str = 'info') -> bool:
     """Create a new notification for a user"""

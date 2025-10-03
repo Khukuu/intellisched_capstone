@@ -21,6 +21,7 @@ from database import (
     approve_schedule,
     reject_schedule,
     get_schedule_approval_status,
+    delete_schedule_approval,
 )
 import os
 import io
@@ -535,6 +536,26 @@ async def list_approved_schedules_alias(username: str = Depends(require_role(['d
 @app.get('/saved_schedules')
 async def saved_schedules(username: str = Depends(require_chair_role)):
     return JSONResponse(content=_list_saved_summaries())
+
+@app.delete('/saved_schedules/{schedule_id}')
+async def delete_saved_schedule(schedule_id: str, username: str = Depends(require_chair_role)):
+    """Delete a saved schedule JSON by id prefix and remove approval record if exists."""
+    saved_dir = _ensure_saved_dir()
+    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
+    if not candidates:
+        raise HTTPException(status_code=404, detail='Saved schedule not found')
+    fpath = os.path.join(saved_dir, candidates[0])
+    try:
+        os.remove(fpath)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Failed to delete schedule file: {e}')
+
+    try:
+        delete_schedule_approval(schedule_id)
+    except Exception:
+        pass
+
+    return JSONResponse(content={'message': 'Saved schedule deleted', 'id': schedule_id})
 
 @app.post('/save_schedule')
 async def save_schedule(payload: dict, username: str = Depends(require_chair_role)):

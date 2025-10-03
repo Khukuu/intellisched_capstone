@@ -22,7 +22,7 @@ const saveBtn = document.getElementById('saveBtn');
 const saveNameInput = document.getElementById('saveNameInput');
 const savedSchedulesSelect = document.getElementById('savedSchedulesSelect');
 const loadBtn = document.getElementById('loadBtn');
-const deleteBtn = null;
+const deleteBtn = document.getElementById('deleteBtn');
 
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
@@ -394,7 +394,38 @@ if (loadBtn) {
 }
 
 // Delete selected saved schedule
-// delete removed by revert
+if (deleteBtn) {
+  deleteBtn.addEventListener('click', async () => {
+    const id = savedSchedulesSelect ? savedSchedulesSelect.value : '';
+    if (!id) {
+      alert('Select a saved schedule to delete.');
+      return;
+    }
+    if (!confirm('Delete this saved schedule? This action cannot be undone.')) return;
+    try {
+      const resp = await fetch(`/saved_schedules/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(data.detail || 'Failed to delete');
+      alert('Saved schedule deleted.');
+      if (lastSavedId === id) lastSavedId = '';
+      refreshSavedSchedulesList();
+      // Clear rendered views if nothing loaded/generated
+      if (!lastSavedId && (!lastGeneratedSchedule || lastGeneratedSchedule.length === 0)) {
+        const resultDiv = document.getElementById('result');
+        const timetableDiv = document.getElementById('timetable');
+        if (resultDiv) resultDiv.innerHTML = '<div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 200px;">No schedule generated yet. Click <strong>Generate</strong> to create one.</div>';
+        if (timetableDiv) timetableDiv.innerHTML = '<div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 200px;">Timetable will appear here after generation.</div>';
+        if (downloadBtn) downloadBtn.disabled = true;
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error deleting saved schedule.');
+    }
+  });
+}
 
 // Submit generated schedule for approval (Chair)
 async function submitForApproval() {
