@@ -1,0 +1,375 @@
+2025-10-04 16:11:19,890 - app - INFO - Login attempt for user: admin
+2025-10-04 16:11:20,014 - app - INFO - Login successful for user admin
+2025-10-04 16:11:32,235 - app - INFO - Login attempt for user: chair
+2025-10-04 16:11:32,485 - app - INFO - Login successful for user chair
+2025-10-04 16:11:41,927 - app - INFO - Received request for /schedule
+2025-10-04 16:11:42,224 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:11:42,225 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:11:42,226 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:11:42,238 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:12:59,816 - app - INFO - Received request for /schedule
+2025-10-04 16:13:00,027 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:13:00,027 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:13:00,028 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:13:00,029 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:20:51,235 - app - INFO - Received request for /schedule
+2025-10-04 16:20:51,557 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:20:51,557 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:20:51,558 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:20:51,558 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:21:11,397 - app - INFO - Login attempt for user: chair
+2025-10-04 16:21:11,520 - app - INFO - Login successful for user chair
+2025-10-04 16:21:27,056 - app - INFO - Room added successfully with ID: 19
+2025-10-04 16:21:54,336 - app - INFO - Teacher added successfully with ID: 18
+2025-10-04 16:24:52,113 - app - INFO - Login attempt for user: chair
+2025-10-04 16:24:52,253 - app - INFO - Login successful for user chair
+2025-10-04 16:26:56,564 - app - INFO - Room added successfully with ID: 20
+2025-10-04 16:29:05,632 - app - INFO - Room added successfully with ID: 21
+2025-10-04 16:32:01,519 - app - INFO - Login attempt for user: chair
+2025-10-04 16:32:01,588 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-04 16:32:04,493 - app - INFO - Login attempt for user: chair
+2025-10-04 16:32:04,733 - app - INFO - Login successful for user chair
+2025-10-04 16:36:50,988 - app - INFO - Teacher added successfully with ID: 19
+2025-10-04 16:37:11,739 - app - INFO - Room added successfully with ID: 22
+2025-10-04 16:44:04,047 - app - INFO - Login attempt for user: dean
+2025-10-04 16:44:04,187 - app - INFO - Login successful for user dean
+2025-10-04 16:44:04,677 - database - INFO - Found 0 pending schedules in database
+2025-10-04 16:44:13,098 - app - INFO - Login attempt for user: chair
+2025-10-04 16:44:13,229 - app - INFO - Login successful for user chair
+2025-10-04 16:44:16,378 - app - INFO - Received request for /schedule
+2025-10-04 16:44:16,724 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:44:16,725 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:44:16,725 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:44:16,726 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:44:23,480 - app - INFO - Received request for /schedule
+2025-10-04 16:44:23,935 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:44:23,935 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:44:23,936 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:44:23,936 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:44:41,632 - app - INFO - Room added successfully with ID: 23
+2025-10-04 16:44:48,619 - app - INFO - Room added successfully with ID: 24
+2025-10-04 16:44:57,033 - app - INFO - Room added successfully with ID: 25
+2025-10-04 16:45:03,823 - app - INFO - Received request for /schedule
+2025-10-04 16:45:04,017 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:45:04,017 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:45:04,018 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:45:04,018 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:45:16,788 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-04 16:45:21,504 - app - INFO - Login attempt for user: dean
+2025-10-04 16:45:21,633 - app - INFO - Login successful for user dean
+2025-10-04 16:45:22,159 - database - INFO - Found 1 pending schedules in database
+2025-10-04 16:45:31,923 - database - INFO - Found 1 pending schedules in database
+2025-10-04 16:45:35,247 - database - INFO - Found 0 pending schedules in database
+2025-10-04 16:45:39,879 - app - INFO - Login attempt for user: chair
+2025-10-04 16:45:39,947 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-04 16:45:42,138 - app - INFO - Login attempt for user: chair
+2025-10-04 16:45:42,282 - app - INFO - Login successful for user chair
+2025-10-04 16:46:05,914 - app - INFO - Deleted schedule file: .\saved_schedules\20251004084516_test.json
+2025-10-04 16:46:05,915 - app - INFO - Attempting to delete schedule approval record for 20251004084516
+2025-10-04 16:46:06,238 - app - INFO - Successfully deleted schedule approval record for 20251004084516
+2025-10-04 16:48:50,992 - database - INFO - Creating notification for user_id: 8, title: Test Notification, type: info
+2025-10-04 16:48:51,067 - database - INFO - Successfully created notification for user_id: 8
+2025-10-04 16:48:51,068 - app - INFO - Test notification created successfully for user chair
+2025-10-04 16:48:55,222 - database - INFO - Creating notification for user_id: 8, title: Test Notification, type: info
+2025-10-04 16:48:55,301 - database - INFO - Successfully created notification for user_id: 8
+2025-10-04 16:48:55,302 - app - INFO - Test notification created successfully for user chair
+2025-10-04 16:49:25,985 - app - INFO - Login attempt for user: dean
+2025-10-04 16:49:26,105 - app - INFO - Login successful for user dean
+2025-10-04 16:49:26,585 - database - INFO - Found 0 pending schedules in database
+2025-10-04 16:49:33,905 - app - INFO - Login attempt for user: chair
+2025-10-04 16:49:34,144 - app - INFO - Login successful for user chair
+2025-10-04 16:49:43,424 - database - INFO - Creating notification for user_id: 8, title: Test Notification, type: info
+2025-10-04 16:49:43,499 - database - INFO - Successfully created notification for user_id: 8
+2025-10-04 16:49:43,499 - app - INFO - Test notification created successfully for user chair
+2025-10-04 16:50:34,822 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:50:34,895 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:50:34,967 - app - INFO - Found 26 notifications for user_id: 8
+2025-10-04 16:50:34,968 - app - ERROR - Error getting notifications for username chair: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "C:\Users\chlar\documents\repositories\test\intellisched_capstone\app.py", line 1092, in get_notifications_endpoint
+    return JSONResponse(content=notifications)
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 190, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 47, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 193, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Python313\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Python313\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python313\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type datetime is not JSON serializable
+2025-10-04 16:51:05,207 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:51:05,274 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:51:05,338 - app - INFO - Found 26 notifications for user_id: 8
+2025-10-04 16:51:05,339 - app - ERROR - Error getting notifications for username chair: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "C:\Users\chlar\documents\repositories\test\intellisched_capstone\app.py", line 1092, in get_notifications_endpoint
+    return JSONResponse(content=notifications)
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 190, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 47, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 193, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Python313\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Python313\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python313\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type datetime is not JSON serializable
+2025-10-04 16:51:15,183 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:51:15,277 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:51:15,357 - app - INFO - Found 26 notifications for user_id: 8
+2025-10-04 16:51:15,358 - app - ERROR - Error getting notifications for username chair: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "C:\Users\chlar\documents\repositories\test\intellisched_capstone\app.py", line 1092, in get_notifications_endpoint
+    return JSONResponse(content=notifications)
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 190, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 47, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 193, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Python313\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Python313\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python313\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type datetime is not JSON serializable
+2025-10-04 16:51:16,663 - app - INFO - Debug: Checking user info for username: chair
+2025-10-04 16:51:16,729 - app - INFO - Debug: Found user_id: 8 for username: chair
+2025-10-04 16:51:25,641 - app - INFO - Creating test notification for username: chair
+2025-10-04 16:51:25,720 - app - INFO - Creating test notification for user_id: 8
+2025-10-04 16:51:25,721 - database - INFO - Creating notification for user_id: 8, title: Test Notification, type: info
+2025-10-04 16:51:25,908 - database - INFO - Successfully created notification for user_id: 8
+2025-10-04 16:51:25,909 - app - INFO - Test notification created successfully for user chair
+2025-10-04 16:51:27,620 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:51:27,809 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:51:27,887 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:51:27,891 - app - ERROR - Error getting notifications for username chair: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "C:\Users\chlar\documents\repositories\test\intellisched_capstone\app.py", line 1092, in get_notifications_endpoint
+    return JSONResponse(content=notifications)
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 190, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 47, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 193, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Python313\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Python313\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python313\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type datetime is not JSON serializable
+2025-10-04 16:51:45,804 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:51:45,869 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:51:45,938 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:51:45,938 - app - ERROR - Error getting notifications for username chair: Object of type datetime is not JSON serializable
+Traceback (most recent call last):
+  File "C:\Users\chlar\documents\repositories\test\intellisched_capstone\app.py", line 1092, in get_notifications_endpoint
+    return JSONResponse(content=notifications)
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 190, in __init__
+    super().__init__(content, status_code, headers, media_type, background)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 47, in __init__
+    self.body = self.render(content)
+                ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\chlar\Documents\Repositories\test\intellisched_capstone\.venv\Lib\site-packages\starlette\responses.py", line 193, in render
+    return json.dumps(
+           ~~~~~~~~~~^
+        content,
+        ^^^^^^^^
+    ...<3 lines>...
+        separators=(",", ":"),
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ).encode("utf-8")
+    ^
+  File "C:\Python313\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Python313\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python313\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type datetime is not JSON serializable
+2025-10-04 16:52:15,807 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:52:15,975 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:52:16,064 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:52:22,004 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:52:22,112 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:52:22,224 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:52:22,233 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:52:22,312 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:52:22,494 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:52:22,695 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:52:22,772 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:52:22,841 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:52:29,757 - database - INFO - Marking notification 28 as read
+2025-10-04 16:52:29,929 - database - INFO - Successfully marked notification 28 as read
+2025-10-04 16:52:29,937 - app - INFO - Getting unread notifications for username: chair
+2025-10-04 16:52:30,101 - app - INFO - Retrieving unread notifications for user_id: 8
+2025-10-04 16:52:30,276 - app - INFO - Found 26 unread notifications for user_id: 8
+2025-10-04 16:52:52,805 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:52:52,872 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:52:52,940 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:53:22,802 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:53:22,970 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:53:23,034 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:53:52,807 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:53:52,983 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:53:53,048 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:22,813 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:22,876 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:22,938 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:50,244 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:50,372 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:50,470 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:50,791 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:50,879 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:50,943 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:51,206 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:51,290 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:51,354 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:51,816 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:51,927 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:52,017 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:52,235 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:52,331 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:52,517 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:52,810 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:52,981 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:53,058 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:53,341 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:53,427 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:53,510 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:54:53,745 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:54:53,835 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:54:53,936 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:55:23,806 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:55:23,876 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:55:23,946 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:55:46,961 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:55:47,068 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:55:47,150 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:56:16,963 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:56:17,026 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:56:17,189 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:56:46,964 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:56:47,053 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:56:47,135 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:57:20,074 - app - INFO - Login attempt for user: chair
+2025-10-04 16:57:20,306 - app - INFO - Login successful for user chair
+2025-10-04 16:57:20,643 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:57:20,729 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:57:20,798 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:57:50,813 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:57:50,879 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:57:50,947 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:58:19,774 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:58:19,866 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:58:19,945 - app - INFO - Found 27 notifications for user_id: 8
+2025-10-04 16:58:21,336 - app - INFO - Received request for /schedule
+2025-10-04 16:58:21,534 - app - INFO - Filtering for semester: 1. Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:58:21,534 - app - INFO - Available years: {1, 2, 3}
+2025-10-04 16:58:21,535 - app - INFO - Desired sections per year: {1: 1, 2: 1, 3: 1, 4: 0}
+2025-10-04 16:58:21,535 - app - INFO - Filtered desired sections: {1: 1, 2: 1, 3: 1}
+2025-10-04 16:58:26,095 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-04 16:58:26,180 - database - INFO - Successfully created notification for user_id: 9
+2025-10-04 16:58:26,181 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-04 16:58:31,925 - app - INFO - Login attempt for user: dean
+2025-10-04 16:58:32,187 - app - INFO - Login successful for user dean
+2025-10-04 16:58:32,260 - app - INFO - Getting notifications for username: dean
+2025-10-04 16:58:32,358 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-04 16:58:32,439 - app - INFO - Found 2 notifications for user_id: 9
+2025-10-04 16:58:32,602 - database - INFO - Found 1 pending schedules in database
+2025-10-04 16:58:42,511 - database - INFO - Found 1 pending schedules in database
+2025-10-04 16:58:42,852 - database - INFO - Creating notification for user_id: 8, title: Schedule Rejected, type: warning
+2025-10-04 16:58:42,939 - database - INFO - Successfully created notification for user_id: 8
+2025-10-04 16:58:44,127 - database - INFO - Found 0 pending schedules in database
+2025-10-04 16:58:50,651 - app - INFO - Login attempt for user: chair
+2025-10-04 16:58:50,716 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-04 16:58:53,415 - app - INFO - Login attempt for user: chair
+2025-10-04 16:58:53,667 - app - INFO - Login successful for user chair
+2025-10-04 16:58:53,752 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:58:53,856 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:58:54,045 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 16:58:58,461 - database - INFO - Marking notification 34 as read
+2025-10-04 16:58:58,545 - database - INFO - Successfully marked notification 34 as read
+2025-10-04 16:58:58,554 - app - INFO - Getting unread notifications for username: chair
+2025-10-04 16:58:58,643 - app - INFO - Retrieving unread notifications for user_id: 8
+2025-10-04 16:58:58,706 - app - INFO - Found 26 unread notifications for user_id: 8
+2025-10-04 16:59:07,622 - app - INFO - Deleted schedule file: .\saved_schedules\20251004085825_GeneratedSchedule.json
+2025-10-04 16:59:07,623 - app - INFO - Attempting to delete schedule approval record for 20251004085825
+2025-10-04 16:59:07,931 - app - INFO - Successfully deleted schedule approval record for 20251004085825
+2025-10-04 16:59:10,393 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:59:10,493 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:59:10,569 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 16:59:40,907 - app - INFO - Getting notifications for username: chair
+2025-10-04 16:59:41,863 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 16:59:42,707 - app - INFO - Found 28 notifications for user_id: 8

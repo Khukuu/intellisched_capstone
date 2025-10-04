@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, status, R
 from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import logging
 from scheduler import generate_schedule
 from database import (
     db,
@@ -30,6 +31,17 @@ import csv
 from datetime import datetime, timedelta
 import jwt  # PyJWT is installed as 'jwt'
 from typing import Optional
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('intellisched.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.mount('/static', StaticFiles(directory='static'), name='static')
@@ -135,15 +147,15 @@ async def login(payload: dict):
         if not username or not password:
             raise HTTPException(status_code=400, detail="Username and password are required")
         
-        print(f"Login attempt for user: {username}")
+        logger.info(f"Login attempt for user: {username}")
         
         # Verify credentials
         user = db.verify_user_credentials(username, password)
         if not user:
-            print(f"Login failed for user {username}: Invalid credentials")
+            logger.warning(f"Login failed for user {username}: Invalid credentials")
             raise HTTPException(status_code=401, detail="Invalid username or password")
         
-        print(f"Login successful for user {username}")
+        logger.info(f"Login successful for user {username}")
         
         # Create access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -164,11 +176,8 @@ async def login(payload: dict):
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"Unexpected error during login: {e}")
-        print(f"   Error type: {type(e).__name__}")
-        import traceback
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        logger.error(f"Unexpected error during login: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get('/auth/me')
 async def get_current_user(username: str = Depends(verify_token)):
@@ -345,7 +354,7 @@ async def saved_schedules_page():
 
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(require_chair_role)):
-    print('Received request for /schedule')
+    logger.info('Received request for /schedule')
     subjects = load_subjects_from_db()
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
@@ -364,7 +373,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         4: num_sections_year_4,
     }
 
-    print(f"Filtering for semester: {semester_filter}. Desired sections per year: {desired_sections_per_year}")
+    logger.info(f"Filtering for semester: {semester_filter}. Desired sections per year: {desired_sections_per_year}")
 
     try:
         if semester_filter:
@@ -379,21 +388,21 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
                 int(s.get('year_level', 0)) for s in subjects if s.get('year_level')
             )
     except Exception as e:
-        print(f"Error in year filtering: {e}")
+        logger.warning(f"Error in year filtering: {e}")
         available_years = {1, 2, 3, 4}
 
-    print(f"Available years: {available_years}")
-    print(f"Desired sections per year: {desired_sections_per_year}")
+    logger.info(f"Available years: {available_years}")
+    logger.info(f"Desired sections per year: {desired_sections_per_year}")
     
     filtered_desired_sections_per_year = {
         year: count for year, count in desired_sections_per_year.items()
         if count and (year in available_years)
     }
     
-    print(f"Filtered desired sections: {filtered_desired_sections_per_year}")
+    logger.info(f"Filtered desired sections: {filtered_desired_sections_per_year}")
 
     if not filtered_desired_sections_per_year:
-        print('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
+        logger.warning('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
         return JSONResponse(content=[])
 
     result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year)
@@ -407,7 +416,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
             uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
             created = create_schedule_approval(uid, name, semester_int or 0, username)
             if not created:
-                print('Warning: failed to create schedule approval record')
+                logger.warning('Failed to create schedule approval record')
             return JSONResponse(content={
                 'id': uid,
                 'name': name,
@@ -417,7 +426,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
             })
         except Exception as e:
             # Fall back to returning just the result
-            print(f"Warning: persist schedule failed: {e}")
+            logger.warning(f"Persist schedule failed: {e}")
             return JSONResponse(content=result)
 
     return JSONResponse(content=result)
@@ -494,7 +503,7 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         # Non-fatal: still proceed with approval record
-        print(f"Warning: Could not persist schedule file for {uid}: {e}")
+        logger.warning(f"Could not persist schedule file for {uid}: {e}")
 
     # Create approval record
     create_schedule_approval(uid, name, semester_int or 0, username)
@@ -560,22 +569,22 @@ async def delete_saved_schedule(schedule_id: str, username: str = Depends(requir
         raise HTTPException(status_code=500, detail=f'Failed to delete schedule file: {e}')
 
     # Delete the schedule approval record so it's no longer visible to dean
-    print(f"Attempting to delete schedule approval record for {schedule_id}")
+    logger.info(f"Attempting to delete schedule approval record for {schedule_id}")
     approval_deleted = delete_schedule_approval(schedule_id)
     if approval_deleted:
-        print(f"Successfully deleted schedule approval record for {schedule_id}")
+        logger.info(f"Successfully deleted schedule approval record for {schedule_id}")
     else:
-        print(f"Warning: Could not delete schedule approval record for {schedule_id}")
+        logger.warning(f"Could not delete schedule approval record for {schedule_id}")
         # Don't fail the entire operation if approval record deletion fails
     
     # Verify deletion by checking if record still exists
     remaining_status = get_schedule_approval_status(schedule_id)
     if remaining_status:
-        print(f"ERROR: Schedule approval record still exists after deletion attempt: {remaining_status}")
-        print(f"This means the deletion failed! Schedule {schedule_id} will still be visible to dean.")
+        logger.error(f"Schedule approval record still exists after deletion attempt: {remaining_status}")
+        logger.error(f"Schedule {schedule_id} will still be visible to dean")
     else:
-        print(f"Confirmed: Schedule approval record successfully deleted for {schedule_id}")
-        print(f"Schedule {schedule_id} should no longer be visible to dean.")
+        logger.info(f"Confirmed: Schedule approval record successfully deleted for {schedule_id}")
+        logger.info(f"Schedule {schedule_id} should no longer be visible to dean")
 
     return JSONResponse(content={'message': 'Saved schedule deleted', 'id': schedule_id})
 
@@ -607,17 +616,17 @@ async def delete_schedule_endpoint(schedule_id: str, username: str = Depends(req
         fpath = os.path.join(saved_dir, candidates[0])
         try:
             os.remove(fpath)
-            print(f"Deleted schedule file: {fpath}")
+            logger.info(f"Deleted schedule file: {fpath}")
         except Exception as e:
-            print(f"Warning: Could not delete schedule file: {e}")
+            logger.warning(f"Could not delete schedule file: {e}")
     
     # Delete the schedule approval record
-    print(f"Attempting to delete schedule approval record for {schedule_id}")
+    logger.info(f"Attempting to delete schedule approval record for {schedule_id}")
     approval_deleted = delete_schedule_approval(schedule_id)
     if approval_deleted:
-        print(f"Successfully deleted schedule approval record for {schedule_id}")
+        logger.info(f"Successfully deleted schedule approval record for {schedule_id}")
     else:
-        print(f"Warning: Could not delete schedule approval record for {schedule_id}")
+        logger.warning(f"Could not delete schedule approval record for {schedule_id}")
     
     return JSONResponse(content={'message': 'Schedule deleted successfully', 'id': schedule_id})
 
@@ -648,9 +657,9 @@ async def save_schedule(payload: dict, username: str = Depends(require_chair_rol
     try:
         from database import create_schedule_approval
         create_schedule_approval(uid, name, semester, username)
-        print(f"Schedule approval request created for {uid}")
+        logger.info(f"Schedule approval request created for {uid}")
     except Exception as e:
-        print(f"Warning: Could not create approval request: {e}")
+        logger.warning(f"Could not create approval request: {e}")
     
     return JSONResponse(content={'id': uid, 'name': name, 'semester': semester, 'created_at': created_at})
 
@@ -780,30 +789,34 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
             return JSONResponse(content={'message': 'Subjects CSV uploaded successfully'})
         elif filename == 'teachers':
             from database import add_teacher
+            added_count = 0
             for r in rows:
                 teacher = {
-                    'teacher_id': r.get('teacher_id') or r.get('id') or '',
                     'teacher_name': r.get('teacher_name') or r.get('name') or '',
                     'can_teach': r.get('can_teach') or r.get('subjects') or '',
                 }
-                if not teacher['teacher_id']:
+                if not teacher['teacher_name']:
                     continue
-                add_teacher(teacher)
-            return JSONResponse(content={'message': 'Teachers CSV uploaded successfully'})
+                teacher_id = add_teacher(teacher)
+                added_count += 1
+                logger.info(f"Added teacher '{teacher['teacher_name']}' with ID: {teacher_id}")
+            return JSONResponse(content={'message': f'Teachers CSV uploaded successfully. Added {added_count} teachers.'})
         elif filename == 'rooms':
             from database import add_room
+            added_count = 0
             for r in rows:
                 val = (str(r.get('is_laboratory') or r.get('lab') or '').strip().lower())
                 is_lab = val in ['1', 'true', 'yes', 'y']
                 room = {
-                    'room_id': r.get('room_id') or r.get('id') or '',
-                    'room_name': (r.get('room_name') or r.get('name') or '') or (r.get('room_id') or ''),
+                    'room_name': (r.get('room_name') or r.get('name') or ''),
                     'is_laboratory': is_lab,
                 }
-                if not room['room_id']:
+                if not room['room_name']:
                     continue
-                add_room(room)
-            return JSONResponse(content={'message': 'Rooms CSV uploaded successfully'})
+                room_id = add_room(room)
+                added_count += 1
+                logger.info(f"Added room '{room['room_name']}' with ID: {room_id}")
+            return JSONResponse(content={'message': f'Rooms CSV uploaded successfully. Added {added_count} rooms.'})
         elif filename == 'sections':
             from database import add_section
             for r in rows:
@@ -861,9 +874,11 @@ async def add_teacher_endpoint(teacher_data: dict, username: str = Depends(requi
     """Add a new teacher to the database"""
     try:
         from database import add_teacher
-        add_teacher(teacher_data)
-        return JSONResponse(content={'message': 'Teacher added successfully'})
+        teacher_id = add_teacher(teacher_data)
+        logger.info(f"Teacher added successfully with ID: {teacher_id}")
+        return JSONResponse(content={'message': 'Teacher added successfully', 'teacher_id': teacher_id})
     except Exception as e:
+        logger.error(f"Error adding teacher: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put('/api/teachers/{teacher_id}')
@@ -892,9 +907,11 @@ async def add_room_endpoint(room_data: dict, username: str = Depends(require_cha
     """Add a new room to the database"""
     try:
         from database import add_room
-        add_room(room_data)
-        return JSONResponse(content={'message': 'Room added successfully'})
+        room_id = add_room(room_data)
+        logger.info(f"Room added successfully with ID: {room_id}")
+        return JSONResponse(content={'message': 'Room added successfully', 'room_id': room_id})
     except Exception as e:
+        logger.error(f"Error adding room: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put('/api/rooms/{room_id}')
@@ -984,12 +1001,12 @@ async def get_pending_schedules_endpoint(username: str = Depends(require_dean_ro
     try:
         from database import get_pending_schedules
         schedules = get_pending_schedules()
-        print(f"Dean requesting pending schedules. Found {len(schedules)} schedules:")
+        logger.info(f"Dean requesting pending schedules. Found {len(schedules)} schedules")
         for schedule in schedules:
-            print(f"  - Schedule ID: {schedule.get('schedule_id')}, Status: {schedule.get('status')}")
+            logger.debug(f"  - Schedule ID: {schedule.get('schedule_id')}, Status: {schedule.get('status')}")
         return JSONResponse(content=schedules)
     except Exception as e:
-        print(f"Error getting pending schedules: {e}")
+        logger.error(f"Error getting pending schedules: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/api/approved_schedules')
@@ -1047,12 +1064,12 @@ async def debug_all_schedules(username: str = Depends(require_dean_role)):
         from database import db
         query = "SELECT * FROM schedule_approvals ORDER BY created_at DESC"
         all_schedules = db.db.execute_query(query)
-        print(f"DEBUG: All schedules in database: {len(all_schedules)}")
+        logger.info(f"DEBUG: All schedules in database: {len(all_schedules)}")
         for schedule in all_schedules:
-            print(f"  - ID: {schedule.get('schedule_id')}, Status: {schedule.get('status')}, Name: {schedule.get('schedule_name')}")
+            logger.debug(f"  - ID: {schedule.get('schedule_id')}, Status: {schedule.get('status')}, Name: {schedule.get('schedule_name')}")
         return JSONResponse(content=all_schedules)
     except Exception as e:
-        print(f"DEBUG ERROR: {e}")
+        logger.error(f"DEBUG ERROR: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 # Notification endpoints
@@ -1061,28 +1078,48 @@ async def get_notifications_endpoint(username: str = Depends(verify_token)):
     """Get notifications for the current user"""
     try:
         from database import get_user_notifications, get_user_id_by_username
+        logger.info(f"Getting notifications for username: {username}")
+        
         user_id = get_user_id_by_username(username)
         if not user_id:
-            raise HTTPException(status_code=404, detail="User not found")
+            logger.error(f"User not found: {username}")
+            raise HTTPException(status_code=404, detail=f"User '{username}' not found")
         
+        logger.info(f"Retrieving notifications for user_id: {user_id}")
         notifications = get_user_notifications(user_id)
+        logger.info(f"Found {len(notifications)} notifications for user_id: {user_id}")
+        
         return JSONResponse(content=notifications)
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error getting notifications for username {username}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @app.get('/api/notifications/unread')
 async def get_unread_notifications_endpoint(username: str = Depends(verify_token)):
     """Get unread notifications for the current user"""
     try:
         from database import get_user_notifications, get_user_id_by_username
+        logger.info(f"Getting unread notifications for username: {username}")
+        
         user_id = get_user_id_by_username(username)
         if not user_id:
-            raise HTTPException(status_code=404, detail="User not found")
+            logger.error(f"User not found: {username}")
+            raise HTTPException(status_code=404, detail=f"User '{username}' not found")
         
+        logger.info(f"Retrieving unread notifications for user_id: {user_id}")
         notifications = get_user_notifications(user_id, unread_only=True)
+        logger.info(f"Found {len(notifications)} unread notifications for user_id: {user_id}")
+        
         return JSONResponse(content=notifications)
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error getting unread notifications for username {username}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 @app.post('/api/notifications/{notification_id}/read')
 async def mark_notification_read_endpoint(notification_id: int, username: str = Depends(verify_token)):
@@ -1095,6 +1132,56 @@ async def mark_notification_read_endpoint(notification_id: int, username: str = 
         else:
             raise HTTPException(status_code=500, detail="Failed to mark notification as read")
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/debug-user')
+async def debug_user_endpoint(username: str = Depends(verify_token)):
+    """Debug endpoint to check user info"""
+    try:
+        from database import get_user_id_by_username
+        logger.info(f"Debug: Checking user info for username: {username}")
+        
+        user_id = get_user_id_by_username(username)
+        if not user_id:
+            logger.error(f"Debug: User not found: {username}")
+            return JSONResponse(content={'error': f'User "{username}" not found', 'user_id': None})
+        
+        logger.info(f"Debug: Found user_id: {user_id} for username: {username}")
+        return JSONResponse(content={'username': username, 'user_id': user_id, 'status': 'found'})
+    except Exception as e:
+        logger.error(f"Debug: Error checking user info: {e}", exc_info=True)
+        return JSONResponse(content={'error': str(e), 'username': username, 'user_id': None})
+
+@app.post('/api/test-notification')
+async def test_notification_endpoint(username: str = Depends(verify_token)):
+    """Test endpoint to create a notification"""
+    try:
+        from database import create_notification, get_user_id_by_username
+        logger.info(f"Creating test notification for username: {username}")
+        
+        user_id = get_user_id_by_username(username)
+        if not user_id:
+            logger.error(f"User not found: {username}")
+            raise HTTPException(status_code=404, detail=f"User '{username}' not found")
+        
+        logger.info(f"Creating test notification for user_id: {user_id}")
+        success = create_notification(
+            user_id,
+            "Test Notification",
+            f"This is a test notification for user {username}",
+            "info"
+        )
+        
+        if success:
+            logger.info(f"Test notification created successfully for user {username}")
+            return JSONResponse(content={'message': 'Test notification created successfully', 'user_id': user_id})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create test notification")
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    except Exception as e:
+        logger.error(f"Error creating test notification: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 # User management endpoints (Admin only)
