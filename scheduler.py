@@ -40,9 +40,9 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
 
     # Define granular days and time slots (30-minute increments)
     day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    # Assuming 8 AM to 8 PM with a lunch break (12-1 PM)
+    # Assuming 7 AM to 8 PM with a lunch break (12-1 PM)
     time_slot_labels = []
-    for h in range(8, 20): # 8 AM to 8 PM (exclusive 9 PM)
+    for h in range(7, 20): # 7 AM to 8 PM (exclusive 9 PM)
         time_slot_labels.append(f"{h:02d}:00-{h:02d}:30")
         time_slot_labels.append(f"{h:02d}:30-{h+1:02d}:00")
     # Remove 12:00-1:00 for lunch break
