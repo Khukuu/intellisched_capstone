@@ -50,6 +50,19 @@
           </li>
         </ul>
         <div class="d-flex align-items-center">
+          <div class="dropdown me-3">
+            <button class="btn btn-outline-light btn-sm rounded-pill position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-bell"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">
+                0
+              </span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" id="notificationDropdownMenu" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+              <li><h6 class="dropdown-header">Notifications</h6></li>
+              <li><hr class="dropdown-divider"></li>
+              <li id="noNotifications" class="dropdown-item-text text-muted text-center py-3">No notifications</li>
+            </ul>
+          </div>
           <button id="logoutBtn" class="btn btn-outline-light btn-sm rounded-pill"><i class="bi bi-box-arrow-right"></i> Logout</button>
         </div>
       </div>
@@ -139,9 +152,6 @@
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-rooms" data-tab="rooms" data-bs-toggle="tab" data-bs-target="#pane-rooms" type="button" role="tab" aria-controls="pane-rooms" aria-selected="false">Rooms</button>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="tab-sections" data-tab="sections" data-bs-toggle="tab" data-bs-target="#pane-sections" type="button" role="tab" aria-controls="pane-sections" aria-selected="false">Sections</button>
-        </li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
@@ -198,25 +208,6 @@
             <div class="input-group">
               <input type="file" class="form-control" id="roomsFile" accept=".csv">
               <button class="btn btn-outline-secondary" type="submit">Upload Rooms CSV</button>
-            </div>
-          </form>
-        </div>
-        <div class="tab-pane fade" id="pane-sections" role="tabpanel" aria-labelledby="tab-sections">
-          <h2>Sections</h2>
-          <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-            <input id="sectionsSearch" class="form-control form-control-sm me-2" placeholder="Search sections (id, subject)…" />
-            <button id="sectionsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
-            <div class="ms-auto d-flex align-items-center gap-2">
-              <button id="sectionsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
-              <button id="sectionsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
-              <button id="sectionsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
-            </div>
-          </div>
-          <div id="sectionsData" class="table-responsive mb-4"></div>
-          <form id="uploadSectionsForm" enctype="multipart/form-data" class="mb-4">
-            <div class="input-group">
-              <input type="file" class="form-control" id="sectionsFile" accept=".csv">
-              <button class="btn btn-outline-secondary" type="submit">Upload Sections CSV</button>
             </div>
           </form>
         </div>
@@ -331,7 +322,7 @@
   </footer>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/script.js?v=2"></script>
+  <script src="/static/script.js?v=3"></script>
   <script>
     // Authentication check and role-based routing
     document.addEventListener('DOMContentLoaded', function() {

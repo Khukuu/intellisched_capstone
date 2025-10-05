@@ -4,6 +4,10 @@ import os
 from typing import List, Dict, Any
 import hashlib
 import secrets
+import logging
+
+# Configure logging for database module
+logger = logging.getLogger(__name__)
 
 class DatabaseManager:
     def __init__(self, connection_string: str = None):
@@ -128,16 +132,16 @@ class ScheduleDatabase:
             try:
                 self.db.execute_single(statement)
             except Exception as e:
-                print(f"Warning: Could not execute statement: {e}")
+                logger.warning(f"Could not execute statement: {e}")
                 # Continue with other statements
         
         # Check if users table has correct structure
         if not self._check_users_table_structure():
-            print("⚠️ Users table structure is incorrect. Attempting to fix...")
+            logger.warning("Users table structure is incorrect. Attempting to fix...")
             if self._fix_users_table():
-                print("✅ Users table structure fixed successfully")
+                logger.info("Users table structure fixed successfully")
             else:
-                print("❌ Failed to fix users table structure. Please run fix_users_table.py manually.")
+                logger.error("Failed to fix users table structure. Please run fix_users_table.py manually.")
                 return
         
         # Create default admin user if it doesn't exist
@@ -154,7 +158,7 @@ class ScheduleDatabase:
             """)
             return len(result) > 0
         except Exception as e:
-            print(f"Error checking table structure: {e}")
+            logger.error(f"Error checking table structure: {e}")
             return False
     
     def _fix_users_table(self):
@@ -180,7 +184,7 @@ class ScheduleDatabase:
             self.db.execute_single(create_users_sql)
             return True
         except Exception as e:
-            print(f"Error fixing users table: {e}")
+            logger.error(f"Error fixing users table: {e}")
             return False
     
     def create_default_admin(self):
@@ -199,7 +203,7 @@ class ScheduleDatabase:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, ('admin', password_hash, salt, 'Administrator', 'admin@intellisched.com', 'admin', 'active'))
                 
-                print("✅ Default admin user created (username: admin, password: admin123)")
+                logger.info("Default admin user created (username: admin, password: admin123)")
             
             # Check if chair user exists
             existing_chair = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('chair',))
@@ -214,7 +218,7 @@ class ScheduleDatabase:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, ('chair', password_hash, salt, 'Department Chair', 'chair@intellisched.com', 'chair', 'active'))
                 
-                print("✅ Default chair user created (username: chair, password: chair123)")
+                logger.info("Default chair user created (username: chair, password: chair123)")
             
             # Check if dean user exists
             existing_dean = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('dean',))
@@ -282,7 +286,7 @@ class ScheduleDatabase:
                 }
             return None
         except Exception as e:
-            print(f"Error verifying credentials: {e}")
+            logger.error(f"Error verifying credentials: {e}")
             return None
     
     def get_user_by_id(self, user_id: int) -> Dict[str, Any]:
@@ -422,37 +426,33 @@ class ScheduleDatabase:
         )
         self.db.execute_single(query, params)
     
-    def insert_teacher(self, teacher_data: Dict[str, Any]) -> None:
-        """Insert a single teacher"""
+    def insert_teacher(self, teacher_data: Dict[str, Any]) -> int:
+        """Insert a single teacher and return the generated ID"""
         query = """
-        INSERT INTO teachers (teacher_id, teacher_name, can_teach)
-        VALUES (%s, %s, %s)
-        ON CONFLICT (teacher_id) DO UPDATE SET
-            teacher_name = EXCLUDED.teacher_name,
-            can_teach = EXCLUDED.can_teach
+        INSERT INTO teachers (teacher_name, can_teach)
+        VALUES (%s, %s)
+        RETURNING teacher_id
         """
         params = (
-            teacher_data['teacher_id'],
             teacher_data['teacher_name'],
             teacher_data.get('can_teach', '')
         )
-        self.db.execute_single(query, params)
+        result = self.db.execute_query(query, params)
+        return result[0]['teacher_id'] if result else None
     
-    def insert_room(self, room_data: Dict[str, Any]) -> None:
-        """Insert a single room"""
+    def insert_room(self, room_data: Dict[str, Any]) -> int:
+        """Insert a single room and return the generated ID"""
         query = """
-        INSERT INTO rooms (room_id, room_name, is_laboratory)
-        VALUES (%s, %s, %s)
-        ON CONFLICT (room_id) DO UPDATE SET
-            room_name = EXCLUDED.room_name,
-            is_laboratory = EXCLUDED.is_laboratory
+        INSERT INTO rooms (room_name, is_laboratory)
+        VALUES (%s, %s)
+        RETURNING room_id
         """
         params = (
-            room_data['room_id'],
             room_data['room_name'],
             room_data.get('is_laboratory', False)
         )
-        self.db.execute_single(query, params)
+        result = self.db.execute_query(query, params)
+        return result[0]['room_id'] if result else None
     
     def insert_section(self, section_data: Dict[str, Any]) -> None:
         """Insert a single section"""
@@ -500,13 +500,13 @@ def add_subject(subject_data: Dict[str, Any]) -> None:
     """Add a new subject to the database"""
     db.insert_subject(subject_data)
 
-def add_teacher(teacher_data: Dict[str, Any]) -> None:
-    """Add a new teacher to the database"""
-    db.insert_teacher(teacher_data)
+def add_teacher(teacher_data: Dict[str, Any]) -> int:
+    """Add a new teacher to the database and return the generated ID"""
+    return db.insert_teacher(teacher_data)
 
-def add_room(room_data: Dict[str, Any]) -> None:
-    """Add a new room to the database"""
-    db.insert_room(room_data)
+def add_room(room_data: Dict[str, Any]) -> int:
+    """Add a new room to the database and return the generated ID"""
+    return db.insert_room(room_data)
  
 def add_section(section_data: Dict[str, Any]) -> None:
     """Add a new section to the database"""
@@ -518,11 +518,31 @@ def update_subject(subject_code: str, subject_data: Dict[str, Any]) -> None:
 
 def update_teacher(teacher_id: str, teacher_data: Dict[str, Any]) -> None:
     """Update an existing teacher in the database"""
-    db.insert_teacher(teacher_data)  # Uses ON CONFLICT DO UPDATE
+    query = """
+    UPDATE teachers 
+    SET teacher_name = %s, can_teach = %s
+    WHERE teacher_id = %s
+    """
+    params = (
+        teacher_data['teacher_name'],
+        teacher_data.get('can_teach', ''),
+        teacher_id
+    )
+    db.db.execute_single(query, params)
 
 def update_room(room_id: str, room_data: Dict[str, Any]) -> None:
     """Update an existing room in the database"""
-    db.insert_room(room_data)  # Uses ON CONFLICT DO UPDATE
+    query = """
+    UPDATE rooms 
+    SET room_name = %s, is_laboratory = %s
+    WHERE room_id = %s
+    """
+    params = (
+        room_data['room_name'],
+        room_data.get('is_laboratory', False),
+        room_id
+    )
+    db.db.execute_single(query, params)
  
 def update_section(section_id: str, section_data: Dict[str, Any]) -> None:
     """Update an existing section in the database"""
@@ -581,9 +601,27 @@ def create_schedule_approval(schedule_id: str, schedule_name: str, semester: int
         VALUES (%s, %s, %s, %s, 'pending')
         """
         db.db.execute_single(query, (schedule_id, schedule_name, semester, created_by))
+        
+        # Send notification to all deans about the new schedule submission
+        try:
+            # Get all dean users
+            dean_query = "SELECT id FROM users WHERE role = 'dean'"
+            deans = db.db.execute_query(dean_query)
+            
+            for dean in deans:
+                create_notification(
+                    dean['id'],
+                    "New Schedule Submitted",
+                    f"Chair {created_by} has submitted a new schedule '{schedule_name}' for semester {semester} and is awaiting your approval.",
+                    "info"
+                )
+            logger.info(f"Sent notifications to {len(deans)} deans about schedule submission from {created_by}")
+        except Exception as notification_error:
+            logger.warning(f"Failed to send notifications for schedule submission: {notification_error}")
+        
         return True
     except Exception as e:
-        print(f"Error creating schedule approval: {e}")
+        logger.error(f"Error creating schedule approval: {e}")
         return False
 
 def get_pending_schedules() -> List[Dict[str, Any]]:
@@ -593,9 +631,9 @@ def get_pending_schedules() -> List[Dict[str, Any]]:
     WHERE status = 'pending' 
     ORDER BY created_at DESC
     """
-    print(f"Executing query: {query}")
+    logger.debug(f"Executing query: {query}")
     rows = db.db.execute_query(query)
-    print(f"Found {len(rows)} pending schedules in database")
+    logger.info(f"Found {len(rows)} pending schedules in database")
     # Convert datetime fields to ISO strings for JSON serialization
     for r in rows:
         if 'created_at' in r and r['created_at']:
@@ -705,20 +743,20 @@ def delete_schedule_approval(schedule_id: str) -> None:
         # First check if the record exists
         check_query = "SELECT * FROM schedule_approvals WHERE schedule_id = %s"
         existing = db.db.execute_query(check_query, (schedule_id,))
-        print(f"Before deletion: Found {len(existing)} records for schedule_id: {schedule_id}")
+        logger.debug(f"Before deletion: Found {len(existing)} records for schedule_id: {schedule_id}")
         
         # Use execute_single for DELETE operations to ensure transaction is committed
         query = "DELETE FROM schedule_approvals WHERE schedule_id = %s"
         db.db.execute_single(query, (schedule_id,))
-        print(f"Executed DELETE query for schedule_id: {schedule_id}")
+        logger.debug(f"Executed DELETE query for schedule_id: {schedule_id}")
         
         # Verify deletion
         remaining = db.db.execute_query(check_query, (schedule_id,))
-        print(f"After deletion: Found {len(remaining)} records for schedule_id: {schedule_id}")
+        logger.debug(f"After deletion: Found {len(remaining)} records for schedule_id: {schedule_id}")
         
         return True
     except Exception as e:
-        print(f"Error deleting schedule approval record for {schedule_id}: {e}")
+        logger.error(f"Error deleting schedule approval record for {schedule_id}: {e}")
         return False
 
 # Notification functions
@@ -729,10 +767,12 @@ def create_notification(user_id: int, title: str, message: str, notification_typ
         INSERT INTO notifications (user_id, title, message, type)
         VALUES (%s, %s, %s, %s)
         """
+        logger.info(f"Creating notification for user_id: {user_id}, title: {title}, type: {notification_type}")
         db.db.execute_single(query, (user_id, title, message, notification_type))
+        logger.info(f"Successfully created notification for user_id: {user_id}")
         return True
     except Exception as e:
-        print(f"Error creating notification: {e}")
+        logger.error(f"Error creating notification for user_id {user_id}: {e}")
         return False
 
 def get_user_notifications(user_id: int, unread_only: bool = False) -> List[Dict[str, Any]]:
@@ -744,36 +784,59 @@ def get_user_notifications(user_id: int, unread_only: bool = False) -> List[Dict
             WHERE user_id = %s AND is_read = FALSE 
             ORDER BY created_at DESC
             """
-            return db.db.execute_query(query, (user_id,))
+            logger.debug(f"Getting unread notifications for user_id: {user_id}")
+            result = db.db.execute_query(query, (user_id,))
+            logger.debug(f"Found {len(result)} unread notifications for user_id: {user_id}")
         else:
             query = """
             SELECT * FROM notifications 
             WHERE user_id = %s 
             ORDER BY created_at DESC
             """
-            return db.db.execute_query(query, (user_id,))
+            logger.debug(f"Getting all notifications for user_id: {user_id}")
+            result = db.db.execute_query(query, (user_id,))
+            logger.debug(f"Found {len(result)} total notifications for user_id: {user_id}")
+        
+        # Convert datetime objects to strings for JSON serialization
+        for notification in result:
+            if 'created_at' in notification and notification['created_at']:
+                if hasattr(notification['created_at'], 'isoformat'):
+                    notification['created_at'] = notification['created_at'].isoformat()
+                else:
+                    notification['created_at'] = str(notification['created_at'])
+        
+        return result
     except Exception as e:
-        print(f"Error getting notifications: {e}")
+        logger.error(f"Error getting notifications for user_id {user_id}: {e}")
         return []
 
 def mark_notification_read(notification_id: int) -> bool:
     """Mark a notification as read"""
     try:
         query = "UPDATE notifications SET is_read = TRUE WHERE id = %s"
+        logger.info(f"Marking notification {notification_id} as read")
         db.db.execute_single(query, (notification_id,))
+        logger.info(f"Successfully marked notification {notification_id} as read")
         return True
     except Exception as e:
-        print(f"Error marking notification as read: {e}")
+        logger.error(f"Error marking notification {notification_id} as read: {e}")
         return False
 
 def get_user_id_by_username(username: str) -> int:
     """Get user ID by username"""
     try:
         query = "SELECT id FROM users WHERE username = %s"
+        logger.debug(f"Looking up user_id for username: {username}")
         results = db.db.execute_query(query, (username,))
-        return results[0]['id'] if results else None
+        if results:
+            user_id = results[0]['id']
+            logger.debug(f"Found user_id: {user_id} for username: {username}")
+            return user_id
+        else:
+            logger.warning(f"No user found with username: {username}")
+            return None
     except Exception as e:
-        print(f"Error getting user ID: {e}")
+        logger.error(f"Error getting user ID for username {username}: {e}")
         return None
 
 # User management functions

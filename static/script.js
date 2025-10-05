@@ -32,7 +32,6 @@ let availableRooms = [];
 let subjectsCache = [];
 let teachersCache = [];
 let roomsCache = [];
-let sectionsCache = [];
 
 // Room ID to room name mapping
 let roomIdToNameMap = {};
@@ -85,6 +84,9 @@ function showSection(sectionId) {
 // Initial display
 showSection('schedule-section');
 
+// Load notifications on page load
+loadNotifications();
+
 scheduleNavLink.addEventListener('click', (e) => {
   e.preventDefault();
   showSection('schedule-section');
@@ -117,12 +119,6 @@ if (uploadRoomsForm) uploadRoomsForm.addEventListener('submit', async (e) => {
   await loadRoomsTable(); // Reload rooms after upload
 });
 
-if (uploadSectionsForm) uploadSectionsForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fileInput = document.getElementById('sectionsFile');
-  await uploadFile(fileInput.files[0], 'sections');
-  await loadSectionsTable(); // Reload sections after upload
-});
 
 async function uploadFile(file, filename) {
   if (!file) {
@@ -847,23 +843,6 @@ async function loadRoomsTable() {
   }
 }
 
-async function loadSectionsTable() {
-  try {
-    const sectionsResponse = await fetch('/data/sections', {
-      headers: getAuthHeaders()
-    });
-    if (!sectionsResponse.ok) throw new Error('Failed to load sections');
-    sectionsCache = await sectionsResponse.json();
-    renderTable(sectionsCache, 'sectionsData', ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
-  } catch (e) {
-    console.warn('Could not load sections:', e);
-    document.getElementById('sectionsData').innerHTML = '<p>No data available.</p>';
-  }
-  const secInput = document.getElementById('sectionsSearch');
-  if (secInput) {
-    secInput.oninput = () => filterTable('sectionsData', sectionsCache, ['section_id', 'subject_code']);
-  }
-}
 
 function filterTable(elementId, data, searchableFields) {
   const input = document.getElementById(elementId.replace('Data','Search')) || document.querySelector(`#${elementId.split('Data')[0]}Search`);
@@ -873,7 +852,6 @@ function filterTable(elementId, data, searchableFields) {
     if (elementId === 'subjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
     else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
     else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
-    else if (elementId === 'sectionsData') renderTable(data, elementId, ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
     return;
   }
   const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
@@ -881,7 +859,6 @@ function filterTable(elementId, data, searchableFields) {
   if (elementId === 'subjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
-  else if (elementId === 'sectionsData') renderTable(filtered, elementId, ['section_id', 'subject_code', 'year_level', 'num_meetings_non_lab']);
 }
 
 async function loadDataManagementTables() {
@@ -891,7 +868,6 @@ async function loadDataManagementTables() {
   if (tab === 'subjects') await loadSubjectsTable();
   else if (tab === 'teachers') await loadTeachersTable();
   else if (tab === 'rooms') await loadRoomsTable();
-  else if (tab === 'sections') await loadSectionsTable();
 }
 
 // Wire tab buttons to load content when activated (use Bootstrap event)
@@ -901,18 +877,16 @@ document.querySelectorAll('#dataTabs button[data-bs-toggle="tab"]').forEach(btn 
     if (tab === 'subjects') loadSubjectsTable();
     else if (tab === 'teachers') loadTeachersTable();
     else if (tab === 'rooms') loadRoomsTable();
-    else if (tab === 'sections') loadSectionsTable();
   });
 });
 
 // Wire refresh buttons
-['subjects','teachers','rooms','sections'].forEach(key => {
+['subjects','teachers','rooms'].forEach(key => {
   const btn = document.getElementById(`${key}Refresh`);
   if (btn) btn.addEventListener('click', () => {
     if (key === 'subjects') loadSubjectsTable();
     if (key === 'teachers') loadTeachersTable();
     if (key === 'rooms') loadRoomsTable();
-    if (key === 'sections') loadSectionsTable();
   });
 });
 
@@ -1010,8 +984,26 @@ function getSelectedRowData(elementId, headers) {
 
 function promptForData(fields, initial = {}) {
   const result = {};
+  
+  // Field labels for better user experience
+  const fieldLabels = {
+    'teacher_name': 'Teacher Name',
+    'can_teach': 'Subjects (comma-separated)',
+    'room_name': 'Room Name',
+    'is_laboratory': 'Is Laboratory? (yes/no)',
+    'subject_code': 'Subject Code',
+    'subject_name': 'Subject Name',
+    'lecture_hours_per_week': 'Lecture Hours per Week',
+    'lab_hours_per_week': 'Lab Hours per Week',
+    'units': 'Units',
+    'semester': 'Semester',
+    'program_specialization': 'Program Specialization',
+    'year_level': 'Year Level'
+  };
+  
   for (const f of fields) {
-    const val = prompt(`Enter ${f}`, initial[f] != null ? String(initial[f]) : '');
+    const label = fieldLabels[f] || f;
+    const val = prompt(`Enter ${label}:`, initial[f] != null ? String(initial[f]) : '');
     if (val === null) return null;
     result[f] = val;
   }
@@ -1056,15 +1048,19 @@ function setupCrudButtons() {
   const tEdit = document.getElementById('teachersEdit');
   const tDel = document.getElementById('teachersDelete');
   if (tAdd) tAdd.onclick = async () => {
-    const data = promptForData(['teacher_id','teacher_name','can_teach']);
+    const data = promptForData(['teacher_name','can_teach']);
     if (!data) return;
-    await fetch('/api/teachers', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    const response = await fetch('/api/teachers', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (response.ok) {
+      const result = await response.json();
+      alert(`Teacher added successfully with ID: ${result.teacher_id}`);
+    }
     loadTeachersTable();
   };
   if (tEdit) tEdit.onclick = async () => {
     const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    openBulkEditModal('teachers', ['teacher_id','teacher_name','can_teach'], selected);
+    openBulkEditModal('teachers', ['teacher_name','can_teach'], selected);
   };
   if (tDel) tDel.onclick = async () => {
     const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
@@ -1081,16 +1077,20 @@ function setupCrudButtons() {
   const rEdit = document.getElementById('roomsEdit');
   const rDel = document.getElementById('roomsDelete');
   if (rAdd) rAdd.onclick = async () => {
-    const data = promptForData(['room_id','room_name','is_laboratory']);
+    const data = promptForData(['room_name','is_laboratory']);
     if (!data) return;
     data.is_laboratory = ['1','true','yes','y'].includes(String(data.is_laboratory).trim().toLowerCase());
-    await fetch('/api/rooms', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    const response = await fetch('/api/rooms', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    if (response.ok) {
+      const result = await response.json();
+      alert(`Room added successfully with ID: ${result.room_id}`);
+    }
     loadRoomsTable();
   };
   if (rEdit) rEdit.onclick = async () => {
     const selected = getSelectedRowData('roomsData', ['room_id','room_name','is_laboratory']);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    openBulkEditModal('rooms', ['room_id','room_name','is_laboratory'], selected);
+    openBulkEditModal('rooms', ['room_name','is_laboratory'], selected);
   };
   if (rDel) rDel.onclick = async () => {
     const selected = getSelectedRowData('roomsData', ['room_id','room_name','is_laboratory']);
@@ -1102,32 +1102,6 @@ function setupCrudButtons() {
     loadRoomsTable();
   };
 
-  // Sections
-  const sAdd = document.getElementById('sectionsAdd');
-  const sEdit = document.getElementById('sectionsEdit');
-  const sDel = document.getElementById('sectionsDelete');
-  if (sAdd) sAdd.onclick = async () => {
-    const data = promptForData(['section_id','subject_code','year_level','num_meetings_non_lab']);
-    if (!data) return;
-    data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
-    data.num_meetings_non_lab = data.num_meetings_non_lab ? parseInt(data.num_meetings_non_lab, 10) : 0;
-    await fetch('/api/sections', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
-    loadSectionsTable();
-  };
-  if (sEdit) sEdit.onclick = async () => {
-    const selected = getSelectedRowData('sectionsData', ['section_id','subject_code','year_level','num_meetings_non_lab']);
-    if (!selected || selected.length === 0) return alert('Select at least one row.');
-    openBulkEditModal('sections', ['section_id','subject_code','year_level','num_meetings_non_lab'], selected);
-  };
-  if (sDel) sDel.onclick = async () => {
-    const selected = getSelectedRowData('sectionsData', ['section_id','subject_code','year_level','num_meetings_non_lab']);
-    if (!selected || selected.length === 0) return alert('Select at least one row.');
-    if (!confirm(`Delete ${selected.length} section(s)?`)) return;
-    for (const item of selected) {
-      await fetch(`/api/sections/${encodeURIComponent(item.section_id)}`, { method: 'DELETE', headers: getAuthHeaders() });
-    }
-    loadSectionsTable();
-  };
 }
 
 function openBulkEditModal(kind, fields, selectedRows) {
@@ -1136,15 +1110,32 @@ function openBulkEditModal(kind, fields, selectedRows) {
   const saveBtn = document.getElementById('bulkEditSaveBtn');
   if (!modalEl || !content || !saveBtn) return;
 
+  // Field labels for better user experience
+  const fieldLabels = {
+    'teacher_name': 'Teacher Name',
+    'can_teach': 'Subjects (comma-separated)',
+    'room_name': 'Room Name',
+    'is_laboratory': 'Is Laboratory? (yes/no)',
+    'subject_code': 'Subject Code',
+    'subject_name': 'Subject Name',
+    'lecture_hours_per_week': 'Lecture Hours per Week',
+    'lab_hours_per_week': 'Lab Hours per Week',
+    'units': 'Units',
+    'semester': 'Semester',
+    'program_specialization': 'Program Specialization',
+    'year_level': 'Year Level'
+  };
+
   // Build form: checkboxes for fields and inputs for new values
   let html = '';
   html += `<p>${selectedRows.length} row(s) selected.</p>`;
   html += '<div class="table-responsive"><table class="table"><thead><tr><th>Apply</th><th>Field</th><th>New value</th></tr></thead><tbody>';
   fields.forEach(f => {
     const disabled = (f.endsWith('_id') || f === 'teacher_id' || f === 'room_id' || f === 'section_id') ? 'disabled' : '';
+    const label = fieldLabels[f] || f;
     html += `<tr>
       <td><input type="checkbox" class="form-check-input" data-role="field-check" data-field="${f}" ${disabled && 'disabled'}></td>
-      <td>${f}</td>
+      <td>${label}</td>
       <td><input type="text" class="form-control form-control-sm" data-role="field-input" data-field="${f}" ${disabled && 'disabled'}></td>
     </tr>`;
   });
@@ -1171,10 +1162,6 @@ function openBulkEditModal(kind, fields, selectedRows) {
     if (kind === 'rooms' && toApply.hasOwnProperty('is_laboratory')) {
       toApply.is_laboratory = ['1','true','yes','y'].includes(String(toApply.is_laboratory).trim().toLowerCase());
     }
-    if (kind === 'sections') {
-      if (toApply.hasOwnProperty('year_level')) toApply.year_level = toApply.year_level ? parseInt(toApply.year_level, 10) : null;
-      if (toApply.hasOwnProperty('num_meetings_non_lab')) toApply.num_meetings_non_lab = toApply.num_meetings_non_lab ? parseInt(toApply.num_meetings_non_lab, 10) : 0;
-    }
     if (kind === 'subjects') {
       ['lecture_hours_per_week','lab_hours_per_week','units','semester','year_level'].forEach(k => {
         if (toApply.hasOwnProperty(k)) {
@@ -1186,7 +1173,7 @@ function openBulkEditModal(kind, fields, selectedRows) {
 
     // Perform PUT per selected row
     for (const row of selectedRows) {
-      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : (kind === 'sections') ? 'section_id' : 'subject_code';
+      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'subject_code';
       const idVal = row[idField];
       const body = { ...row, ...toApply };
       const url = `/api/${kind}/${encodeURIComponent(idVal)}`;
@@ -1196,7 +1183,6 @@ function openBulkEditModal(kind, fields, selectedRows) {
     // Refresh table
     if (kind === 'teachers') await loadTeachersTable();
     if (kind === 'rooms') await loadRoomsTable();
-    if (kind === 'sections') await loadSectionsTable();
     if (kind === 'subjects') await loadSubjectsTable();
 
     // Close modal
@@ -1208,3 +1194,160 @@ function openBulkEditModal(kind, fields, selectedRows) {
   const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
   bsModal.show();
 }
+
+// Notification functions
+async function loadNotifications() {
+  try {
+    const response = await fetch('/api/notifications', {
+      headers: getAuthHeaders()
+    });
+    
+    if (response.ok) {
+      const notifications = await response.json();
+      displayNotifications(notifications);
+      updateNotificationBadge(notifications);
+    }
+  } catch (error) {
+    console.error('Error loading notifications:', error);
+  }
+}
+
+async function loadUnreadNotifications() {
+  try {
+    const response = await fetch('/api/notifications/unread', {
+      headers: getAuthHeaders()
+    });
+    
+    if (response.ok) {
+      const notifications = await response.json();
+      return notifications;
+    }
+  } catch (error) {
+    console.error('Error loading unread notifications:', error);
+  }
+  return [];
+}
+
+function displayNotifications(notifications) {
+  const dropdownMenu = document.getElementById('notificationDropdownMenu');
+  const noNotifications = document.getElementById('noNotifications');
+  
+  if (!dropdownMenu) return;
+  
+  // Clear existing notifications (except header and divider)
+  const existingItems = dropdownMenu.querySelectorAll('.notification-item');
+  existingItems.forEach(item => item.remove());
+  
+  if (notifications.length === 0) {
+    noNotifications.style.display = 'block';
+    return;
+  }
+  
+  noNotifications.style.display = 'none';
+  
+  notifications.forEach(notification => {
+    const notificationItem = createNotificationItem(notification);
+    dropdownMenu.appendChild(notificationItem);
+  });
+}
+
+function createNotificationItem(notification) {
+  const li = document.createElement('li');
+  li.className = 'notification-item';
+  
+  const typeClass = getNotificationTypeClass(notification.type);
+  const timeAgo = getTimeAgo(notification.created_at);
+  
+  li.innerHTML = `
+    <div class="dropdown-item ${notification.is_read ? '' : 'bg-light'}">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="flex-grow-1">
+          <div class="d-flex align-items-center mb-1">
+            <i class="bi ${getNotificationIcon(notification.type)} ${typeClass} me-2"></i>
+            <strong class="text-dark">${notification.title}</strong>
+          </div>
+          <p class="mb-1 text-muted small">${notification.message}</p>
+          <small class="text-muted">${timeAgo}</small>
+        </div>
+        ${!notification.is_read ? '<span class="badge bg-primary rounded-pill ms-2">New</span>' : ''}
+      </div>
+    </div>
+  `;
+  
+  // Add click handler to mark as read
+  li.addEventListener('click', async () => {
+    if (!notification.is_read) {
+      await markNotificationAsRead(notification.id);
+      notification.is_read = true;
+      li.querySelector('.dropdown-item').classList.remove('bg-light');
+      li.querySelector('.badge').remove();
+      updateNotificationBadge(await loadUnreadNotifications());
+    }
+  });
+  
+  return li;
+}
+
+function getNotificationTypeClass(type) {
+  switch (type) {
+    case 'success': return 'text-success';
+    case 'warning': return 'text-warning';
+    case 'error': return 'text-danger';
+    case 'info': 
+    default: return 'text-info';
+  }
+}
+
+function getNotificationIcon(type) {
+  switch (type) {
+    case 'success': return 'bi-check-circle-fill';
+    case 'warning': return 'bi-exclamation-triangle-fill';
+    case 'error': return 'bi-x-circle-fill';
+    case 'info': 
+    default: return 'bi-info-circle-fill';
+  }
+}
+
+function getTimeAgo(dateString) {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  if (diffInSeconds < 60) return 'Just now';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  return date.toLocaleDateString();
+}
+
+function updateNotificationBadge(notifications) {
+  const badge = document.getElementById('notificationBadge');
+  if (!badge) return;
+  
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+  
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+async function markNotificationAsRead(notificationId) {
+  try {
+    const response = await fetch(`/api/notifications/${notificationId}/read`, {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to mark notification as read');
+    }
+  } catch (error) {
+    console.error('Error marking notification as read:', error);
+  }
+}
+
+// Auto-refresh notifications every 30 seconds
+setInterval(loadNotifications, 30000);
