@@ -373,3 +373,49 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-04 16:59:40,907 - app - INFO - Getting notifications for username: chair
 2025-10-04 16:59:41,863 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-04 16:59:42,707 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:17:21,913 - app - INFO - Login attempt for user: chair
+2025-10-04 21:17:22,060 - app - INFO - Login successful for user chair
+2025-10-04 21:17:22,189 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:17:22,265 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:17:22,346 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:17:26,991 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:17:27,066 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:17:27,127 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:17:43,415 - app - INFO - Login attempt for user: dean
+2025-10-04 21:17:43,563 - app - INFO - Login successful for user dean
+2025-10-04 21:17:43,637 - app - INFO - Getting notifications for username: dean
+2025-10-04 21:17:43,714 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-04 21:17:43,780 - app - INFO - Found 2 notifications for user_id: 9
+2025-10-04 21:17:43,923 - database - INFO - Found 0 pending schedules in database
+2025-10-04 21:17:52,972 - app - INFO - Login attempt for user: chair
+2025-10-04 21:17:53,204 - app - INFO - Login successful for user chair
+2025-10-04 21:17:53,278 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:17:53,443 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:17:53,504 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:18:23,251 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:18:23,313 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:18:23,481 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:18:53,931 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:18:54,006 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:18:54,078 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:19:11,583 - app - INFO - Room added successfully with ID: 26
+2025-10-04 21:19:23,254 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:19:23,338 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:19:23,415 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-04 21:19:32,550 - app - INFO - Login attempt for user: admin
+2025-10-04 21:19:32,791 - app - INFO - Login successful for user admin
+2025-10-04 21:19:53,619 - app - INFO - Login attempt for user: admin
+2025-10-04 21:19:53,752 - app - INFO - Login successful for user admin
+2025-10-04 21:20:21,301 - app - INFO - Login attempt for user: chair
+2025-10-04 21:20:21,433 - app - INFO - Login successful for user chair
+2025-10-04 21:20:21,476 - app - INFO - Getting notifications for username: chair
+2025-10-04 21:20:21,549 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-04 21:20:21,744 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-05 13:42:56,133 - app - INFO - Login attempt for user: chair
+2025-10-05 13:42:56,281 - app - INFO - Login successful for user chair
+2025-10-05 13:42:56,413 - app - INFO - Getting notifications for username: chair
+2025-10-05 13:42:56,497 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-05 13:42:56,582 - app - INFO - Found 28 notifications for user_id: 8
+2025-10-05 13:43:00,737 - app - INFO - Getting notifications for username: chair
+2025-10-05 13:43:00,854 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-05 13:43:00,934 - app - INFO - Found 28 notifications for user_id: 8
