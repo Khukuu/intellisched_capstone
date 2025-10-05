@@ -1811,3 +1811,8 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-05 22:31:01,401 - app - INFO - Getting notifications for username: chair
 2025-10-05 22:31:01,498 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-05 22:31:01,587 - app - INFO - Found 31 notifications for user_id: 8
+2025-10-05 22:33:14,157 - app - INFO - Login attempt for user: chair
+2025-10-05 22:33:14,280 - app - INFO - Login successful for user chair
+2025-10-05 22:33:14,618 - app - INFO - Getting notifications for username: chair
+2025-10-05 22:33:14,698 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-05 22:33:14,781 - app - INFO - Found 31 notifications for user_id: 8
