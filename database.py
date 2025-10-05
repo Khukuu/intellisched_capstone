@@ -345,22 +345,36 @@ class ScheduleDatabase:
             print(f"Error updating password: {e}")
             return False
     
-    def load_subjects(self) -> List[Dict[str, Any]]:
-        """Load all subjects from database"""
-        query = """
-        SELECT 
-            subject_code,
-            subject_name,
-            lecture_hours_per_week,
-            lab_hours_per_week,
-            units,
-            semester,
-            program_specialization,
-            year_level
-        FROM cs_curriculum
-        ORDER BY year_level, semester, subject_code
-        """
-        return self.db.execute_query(query)
+    def load_subjects(self, programs: List[str] = None) -> List[Dict[str, Any]]:
+        """Load all subjects from database for specified programs"""
+        if programs is None:
+            programs = ['CS']
+        
+        all_subjects = []
+        for program in programs:
+            if program.upper() == 'IT':
+                table_name = 'it_curriculum'
+            else:
+                table_name = 'cs_curriculum'
+                
+            query = f"""
+            SELECT 
+                subject_code,
+                subject_name,
+                lecture_hours_per_week,
+                lab_hours_per_week,
+                units,
+                semester,
+                program_specialization,
+                year_level,
+                '{program.upper()}' as program
+            FROM {table_name}
+            ORDER BY year_level, semester, subject_code
+            """
+            subjects = self.db.execute_query(query)
+            all_subjects.extend(subjects)
+        
+        return all_subjects
     
     def load_teachers(self) -> List[Dict[str, Any]]:
         """Load all teachers from database"""
@@ -425,7 +439,34 @@ class ScheduleDatabase:
             subject_data.get('year_level')
         )
         self.db.execute_single(query, params)
-    
+        
+    def insert_it_subject(self, subject_data: Dict[str, Any]) -> None:
+        """Insert a single IT subject"""
+        query = """
+        INSERT INTO it_curriculum (subject_code, subject_name, lecture_hours_per_week, 
+                             lab_hours_per_week, units, semester, program_specialization, year_level)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (subject_code) DO UPDATE SET
+            subject_name = EXCLUDED.subject_name,
+            lecture_hours_per_week = EXCLUDED.lecture_hours_per_week,
+            lab_hours_per_week = EXCLUDED.lab_hours_per_week,
+            units = EXCLUDED.units,
+            semester = EXCLUDED.semester,
+            program_specialization = EXCLUDED.program_specialization,
+            year_level = EXCLUDED.year_level
+        """
+        params = (
+            subject_data['subject_code'],
+            subject_data['subject_name'],
+            subject_data.get('lecture_hours_per_week', 0),
+            subject_data.get('lab_hours_per_week', 0),
+            subject_data['units'],
+            subject_data.get('semester'),
+            subject_data.get('program_specialization'),
+            subject_data.get('year_level')
+        )
+        self.db.execute_single(query, params)
+        
     def insert_teacher(self, teacher_data: Dict[str, Any]) -> int:
         """Insert a single teacher and return the generated ID"""
         query = """
@@ -480,9 +521,9 @@ class ScheduleDatabase:
 # Global database instance
 db = ScheduleDatabase()
 
-def load_subjects_from_db():
-    """Load subjects from database (replaces CSV loading)"""
-    return db.load_subjects()
+def load_subjects_from_db(programs: List[str] = None):
+    """Load subjects from database for specified programs (replaces CSV loading)"""
+    return db.load_subjects(programs)
 
 def load_teachers_from_db():
     """Load teachers from database (replaces CSV loading)"""
@@ -497,8 +538,20 @@ def load_sections_from_db():
     return db.load_sections()
 
 def add_subject(subject_data: Dict[str, Any]) -> None:
-    """Add a new subject to the database"""
+    """Add a new subject to the CS curriculum database"""
     db.insert_subject(subject_data)
+
+def add_it_subject(subject_data: Dict[str, Any]) -> None:
+    """Add a new subject to the IT curriculum database"""
+    db.insert_it_subject(subject_data)
+
+def update_it_subject(subject_code: str, subject_data: Dict[str, Any]) -> None:
+    """Update an existing IT subject in the database"""
+    db.insert_it_subject(subject_data)  # Uses ON CONFLICT DO UPDATE
+
+def delete_it_subject(subject_code: str) -> None:
+    """Delete an IT subject from the database"""
+    db.delete_it_subject(subject_code)
 
 def add_teacher(teacher_data: Dict[str, Any]) -> int:
     """Add a new teacher to the database and return the generated ID"""
@@ -549,8 +602,13 @@ def update_section(section_id: str, section_data: Dict[str, Any]) -> None:
     db.insert_section(section_data)  # Uses ON CONFLICT DO UPDATE
 
 def delete_subject(subject_code: str) -> None:
-    """Delete a subject from the database"""
+    """Delete a subject from the CS curriculum database"""
     query = "DELETE FROM cs_curriculum WHERE subject_code = %s"
+    db.db.execute_single(query, (subject_code,))
+
+def delete_it_subject(subject_code: str) -> None:
+    """Delete a subject from the IT curriculum database"""
+    query = "DELETE FROM it_curriculum WHERE subject_code = %s"
     db.db.execute_single(query, (subject_code,))
 
 def delete_teacher(teacher_id: str) -> None:

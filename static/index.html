@@ -92,6 +92,21 @@
             </div>
           </div>
           <div class="mb-3">
+            <label class="form-label">Select Programs:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="programCS" value="CS" checked>
+              <label class="form-check-label" for="programCS">
+                Computer Science (CS)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="programIT" value="IT">
+              <label class="form-check-label" for="programIT">
+                Information Technology (IT)
+              </label>
+            </div>
+          </div>
+          <div class="mb-3">
             <label for="semesterSelect" class="form-label">Select Semester:</label>
             <select class="form-select" id="semesterSelect">
               <option value="1" selected>1st Semester</option>
@@ -156,22 +171,63 @@
       <div class="tab-content">
         <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
           <h2>Subjects</h2>
-          <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-            <input id="subjectsSearch" class="form-control form-control-sm me-2" placeholder="Search subjects (code, name)…" />
-            <button id="subjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
-            <div class="ms-auto d-flex align-items-center gap-2">
-              <button id="subjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
-              <button id="subjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
-              <button id="subjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+          
+          <!-- Subject Program Tabs -->
+          <ul class="nav nav-tabs mb-3" id="subjectProgramTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="cs-subjects-tab" data-bs-toggle="tab" data-bs-target="#cs-subjects-pane" type="button" role="tab" aria-controls="cs-subjects-pane" aria-selected="true">
+                <i class="bi bi-laptop"></i> CS Subjects
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="it-subjects-tab" data-bs-toggle="tab" data-bs-target="#it-subjects-pane" type="button" role="tab" aria-controls="it-subjects-pane" aria-selected="false">
+                <i class="bi bi-gear"></i> IT Subjects
+              </button>
+            </li>
+          </ul>
+          
+          <!-- Tab Content -->
+          <div class="tab-content" id="subjectProgramTabsContent">
+            <!-- CS Subjects Tab -->
+            <div class="tab-pane fade show active" id="cs-subjects-pane" role="tabpanel" aria-labelledby="cs-subjects-tab">
+              <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+                <input id="csSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search CS subjects (code, name)…" />
+                <button id="csSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                  <button id="csSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
+                  <button id="csSubjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
+                  <button id="csSubjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                </div>
+              </div>
+              <div id="csSubjectsData" class="table-responsive mb-4"></div>
+              <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
+                <div class="input-group">
+                  <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
+                  <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
+                </div>
+              </form>
+            </div>
+            
+            <!-- IT Subjects Tab -->
+            <div class="tab-pane fade" id="it-subjects-pane" role="tabpanel" aria-labelledby="it-subjects-tab">
+              <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+                <input id="itSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search IT subjects (code, name)…" />
+                <button id="itSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                  <button id="itSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
+                  <button id="itSubjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
+                  <button id="itSubjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                </div>
+              </div>
+              <div id="itSubjectsData" class="table-responsive mb-4"></div>
+              <form id="uploadITSubjectsForm" enctype="multipart/form-data" class="mb-4">
+                <div class="input-group">
+                  <input type="file" class="form-control" id="itCurriculumFile" accept=".csv">
+                  <button class="btn btn-outline-info" type="submit">Upload IT Curriculum CSV</button>
+                </div>
+              </form>
             </div>
           </div>
-          <div id="subjectsData" class="table-responsive mb-4"></div>
-          <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
-            <div class="input-group">
-              <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
-              <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
-            </div>
-          </form>
         </div>
         <div class="tab-pane fade" id="pane-teachers" role="tabpanel" aria-labelledby="tab-teachers">
           <h2>Teachers</h2>

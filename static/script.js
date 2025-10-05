@@ -29,7 +29,9 @@ let currentRoomFilter = 'all';
 let availableRooms = [];
 
 // Cached data for tabs so searches/filtering work reliably
-let subjectsCache = [];
+let subjectsCache = []; // Legacy - kept for compatibility
+let csSubjectsCache = [];
+let itSubjectsCache = [];
 let teachersCache = [];
 let roomsCache = [];
 
@@ -102,7 +104,15 @@ if (uploadSubjectsForm) uploadSubjectsForm.addEventListener('submit', async (e) 
   e.preventDefault();
   const fileInput = document.getElementById('csCurriculumFile');
   await uploadFile(fileInput.files[0], 'cs_curriculum');
-  await loadSubjectsTable(); // Reload subjects after upload
+  await loadCSSubjectsTable(); // Reload CS subjects after upload
+});
+
+const uploadITSubjectsForm = document.getElementById('uploadITSubjectsForm');
+if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('itCurriculumFile');
+  await uploadFile(fileInput.files[0], 'it_curriculum');
+  await loadITSubjectsTable(); // Reload IT subjects after upload
 });
 
 if (uploadTeachersForm) uploadTeachersForm.addEventListener('submit', async (e) => {
@@ -149,14 +159,16 @@ async function uploadFile(file, filename) {
 }
 
 // Day and Time Slot labels must match scheduler.py exactly
-const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const timeSlotLabels = [
-  "07:00-07:30", "07:30-08:00", "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
+  "06:00-06:30", "06:30-07:00", "07:00-07:30", "07:30-08:00",
+  "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
   "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
   "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
   "17:00-17:30", "17:30-18:00", "18:00-18:30", "18:30-19:00",
-  "19:00-19:30", "19:30-20:00"
+  "19:00-19:30", "19:30-20:00", "20:00-20:30", "20:30-21:00",
+  "21:00-21:30", "21:30-22:00"
 ];
 
 // Timetable subject color mapping helpers
@@ -239,31 +251,52 @@ document.getElementById('generateBtn').onclick = async function() {
   document.getElementById('result').innerHTML = '<div class="p-4 text-center">Generating schedule...</div>';
   document.getElementById('timetable').innerHTML = "";
 
+  // Get selected programs from checkboxes
+  const selectedPrograms = [];
+  if (document.getElementById('programCS').checked) selectedPrograms.push('CS');
+  if (document.getElementById('programIT').checked) selectedPrograms.push('IT');
+  
   const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
-  const requestBody = { semester: selectedSemester };
+  const requestBody = { 
+    programs: selectedPrograms,
+    semester: selectedSemester 
+  };
   requestBody.numSectionsYear1 = parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10);
   requestBody.numSectionsYear2 = parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10);
   requestBody.numSectionsYear3 = parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10);
   requestBody.numSectionsYear4 = parseInt(elValue(document.getElementById('numSectionsYear4')) || 0, 10);
 
+  // Validate that at least one program is selected
+  if (selectedPrograms.length === 0) {
+    document.getElementById('result').innerHTML = '<div class="alert alert-warning">Please select at least one program (CS or IT).</div>';
+    return;
+  }
+
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
-    const subjectsResponse = await fetch('/data/cs_curriculum', {
-      headers: getAuthHeaders()
-    });
+    // Load subjects from all selected programs
+    const allSubjects = [];
+    for (const program of selectedPrograms) {
+      const curriculumEndpoint = program.toUpperCase() === 'IT' ? '/data/it_curriculum' : '/data/cs_curriculum';
+      const subjectsResponse = await fetch(curriculumEndpoint, {
+        headers: getAuthHeaders()
+      });
     
-    if (!subjectsResponse.ok) {
-      console.error('Failed to load subjects:', subjectsResponse.status);
-      throw new Error(`Failed to load subjects: ${subjectsResponse.status}`);
+      if (!subjectsResponse.ok) {
+        console.error(`Failed to load subjects for ${program}:`, subjectsResponse.status);
+        throw new Error(`Failed to load subjects for ${program}: ${subjectsResponse.status}`);
+      }
+      
+      const subjectsData = await subjectsResponse.json();
+      
+      if (!Array.isArray(subjectsData)) {
+        throw new Error(`Subjects data for ${program} is not an array`);
+      }
+      
+      allSubjects.push(...subjectsData);
     }
     
-    const subjectsData = await subjectsResponse.json();
-    
-    if (!Array.isArray(subjectsData)) {
-      throw new Error('Subjects data is not an array');
-    }
-    
-    const yearsList = subjectsData
+    const yearsList = allSubjects
       .filter(s => String(s.semester) === String(selectedSemester))
       .map(s => parseInt(s.year_level))
       .filter(n => !isNaN(n));
@@ -780,21 +813,59 @@ if (viewMode) {
 
 // Lazy-load per-tab data loaders
 async function loadSubjectsTable() {
+  // Check if the subject elements exist before loading
+  const csElement = document.getElementById('csSubjectsData');
+  const itElement = document.getElementById('itSubjectsData');
+  
+  if (csElement) {
+    await loadCSSubjectsTable();
+  }
+  if (itElement) {
+    await loadITSubjectsTable();
+  }
+}
+
+async function loadCSSubjectsTable() {
   try {
     const subjectsResponse = await fetch('/data/cs_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!subjectsResponse.ok) throw new Error('Failed to load subjects');
-    subjectsCache = await subjectsResponse.json();
-    renderTable(subjectsCache, 'subjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    if (!subjectsResponse.ok) throw new Error('Failed to load CS subjects');
+    csSubjectsCache = await subjectsResponse.json();
+    renderTable(csSubjectsCache, 'csSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load subjects:', e);
-    document.getElementById('subjectsData').innerHTML = '<p>No data available.</p>';
+    console.warn('Could not load CS subjects:', e);
+    const element = document.getElementById('csSubjectsData');
+    if (element) {
+      element.innerHTML = '<p>No CS data available.</p>';
+    }
   }
   // Attach client-side search handler
-  const sInput = document.getElementById('subjectsSearch');
+  const sInput = document.getElementById('csSubjectsSearch');
   if (sInput) {
-    sInput.oninput = () => filterTable('subjectsData', subjectsCache, ['subject_code', 'subject_name']);
+    sInput.oninput = () => filterTable('csSubjectsData', csSubjectsCache, ['subject_code', 'subject_name']);
+  }
+}
+
+async function loadITSubjectsTable() {
+  try {
+    const subjectsResponse = await fetch('/data/it_curriculum', {
+      headers: getAuthHeaders()
+    });
+    if (!subjectsResponse.ok) throw new Error('Failed to load IT subjects');
+    itSubjectsCache = await subjectsResponse.json();
+    renderTable(itSubjectsCache, 'itSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  } catch (e) {
+    console.warn('Could not load IT subjects:', e);
+    const element = document.getElementById('itSubjectsData');
+    if (element) {
+      element.innerHTML = '<p>No IT data available.</p>';
+    }
+  }
+  // Attach client-side search handler
+  const sInput = document.getElementById('itSubjectsSearch');
+  if (sInput) {
+    sInput.oninput = () => filterTable('itSubjectsData', itSubjectsCache, ['subject_code', 'subject_name']);
   }
 }
 
@@ -848,16 +919,16 @@ function filterTable(elementId, data, searchableFields) {
   const input = document.getElementById(elementId.replace('Data','Search')) || document.querySelector(`#${elementId.split('Data')[0]}Search`);
   const q = (input && input.value || '').trim().toLowerCase();
   if (!q) {
-    // show full
-    if (elementId === 'subjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
-    else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
-    else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
-    return;
-  }
-  const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
-  // reuse renderTable but with filtered data
-  if (elementId === 'subjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
-  else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
+  // show full
+  if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
+  else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
+  return;
+}
+const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
+// reuse renderTable but with filtered data
+if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
 }
 
@@ -874,7 +945,10 @@ async function loadDataManagementTables() {
 document.querySelectorAll('#dataTabs button[data-bs-toggle="tab"]').forEach(btn => {
   btn.addEventListener('shown.bs.tab', (e) => {
     const tab = e.target.dataset.tab;
-    if (tab === 'subjects') loadSubjectsTable();
+    if (tab === 'subjects') {
+      // Small delay to ensure DOM is rendered
+      setTimeout(() => loadSubjectsTable(), 100);
+    }
     else if (tab === 'teachers') loadTeachersTable();
     else if (tab === 'rooms') loadRoomsTable();
   });
@@ -908,7 +982,12 @@ function renderTable(data, elementId, headers) {
     tableHtml += `<tr><td colspan="${headers.length + 1}" class="text-center text-muted">No data available.</td></tr>`;
   }
   tableHtml += '</tbody></table>';
-  document.getElementById(elementId).innerHTML = tableHtml;
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.error(`Element with ID '${elementId}' not found`);
+    return;
+  }
+  element.innerHTML = tableHtml;
   // enable row selection
   const container = document.getElementById(elementId);
   const rows = container.querySelectorAll('tbody tr');
@@ -1011,11 +1090,12 @@ function promptForData(fields, initial = {}) {
 }
 
 function setupCrudButtons() {
-  // Subjects
-  const subAdd = document.getElementById('subjectsAdd');
-  const subEdit = document.getElementById('subjectsEdit');
-  const subDel = document.getElementById('subjectsDelete');
-  if (subAdd) subAdd.onclick = async () => {
+
+  // CS Subjects
+  const csSubAdd = document.getElementById('csSubjectsAdd');
+  const csSubEdit = document.getElementById('csSubjectsEdit');
+  const csSubDel = document.getElementById('csSubjectsDelete');
+  if (csSubAdd) csSubAdd.onclick = async () => {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const data = promptForData(fields);
     if (!data) return;
@@ -1025,24 +1105,58 @@ function setupCrudButtons() {
     data.semester = data.semester ? parseInt(data.semester, 10) : null;
     data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
     await fetch('/api/subjects', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
-    loadSubjectsTable();
+    loadCSSubjectsTable();
   };
-  if (subEdit) subEdit.onclick = async () => {
+  if (csSubEdit) csSubEdit.onclick = async () => {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
-    const selected = getSelectedRowData('subjectsData', fields);
+    const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     openBulkEditModal('subjects', fields, selected);
   };
-  if (subDel) subDel.onclick = async () => {
+  if (csSubDel) csSubDel.onclick = async () => {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
-    const selected = getSelectedRowData('subjectsData', fields);
+    const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    if (!confirm(`Delete ${selected.length} subject(s)?`)) return;
+    if (!confirm(`Delete ${selected.length} CS subject(s)?`)) return;
     for (const item of selected) {
       await fetch(`/api/subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
-    loadSubjectsTable();
+    loadCSSubjectsTable();
   };
+
+  // IT Subjects
+  const itSubAdd = document.getElementById('itSubjectsAdd');
+  const itSubEdit = document.getElementById('itSubjectsEdit');
+  const itSubDel = document.getElementById('itSubjectsDelete');
+  if (itSubAdd) itSubAdd.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const data = promptForData(fields);
+    if (!data) return;
+    data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
+    data.lab_hours_per_week = data.lab_hours_per_week ? parseInt(data.lab_hours_per_week, 10) : 0;
+    data.units = data.units ? parseInt(data.units, 10) : 0;
+    data.semester = data.semester ? parseInt(data.semester, 10) : null;
+    data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
+    await fetch('/api/it-subjects', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    loadITSubjectsTable();
+  };
+  if (itSubEdit) itSubEdit.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const selected = getSelectedRowData('itSubjectsData', fields);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    openBulkEditModal('it-subjects', fields, selected);
+  };
+  if (itSubDel) itSubDel.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const selected = getSelectedRowData('itSubjectsData', fields);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    if (!confirm(`Delete ${selected.length} IT subject(s)?`)) return;
+    for (const item of selected) {
+      await fetch(`/api/it-subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+    }
+    loadITSubjectsTable();
+  };
+
   // Teachers
   const tAdd = document.getElementById('teachersAdd');
   const tEdit = document.getElementById('teachersEdit');

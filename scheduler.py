@@ -1,7 +1,7 @@
 from ortools.sat.python import cp_model
 from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 
-def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, desired_sections_per_year):
+def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, desired_sections_per_year, programs=['CS']):
     logs = []
     print('Scheduler: Initializing model...')
     model = cp_model.CpModel()
@@ -39,10 +39,10 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     room_names = [r['room_name'] for r in rooms_data]
 
     # Define granular days and time slots (30-minute increments)
-    day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    # Assuming 7 AM to 8 PM with a lunch break (12-1 PM)
+    day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    # Extended hours: 6 AM to 10 PM for better capacity
     time_slot_labels = []
-    for h in range(7, 20): # 7 AM to 8 PM (exclusive 9 PM)
+    for h in range(6, 22): # 7 AM to 8 PM (exclusive 9 PM)
         time_slot_labels.append(f"{h:02d}:00-{h:02d}:30")
         time_slot_labels.append(f"{h:02d}:30-{h+1:02d}:00")
     # Remove 12:00-1:00 for lunch break
@@ -59,22 +59,36 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     # Prepare a list of all individual meeting events to be scheduled
     meeting_events = []
     
-    # Dynamically generate cohort sections (e.g., CS1A, CS1B) based on desired_sections_per_year
+    # Get available years from curriculum to avoid creating sections for non-existent years
+    available_years = set()
+    for subject in subjects_data:
+        if subject.get('program', '').upper() in [p.upper() for p in programs]:
+            available_years.add(int(subject.get('year_level', 0)))
+    
+    print(f"Available years in curriculum: {sorted(available_years)}")
+    
+    # Dynamically generate cohort sections for each program (e.g., CS1A, CS1B, IT1A, IT1B) based on desired_sections_per_year
     all_dynamic_cohort_sections = [] 
-    for year_level, num_sections in desired_sections_per_year.items():
-        if num_sections <= 0:
-            continue
+    for program in programs:
+        program_prefix = program.upper()
+        for year_level, num_sections in desired_sections_per_year.items():
+            if num_sections <= 0:
+                continue
+            if year_level not in available_years:
+                print(f"Skipping {program_prefix} Year {year_level} - no curriculum available")
+                continue
 
-        for section_idx in range(num_sections):
-            # Generate section letter (A, B, C...)
-            section_letter = chr(ord('A') + section_idx)
-            # Generate cohort section ID (e.g., CS1A, CS2B) - assuming 'CS' prefix for now
-            cohort_section_id = f"CS{year_level}{section_letter}"
-            all_dynamic_cohort_sections.append({
-                'section_id': cohort_section_id,
-                'year_level': str(year_level),
-                'semester': semester_filter # Attach the filtered semester for the cohort
-            })
+            for section_idx in range(num_sections):
+                # Generate section letter (A, B, C...)
+                section_letter = chr(ord('A') + section_idx)
+                # Generate cohort section ID (e.g., CS1A, CS2B or IT1A, IT2B)
+                cohort_section_id = f"{program_prefix}{year_level}{section_letter}"
+                all_dynamic_cohort_sections.append({
+                    'section_id': cohort_section_id,
+                    'year_level': str(year_level),
+                    'semester': semester_filter, # Attach the filtered semester for the cohort
+                    'program': program.upper()
+                })
 
     if not all_dynamic_cohort_sections:
         print("Scheduler: No dynamic cohort sections generated based on desired year levels and semester filter.")

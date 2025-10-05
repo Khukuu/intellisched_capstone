@@ -355,7 +355,14 @@ async def saved_schedules_page():
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(require_chair_role)):
     logger.info('Received request for /schedule')
-    subjects = load_subjects_from_db()
+    
+    # Get program selection (default to CS for backward compatibility)
+    programs = payload.get('programs', ['CS'])
+    if isinstance(programs, str):
+        programs = [programs]  # Handle single program as string
+    logger.info(f'Scheduling for programs: {programs}')
+    
+    subjects = load_subjects_from_db(programs)
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
 
@@ -405,7 +412,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         logger.warning('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
         return JSONResponse(content=[])
 
-    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year)
+    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year, programs)
 
     # If request explicitly asks to persist as pending schedule (Chair flow)
     if payload.get('persist', False):
@@ -469,7 +476,10 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
     """Chair generates and submits schedule for approval (status=pending)."""
     # Prefer client-provided schedule when available; fall back to server generation
     client_schedule = payload.get('schedule')
-    subjects = load_subjects_from_db()
+    programs = payload.get('programs', ['CS'])
+    if isinstance(programs, str):
+        programs = [programs]  # Handle single program as string
+    subjects = load_subjects_from_db(programs)
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
     semester_filter = payload.get('semester')
@@ -481,7 +491,7 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
         4: payload.get('numSectionsYear4', 0),
     }
 
-    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)
+    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year, programs)
     name = (payload.get('name') or 'Generated Schedule')
     semester_int = int(semester_filter) if semester_filter else None
     uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
@@ -731,7 +741,11 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
 async def get_data(filename: str, username: str = Depends(require_chair_role)):
     try:
         if filename in ['cs_curriculum', 'subjects']:
-            data = load_subjects_from_db()
+            data = load_subjects_from_db(['CS'])
+        elif filename == 'it_curriculum':
+            data = load_subjects_from_db(['IT'])
+        elif filename == 'all_curriculum':
+            data = load_subjects_from_db(['CS', 'IT'])
         elif filename == 'teachers':
             data = load_teachers_from_db()
         elif filename == 'rooms':
@@ -786,7 +800,24 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
                 if not subject['subject_code']:
                     continue
                 add_subject(subject)
-            return JSONResponse(content={'message': 'Subjects CSV uploaded successfully'})
+            return JSONResponse(content={'message': 'CS Curriculum CSV uploaded successfully'})
+        elif filename == 'it_curriculum':
+            from database import add_it_subject
+            for r in rows:
+                subject = {
+                    'subject_code': r.get('subject_code') or r.get('code') or '',
+                    'subject_name': r.get('subject_name') or r.get('name') or '',
+                    'lecture_hours_per_week': safe_int(r.get('lecture_hours_per_week') or r.get('lec_hours')),
+                    'lab_hours_per_week': safe_int(r.get('lab_hours_per_week') or r.get('lab_hours')),
+                    'units': safe_int(r.get('units')),
+                    'semester': (lambda x: (safe_int(x) or None))(r.get('semester')),
+                    'program_specialization': (r.get('program_specialization') or r.get('program') or None),
+                    'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
+                }
+                if not subject['subject_code']:
+                    continue
+                add_it_subject(subject)
+            return JSONResponse(content={'message': 'IT Curriculum CSV uploaded successfully'})
         elif filename == 'teachers':
             from database import add_teacher
             added_count = 0
@@ -866,6 +897,38 @@ async def delete_subject_endpoint(subject_code: str, username: str = Depends(req
         from database import delete_subject
         delete_subject(subject_code)
         return JSONResponse(content={'message': 'Subject deleted successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# IT Subjects API endpoints
+@app.post('/api/it-subjects')
+async def add_it_subject_endpoint(subject_data: dict, username: str = Depends(require_chair_role)):
+    """Add a new IT subject to the database"""
+    try:
+        from database import add_it_subject
+        add_it_subject(subject_data)
+        return JSONResponse(content={'message': 'IT Subject added successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/it-subjects/{subject_code}')
+async def update_it_subject_endpoint(subject_code: str, subject_data: dict, username: str = Depends(require_chair_role)):
+    """Update an existing IT subject in the database"""
+    try:
+        from database import update_it_subject
+        subject_data['subject_code'] = subject_code
+        update_it_subject(subject_code, subject_data)
+        return JSONResponse(content={'message': 'IT Subject updated successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/it-subjects/{subject_code}')
+async def delete_it_subject_endpoint(subject_code: str, username: str = Depends(require_chair_role)):
+    """Delete an IT subject from the database"""
+    try:
+        from database import delete_it_subject
+        delete_it_subject(subject_code)
+        return JSONResponse(content={'message': 'IT Subject deleted successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
