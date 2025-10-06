@@ -368,19 +368,31 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
 
     semester_filter = payload.get('semester')
 
-    num_sections_year_1 = payload.get('numSectionsYear1', 0)
-    num_sections_year_2 = payload.get('numSectionsYear2', 0)
-    num_sections_year_3 = payload.get('numSectionsYear3', 0)
-    num_sections_year_4 = payload.get('numSectionsYear4', 0)
+    # Handle program-specific section counts
+    program_sections = payload.get('programSections', {})
+    
+    # If old format is used, convert to new format
+    if not program_sections and any(key.startswith('numSectionsYear') for key in payload.keys()):
+        # Legacy format - use same sections for all programs
+        num_sections_year_1 = payload.get('numSectionsYear1', 0)
+        num_sections_year_2 = payload.get('numSectionsYear2', 0)
+        num_sections_year_3 = payload.get('numSectionsYear3', 0)
+        num_sections_year_4 = payload.get('numSectionsYear4', 0)
+        
+        for program in programs:
+            program_sections[program] = {
+                1: num_sections_year_1,
+                2: num_sections_year_2,
+                3: num_sections_year_3,
+                4: num_sections_year_4
+            }
+    
+    # Ensure all selected programs have section counts
+    for program in programs:
+        if program not in program_sections:
+            program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
-    desired_sections_per_year = {
-        1: num_sections_year_1,
-        2: num_sections_year_2,
-        3: num_sections_year_3,
-        4: num_sections_year_4,
-    }
-
-    logger.info(f"Filtering for semester: {semester_filter}. Desired sections per year: {desired_sections_per_year}")
+    logger.info(f"Filtering for semester: {semester_filter}. Program sections: {program_sections}")
 
     try:
         if semester_filter:
@@ -399,20 +411,40 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         available_years = {1, 2, 3, 4}
 
     logger.info(f"Available years: {available_years}")
-    logger.info(f"Desired sections per year: {desired_sections_per_year}")
+    logger.info(f"Program sections: {program_sections}")
     
-    filtered_desired_sections_per_year = {
-        year: count for year, count in desired_sections_per_year.items()
-        if count and (year in available_years)
-    }
+    # Filter program sections to only include years with available curriculum
+    # But don't reject if some years don't have curriculum - just warn and adjust
+    filtered_program_sections = {}
+    has_valid_sections = False
+    adjusted_years = []
     
-    logger.info(f"Filtered desired sections: {filtered_desired_sections_per_year}")
+    for program, sections in program_sections.items():
+        filtered_sections = {}
+        for year, count in sections.items():
+            year_int = int(year)
+            if count and (year_int in available_years):
+                filtered_sections[year_int] = count
+                has_valid_sections = True
+            elif count and (year_int not in available_years):
+                # Year requested but no curriculum available
+                adjusted_years.append(f"{program} Year {year}")
+                logger.warning(f"No curriculum available for {program} Year {year} in semester {semester_filter}")
+        
+        if filtered_sections:
+            filtered_program_sections[program] = filtered_sections
+    
+    logger.info(f"Filtered program sections: {filtered_program_sections}")
+    
+    # Log adjustments made
+    if adjusted_years:
+        logger.info(f"Adjusted sections for years without curriculum: {adjusted_years}")
 
-    if not filtered_desired_sections_per_year:
+    if not has_valid_sections:
         logger.warning('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
         return JSONResponse(content=[])
 
-    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year, programs)
+    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
 
     # If request explicitly asks to persist as pending schedule (Chair flow)
     if payload.get('persist', False):
@@ -484,14 +516,31 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
     rooms = load_rooms_from_db()
     semester_filter = payload.get('semester')
 
-    desired_sections_per_year = {
-        1: payload.get('numSectionsYear1', 0),
-        2: payload.get('numSectionsYear2', 0),
-        3: payload.get('numSectionsYear3', 0),
-        4: payload.get('numSectionsYear4', 0),
-    }
+    # Handle program-specific section counts (same logic as main endpoint)
+    program_sections = payload.get('programSections', {})
+    
+    # If old format is used, convert to new format
+    if not program_sections and any(key.startswith('numSectionsYear') for key in payload.keys()):
+        # Legacy format - use same sections for all programs
+        num_sections_year_1 = payload.get('numSectionsYear1', 0)
+        num_sections_year_2 = payload.get('numSectionsYear2', 0)
+        num_sections_year_3 = payload.get('numSectionsYear3', 0)
+        num_sections_year_4 = payload.get('numSectionsYear4', 0)
+        
+        for program in programs:
+            program_sections[program] = {
+                1: num_sections_year_1,
+                2: num_sections_year_2,
+                3: num_sections_year_3,
+                4: num_sections_year_4
+            }
+    
+    # Ensure all selected programs have section counts
+    for program in programs:
+        if program not in program_sections:
+            program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
-    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year, programs)
+    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, program_sections, programs)
     name = (payload.get('name') or 'Generated Schedule')
     semester_int = int(semester_filter) if semester_filter else None
     uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')

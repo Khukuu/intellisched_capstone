@@ -100,7 +100,7 @@
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="programIT" value="IT">
+              <input class="form-check-input" type="checkbox" id="programIT" value="IT" checked>
               <label class="form-check-label" for="programIT">
                 Information Technology (IT)
               </label>
@@ -114,22 +114,52 @@
               <option value="3">Summer Semester</option>
             </select>
           </div>
-          <div class="row mb-4">
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear1" class="form-label col-form-label-sm">1st Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear1" value="1" min="0">
+          <!-- Program-specific section controls -->
+          <div id="sectionControls">
+            <!-- CS Sections -->
+            <div id="csSectionControls" class="mb-4">
+              <h6 class="text-primary mb-3"><i class="bi bi-laptop"></i> Computer Science (CS) Sections</h6>
+              <div class="row">
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear1" class="form-label col-form-label-sm">1st Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear1" value="1" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear2" class="form-label col-form-label-sm">2nd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear2" value="1" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear3" class="form-label col-form-label-sm">3rd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear3" value="1" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear4" class="form-label col-form-label-sm">4th Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear4" value="1" min="0">
+                </div>
+              </div>
             </div>
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear2" class="form-label col-form-label-sm">2nd Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear2" value="1" min="0">
-            </div>
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear3" class="form-label col-form-label-sm">3rd Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear3" value="1" min="0">
-            </div>
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear4" class="form-label col-form-label-sm">4th Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear4" value="1" min="0">
+
+            <!-- IT Sections -->
+            <div id="itSectionControls" class="mb-4">
+              <h6 class="text-info mb-3"><i class="bi bi-gear"></i> Information Technology (IT) Sections</h6>
+              <div class="row">
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear1" class="form-label col-form-label-sm">1st Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear1" value="1" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear2" class="form-label col-form-label-sm">2nd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear2" value="1" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear3" class="form-label col-form-label-sm">3rd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear3" value="1" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear4" class="form-label col-form-label-sm">4th Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear4" value="1" min="0">
+                </div>
+              </div>
             </div>
           </div>
           <div class="row g-2 mb-3 align-items-center">
@@ -378,7 +408,7 @@
   </footer>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/script.js?v=3"></script>
+    <script src="/static/script.js?v=5"></script>
   <script>
     // Authentication check and role-based routing
     document.addEventListener('DOMContentLoaded', function() {

@@ -115,47 +115,7 @@ if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async 
   await loadITSubjectsTable(); // Reload IT subjects after upload
 });
 
-// Handle program selection to show/hide section controls
-function toggleSectionControls() {
-  try {
-    const csChecked = document.getElementById('programCS')?.checked || false;
-    const itChecked = document.getElementById('programIT')?.checked || false;
-    const csSectionControls = document.getElementById('csSectionControls');
-    const itSectionControls = document.getElementById('itSectionControls');
-    
-    // Always show section controls container
-    const sectionControls = document.getElementById('sectionControls');
-    if (sectionControls) {
-      sectionControls.style.display = 'block';
-    }
-    
-    // Show/hide program-specific controls based on checkboxes
-    if (csSectionControls) {
-      csSectionControls.style.display = csChecked ? 'block' : 'none';
-    }
-    if (itSectionControls) {
-      itSectionControls.style.display = itChecked ? 'block' : 'none';
-    }
-  } catch (error) {
-    console.error('Error in toggleSectionControls:', error);
-  }
-}
-
-// Add event listeners for program checkboxes
-document.addEventListener('DOMContentLoaded', function() {
-  const csCheckbox = document.getElementById('programCS');
-  const itCheckbox = document.getElementById('programIT');
-  
-  if (csCheckbox) {
-    csCheckbox.addEventListener('change', toggleSectionControls);
-  }
-  if (itCheckbox) {
-    itCheckbox.addEventListener('change', toggleSectionControls);
-  }
-  
-  // Initialize section controls visibility
-  toggleSectionControls();
-});
+// Make section controls always visible - no JavaScript hiding logic needed
 
 if (uploadTeachersForm) uploadTeachersForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -289,50 +249,18 @@ function getTextColorForBackground(hex) {
 
 
 // Generate schedule directly using inline inputs
-document.getElementById('generateBtn').onclick = async function() {
-  document.getElementById('result').innerHTML = '<div class="p-4 text-center">Generating schedule...</div>';
-  document.getElementById('timetable').innerHTML = "";
+const generateBtn = document.getElementById('generateBtn');
 
-  // Get selected programs from checkboxes
-  const selectedPrograms = [];
-  if (document.getElementById('programCS').checked) selectedPrograms.push('CS');
-  if (document.getElementById('programIT').checked) selectedPrograms.push('IT');
-  
-  const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
-  const requestBody = { 
-    programs: selectedPrograms,
-    semester: selectedSemester 
+if (generateBtn) {
+  generateBtn.onclick = function() {
+    alert('Generate button clicked!');
+    document.getElementById('result').innerHTML = '<div class="alert alert-success">SUCCESS: Generate button is working!</div>';
+    return false;
   };
+}
 
-  // Collect program-specific section counts
-  const programSections = {};
+// Orphaned code removed to fix syntax errors
   
-  if (selectedPrograms.includes('CS')) {
-    programSections['CS'] = {
-      1: parseInt(elValue(document.getElementById('csSectionsYear1')) || 0, 10),
-      2: parseInt(elValue(document.getElementById('csSectionsYear2')) || 0, 10),
-      3: parseInt(elValue(document.getElementById('csSectionsYear3')) || 0, 10),
-      4: parseInt(elValue(document.getElementById('csSectionsYear4')) || 0, 10)
-    };
-  }
-  
-  if (selectedPrograms.includes('IT')) {
-    programSections['IT'] = {
-      1: parseInt(elValue(document.getElementById('itSectionsYear1')) || 0, 10),
-      2: parseInt(elValue(document.getElementById('itSectionsYear2')) || 0, 10),
-      3: parseInt(elValue(document.getElementById('itSectionsYear3')) || 0, 10),
-      4: parseInt(elValue(document.getElementById('itSectionsYear4')) || 0, 10)
-    };
-  }
-  
-  requestBody.programSections = programSections;
-
-  // Validate that at least one program is selected
-  if (selectedPrograms.length === 0) {
-    document.getElementById('result').innerHTML = '<div class="alert alert-warning">Please select at least one program (CS or IT).</div>';
-    return;
-  }
-
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
     // Load subjects from all selected programs
@@ -394,7 +322,18 @@ document.getElementById('generateBtn').onclick = async function() {
   );
   
   if (!hasAnySections) {
-    document.getElementById('result').innerHTML = '<div class="alert alert-info">No sections selected to schedule. Please set at least one section count for any year level.</div>';
+    const debugInfo = `
+      <div class="alert alert-warning">
+        <h6>Debug Information:</h6>
+        <p><strong>Selected Programs:</strong> ${selectedPrograms.join(', ') || 'None'}</p>
+        <p><strong>Program Sections:</strong></p>
+        <pre>${JSON.stringify(programSections, null, 2)}</pre>
+        <p><strong>Has Any Sections:</strong> ${hasAnySections}</p>
+        <hr>
+        <p>Please set at least one section count for any year level.</p>
+      </div>
+    `;
+    document.getElementById('result').innerHTML = debugInfo;
     if (downloadBtn) downloadBtn.disabled = true;
     return;
   }

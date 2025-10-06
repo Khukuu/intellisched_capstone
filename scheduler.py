@@ -1,7 +1,7 @@
 from ortools.sat.python import cp_model
 from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 
-def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, desired_sections_per_year, programs=['CS']):
+def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, program_sections, programs=['CS']):
     logs = []
     print('Scheduler: Initializing model...')
     model = cp_model.CpModel()
@@ -67,11 +67,13 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     
     print(f"Available years in curriculum: {sorted(available_years)}")
     
-    # Dynamically generate cohort sections for each program (e.g., CS1A, CS1B, IT1A, IT1B) based on desired_sections_per_year
+    # Dynamically generate cohort sections for each program (e.g., CS1A, CS1B, IT1A, IT1B) based on program_sections
     all_dynamic_cohort_sections = [] 
     for program in programs:
         program_prefix = program.upper()
-        for year_level, num_sections in desired_sections_per_year.items():
+        program_section_counts = program_sections.get(program, {})
+        
+        for year_level, num_sections in program_section_counts.items():
             if num_sections <= 0:
                 continue
             if year_level not in available_years:
