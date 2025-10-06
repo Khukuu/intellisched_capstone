@@ -201,7 +201,7 @@ async function uploadFile(file, filename) {
 }
 
 // Day and Time Slot labels must match scheduler.py exactly
-const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];  // No Sunday classes
 const timeSlotLabels = [
   "06:00-06:30", "06:30-07:00", "07:00-07:30", "07:30-08:00",
   "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
@@ -209,8 +209,7 @@ const timeSlotLabels = [
   "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
   "17:00-17:30", "17:30-18:00", "18:00-18:30", "18:30-19:00",
-  "19:00-19:30", "19:30-20:00", "20:00-20:30", "20:30-21:00",
-  "21:00-21:30", "21:30-22:00"
+  "19:00-19:30", "19:30-20:00"
 ];
 
 // Timetable subject color mapping helpers
@@ -493,13 +492,13 @@ async function submitForApproval() {
 
 
 function populateFilters(data) {
-  // Extract available years from section IDs (format CS{year}{letter})
+  // Extract available years from section IDs (format CS{year}{letter} or IT{year}{letter})
   const years = new Set();
   const sectionsByYear = new Map();
   data.forEach(e => {
-    const match = /^CS(\d)/.exec(e.section_id || '');
+    const match = /^(CS|IT)(\d)/.exec(e.section_id || '');
     if (match) {
-      const y = match[1];
+      const y = match[2];
       years.add(y);
       if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
       sectionsByYear.get(y).add(e.section_id);
@@ -622,9 +621,9 @@ yearFilter.addEventListener('change', () => {
   // Rebuild section list based on year
   const sectionsByYear = new Map();
   lastGeneratedSchedule.forEach(e => {
-    const match = /^CS(\d)/.exec(e.section_id || '');
+    const match = /^(CS|IT)(\d)/.exec(e.section_id || '');
     if (match) {
-      const y = match[1];
+      const y = match[2];
       if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
       sectionsByYear.get(y).add(e.section_id);
     }
@@ -692,8 +691,8 @@ function applyFilters(data) {
   return data.filter(e => {
     let ok = true;
     if (y !== 'all') {
-      const m = /^CS(\d)/.exec(e.section_id || '');
-      ok = ok && m && m[1] === y;
+      const m = /^(CS|IT)(\d)/.exec(e.section_id || '');
+      ok = ok && m && m[2] === y;
     }
     if (s !== 'all') ok = ok && e.section_id === s;
     if (r !== 'all') {
@@ -1449,20 +1448,38 @@ function createNotificationItem(notification) {
           <p class="mb-1 text-muted small">${notification.message}</p>
           <small class="text-muted">${timeAgo}</small>
         </div>
-        ${!notification.is_read ? '<span class="badge bg-primary rounded-pill ms-2">New</span>' : ''}
+        <div class="d-flex align-items-center">
+          ${!notification.is_read ? '<span class="badge bg-primary rounded-pill me-2">New</span>' : ''}
+          <button class="btn btn-sm btn-outline-danger p-1" type="button" title="Delete notification">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
       </div>
     </div>
   `;
   
-  // Add click handler to mark as read
-  li.addEventListener('click', async () => {
+  // Add click handler to mark as read (but not when clicking the delete button)
+  li.addEventListener('click', async (e) => {
+    // Don't mark as read if clicking the delete button
+    if (e.target.closest('button')) {
+      return;
+    }
+    
     if (!notification.is_read) {
       await markNotificationAsRead(notification.id);
       notification.is_read = true;
       li.querySelector('.dropdown-item').classList.remove('bg-light');
-      li.querySelector('.badge').remove();
+      const badge = li.querySelector('.badge');
+      if (badge) badge.remove();
       updateNotificationBadge(await loadUnreadNotifications());
     }
+  });
+  
+  // Add click handler for delete button
+  const deleteBtn = li.querySelector('button');
+  deleteBtn.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent the li click handler from firing
+    await deleteNotification(notification.id);
   });
   
   return li;
@@ -1526,6 +1543,24 @@ async function markNotificationAsRead(notificationId) {
     }
   } catch (error) {
     console.error('Error marking notification as read:', error);
+  }
+}
+
+async function deleteNotification(notificationId) {
+  try {
+    const response = await fetch(`/api/notifications/${notificationId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to delete notification');
+    } else {
+      // Reload notifications after deletion
+      await loadNotifications();
+    }
+  } catch (error) {
+    console.error('Error deleting notification:', error);
   }
 }
 

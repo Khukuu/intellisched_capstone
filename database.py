@@ -351,6 +351,8 @@ class ScheduleDatabase:
             programs = ['CS']
         
         all_subjects = []
+        seen_subjects = set()  # Track seen subject codes to avoid duplicates
+        
         for program in programs:
             if program.upper() == 'IT':
                 table_name = 'it_curriculum'
@@ -372,7 +374,29 @@ class ScheduleDatabase:
             ORDER BY year_level, semester, subject_code
             """
             subjects = self.db.execute_query(query)
-            all_subjects.extend(subjects)
+            
+            # Add subjects, but skip duplicates (same subject_code, year_level, semester)
+            for subject in subjects:
+                # Create a unique key for deduplication
+                dedup_key = (subject['subject_code'], subject['year_level'], subject['semester'])
+                if dedup_key not in seen_subjects:
+                    seen_subjects.add(dedup_key)
+                    all_subjects.append(subject)
+                else:
+                    # For general education subjects that exist in both programs, 
+                    # we need to make them available to both programs
+                    # Find the existing subject and update its program info
+                    for existing_subject in all_subjects:
+                        if (existing_subject['subject_code'] == subject['subject_code'] and
+                            existing_subject['year_level'] == subject['year_level'] and
+                            existing_subject['semester'] == subject['semester']):
+                            # Mark this subject as available to both programs
+                            if 'available_programs' not in existing_subject:
+                                existing_subject['available_programs'] = [existing_subject.get('program', 'CS')]
+                            if program.upper() not in existing_subject['available_programs']:
+                                existing_subject['available_programs'].append(program.upper())
+                            print(f"Debug: Subject {subject['subject_code']} is available to programs: {existing_subject['available_programs']}")
+                            break
         
         return all_subjects
     
