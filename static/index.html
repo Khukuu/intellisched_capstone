@@ -92,6 +92,21 @@
             </div>
           </div>
           <div class="mb-3">
+            <label class="form-label">Select Programs:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="programCS" value="CS">
+              <label class="form-check-label" for="programCS">
+                Computer Science (CS)
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="programIT" value="IT">
+              <label class="form-check-label" for="programIT">
+                Information Technology (IT)
+              </label>
+            </div>
+          </div>
+          <div class="mb-3">
             <label for="semesterSelect" class="form-label">Select Semester:</label>
             <select class="form-select" id="semesterSelect">
               <option value="1" selected>1st Semester</option>
@@ -99,22 +114,52 @@
               <option value="3">Summer Semester</option>
             </select>
           </div>
-          <div class="row mb-4">
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear1" class="form-label col-form-label-sm">1st Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear1" value="1" min="0">
+          <!-- Program-specific section controls -->
+          <div id="sectionControls">
+            <!-- CS Sections -->
+            <div id="csSectionControls" class="mb-4">
+              <h6 class="text-primary mb-3"><i class="bi bi-laptop"></i> Computer Science (CS) Sections</h6>
+              <div class="row">
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear1" class="form-label col-form-label-sm">1st Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear1" value="0" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear2" class="form-label col-form-label-sm">2nd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear2" value="0" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear3" class="form-label col-form-label-sm">3rd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear3" value="0" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="csSectionsYear4" class="form-label col-form-label-sm">4th Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="csSectionsYear4" value="0" min="0">
+                </div>
+              </div>
             </div>
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear2" class="form-label col-form-label-sm">2nd Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear2" value="1" min="0">
-            </div>
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear3" class="form-label col-form-label-sm">3rd Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear3" value="1" min="0">
-            </div>
-            <div class="col-md-6 col-lg-6 mb-3">
-              <label for="numSectionsYear4" class="form-label col-form-label-sm">4th Year Sections:</label>
-              <input type="number" class="form-control form-control-sm" id="numSectionsYear4" value="1" min="0">
+
+            <!-- IT Sections -->
+            <div id="itSectionControls" class="mb-4">
+              <h6 class="text-info mb-3"><i class="bi bi-gear"></i> Information Technology (IT) Sections</h6>
+              <div class="row">
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear1" class="form-label col-form-label-sm">1st Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear1" value="0" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear2" class="form-label col-form-label-sm">2nd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear2" value="0" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear3" class="form-label col-form-label-sm">3rd Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear3" value="0" min="0">
+                </div>
+                <div class="col-md-6 col-lg-3 mb-3">
+                  <label for="itSectionsYear4" class="form-label col-form-label-sm">4th Year:</label>
+                  <input type="number" class="form-control form-control-sm" id="itSectionsYear4" value="0" min="0">
+                </div>
+              </div>
             </div>
           </div>
           <div class="row g-2 mb-3 align-items-center">
@@ -156,22 +201,63 @@
       <div class="tab-content">
         <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
           <h2>Subjects</h2>
-          <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-            <input id="subjectsSearch" class="form-control form-control-sm me-2" placeholder="Search subjects (code, name)…" />
-            <button id="subjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
-            <div class="ms-auto d-flex align-items-center gap-2">
-              <button id="subjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
-              <button id="subjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
-              <button id="subjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+          
+          <!-- Subject Program Tabs -->
+          <ul class="nav nav-tabs mb-3" id="subjectProgramTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="cs-subjects-tab" data-bs-toggle="tab" data-bs-target="#cs-subjects-pane" type="button" role="tab" aria-controls="cs-subjects-pane" aria-selected="true">
+                <i class="bi bi-laptop"></i> CS Subjects
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="it-subjects-tab" data-bs-toggle="tab" data-bs-target="#it-subjects-pane" type="button" role="tab" aria-controls="it-subjects-pane" aria-selected="false">
+                <i class="bi bi-gear"></i> IT Subjects
+              </button>
+            </li>
+          </ul>
+          
+          <!-- Tab Content -->
+          <div class="tab-content" id="subjectProgramTabsContent">
+            <!-- CS Subjects Tab -->
+            <div class="tab-pane fade show active" id="cs-subjects-pane" role="tabpanel" aria-labelledby="cs-subjects-tab">
+              <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+                <input id="csSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search CS subjects (code, name)…" />
+                <button id="csSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                  <button id="csSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
+                  <button id="csSubjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
+                  <button id="csSubjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                </div>
+              </div>
+              <div id="csSubjectsData" class="table-responsive mb-4"></div>
+              <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
+                <div class="input-group">
+                  <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
+                  <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
+                </div>
+              </form>
+            </div>
+            
+            <!-- IT Subjects Tab -->
+            <div class="tab-pane fade" id="it-subjects-pane" role="tabpanel" aria-labelledby="it-subjects-tab">
+              <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+                <input id="itSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search IT subjects (code, name)…" />
+                <button id="itSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                <div class="ms-auto d-flex align-items-center gap-2">
+                  <button id="itSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
+                  <button id="itSubjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
+                  <button id="itSubjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                </div>
+              </div>
+              <div id="itSubjectsData" class="table-responsive mb-4"></div>
+              <form id="uploadITSubjectsForm" enctype="multipart/form-data" class="mb-4">
+                <div class="input-group">
+                  <input type="file" class="form-control" id="itCurriculumFile" accept=".csv">
+                  <button class="btn btn-outline-info" type="submit">Upload IT Curriculum CSV</button>
+                </div>
+              </form>
             </div>
           </div>
-          <div id="subjectsData" class="table-responsive mb-4"></div>
-          <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
-            <div class="input-group">
-              <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
-              <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
-            </div>
-          </form>
         </div>
         <div class="tab-pane fade" id="pane-teachers" role="tabpanel" aria-labelledby="tab-teachers">
           <h2>Teachers</h2>
@@ -322,7 +408,7 @@
   </footer>
   
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/script.js?v=3"></script>
+    <script src="/static/script.js?v=9"></script>
   <script>
     // Authentication check and role-based routing
     document.addEventListener('DOMContentLoaded', function() {

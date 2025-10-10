@@ -29,7 +29,9 @@ let currentRoomFilter = 'all';
 let availableRooms = [];
 
 // Cached data for tabs so searches/filtering work reliably
-let subjectsCache = [];
+let subjectsCache = []; // Legacy - kept for compatibility
+let csSubjectsCache = [];
+let itSubjectsCache = [];
 let teachersCache = [];
 let roomsCache = [];
 
@@ -102,7 +104,57 @@ if (uploadSubjectsForm) uploadSubjectsForm.addEventListener('submit', async (e) 
   e.preventDefault();
   const fileInput = document.getElementById('csCurriculumFile');
   await uploadFile(fileInput.files[0], 'cs_curriculum');
-  await loadSubjectsTable(); // Reload subjects after upload
+  await loadCSSubjectsTable(); // Reload CS subjects after upload
+});
+
+const uploadITSubjectsForm = document.getElementById('uploadITSubjectsForm');
+if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fileInput = document.getElementById('itCurriculumFile');
+  await uploadFile(fileInput.files[0], 'it_curriculum');
+  await loadITSubjectsTable(); // Reload IT subjects after upload
+});
+
+// Handle program selection to show/hide section controls
+function toggleSectionControls() {
+  try {
+    const csChecked = document.getElementById('programCS')?.checked || false;
+    const itChecked = document.getElementById('programIT')?.checked || false;
+    const csSectionControls = document.getElementById('csSectionControls');
+    const itSectionControls = document.getElementById('itSectionControls');
+    
+    // Always show section controls container
+    const sectionControls = document.getElementById('sectionControls');
+    if (sectionControls) {
+      sectionControls.style.display = 'block';
+    }
+    
+    // Show/hide program-specific controls based on checkboxes
+    if (csSectionControls) {
+      csSectionControls.style.display = csChecked ? 'block' : 'none';
+    }
+    if (itSectionControls) {
+      itSectionControls.style.display = itChecked ? 'block' : 'none';
+    }
+  } catch (error) {
+    console.error('Error in toggleSectionControls:', error);
+  }
+}
+
+// Add event listeners for program checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+  const csCheckbox = document.getElementById('programCS');
+  const itCheckbox = document.getElementById('programIT');
+  
+  if (csCheckbox) {
+    csCheckbox.addEventListener('change', toggleSectionControls);
+  }
+  if (itCheckbox) {
+    itCheckbox.addEventListener('change', toggleSectionControls);
+  }
+  
+  // Initialize section controls visibility
+  toggleSectionControls();
 });
 
 if (uploadTeachersForm) uploadTeachersForm.addEventListener('submit', async (e) => {
@@ -149,14 +201,14 @@ async function uploadFile(file, filename) {
 }
 
 // Day and Time Slot labels must match scheduler.py exactly
-const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];  // No Sunday classes
 const timeSlotLabels = [
-  "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
-  "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
+  "07:00-07:30", "07:30-08:00", "08:00-08:30", "08:30-09:00",
+  "09:00-09:30", "09:30-10:00", "10:00-10:30", "10:30-11:00",
+  "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-13:00",
   "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
-  "17:00-17:30", "17:30-18:00", "18:00-18:30", "18:30-19:00",
-  "19:00-19:30", "19:30-20:00"
+  "17:00-17:30", "17:30-18:00"
 ];
 
 // Timetable subject color mapping helpers
@@ -239,31 +291,71 @@ document.getElementById('generateBtn').onclick = async function() {
   document.getElementById('result').innerHTML = '<div class="p-4 text-center">Generating schedule...</div>';
   document.getElementById('timetable').innerHTML = "";
 
+  // Get selected programs from checkboxes
+  const selectedPrograms = [];
+  if (document.getElementById('programCS').checked) selectedPrograms.push('CS');
+  if (document.getElementById('programIT').checked) selectedPrograms.push('IT');
+  
   const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
-  const requestBody = { semester: selectedSemester };
-  requestBody.numSectionsYear1 = parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10);
-  requestBody.numSectionsYear2 = parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10);
-  requestBody.numSectionsYear3 = parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10);
-  requestBody.numSectionsYear4 = parseInt(elValue(document.getElementById('numSectionsYear4')) || 0, 10);
+  const requestBody = { 
+    programs: selectedPrograms,
+    semester: selectedSemester 
+  };
+
+  // Collect program-specific section counts
+  const programSections = {};
+  
+  if (selectedPrograms.includes('CS')) {
+    programSections['CS'] = {
+      1: parseInt(elValue(document.getElementById('csSectionsYear1')) || 0, 10),
+      2: parseInt(elValue(document.getElementById('csSectionsYear2')) || 0, 10),
+      3: parseInt(elValue(document.getElementById('csSectionsYear3')) || 0, 10),
+      4: parseInt(elValue(document.getElementById('csSectionsYear4')) || 0, 10)
+    };
+  }
+  
+  if (selectedPrograms.includes('IT')) {
+    programSections['IT'] = {
+      1: parseInt(elValue(document.getElementById('itSectionsYear1')) || 0, 10),
+      2: parseInt(elValue(document.getElementById('itSectionsYear2')) || 0, 10),
+      3: parseInt(elValue(document.getElementById('itSectionsYear3')) || 0, 10),
+      4: parseInt(elValue(document.getElementById('itSectionsYear4')) || 0, 10)
+    };
+  }
+  
+  requestBody.programSections = programSections;
+
+  // Validate that at least one program is selected
+  if (selectedPrograms.length === 0) {
+    document.getElementById('result').innerHTML = '<div class="alert alert-warning">Please select at least one program (CS or IT).</div>';
+    return;
+  }
 
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
-    const subjectsResponse = await fetch('/data/cs_curriculum', {
-      headers: getAuthHeaders()
-    });
+    // Load subjects from all selected programs
+    const allSubjects = [];
+    for (const program of selectedPrograms) {
+      const curriculumEndpoint = program.toUpperCase() === 'IT' ? '/data/it_curriculum' : '/data/cs_curriculum';
+      const subjectsResponse = await fetch(curriculumEndpoint, {
+        headers: getAuthHeaders()
+      });
     
-    if (!subjectsResponse.ok) {
-      console.error('Failed to load subjects:', subjectsResponse.status);
-      throw new Error(`Failed to load subjects: ${subjectsResponse.status}`);
+      if (!subjectsResponse.ok) {
+        console.error(`Failed to load subjects for ${program}:`, subjectsResponse.status);
+        throw new Error(`Failed to load subjects for ${program}: ${subjectsResponse.status}`);
+      }
+      
+      const subjectsData = await subjectsResponse.json();
+      
+      if (!Array.isArray(subjectsData)) {
+        throw new Error(`Subjects data for ${program} is not an array`);
+      }
+      
+      allSubjects.push(...subjectsData);
     }
     
-    const subjectsData = await subjectsResponse.json();
-    
-    if (!Array.isArray(subjectsData)) {
-      throw new Error('Subjects data is not an array');
-    }
-    
-    const yearsList = subjectsData
+    const yearsList = allSubjects
       .filter(s => String(s.semester) === String(selectedSemester))
       .map(s => parseInt(s.year_level))
       .filter(n => !isNaN(n));
@@ -294,8 +386,13 @@ document.getElementById('generateBtn').onclick = async function() {
     console.warn('Pre-validation skipped due to error:', err);
   }
 
-  if (!requestBody.numSectionsYear1 && !requestBody.numSectionsYear2 && !requestBody.numSectionsYear3 && !requestBody.numSectionsYear4) {
-    document.getElementById('result').innerHTML = '<div class="alert alert-info">No sections selected to schedule.</div>';
+  // Check if any program has any sections selected
+  const hasAnySections = Object.values(programSections).some(programSections =>
+    Object.values(programSections).some(count => count > 0)
+  );
+  
+  if (!hasAnySections) {
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">No sections selected to schedule. Please set at least one section count for any year level.</div>';
     if (downloadBtn) downloadBtn.disabled = true;
     return;
   }
@@ -394,13 +491,13 @@ async function submitForApproval() {
 
 
 function populateFilters(data) {
-  // Extract available years from section IDs (format CS{year}{letter})
+  // Extract available years from section IDs (format CS{year}{letter} or IT{year}{letter})
   const years = new Set();
   const sectionsByYear = new Map();
   data.forEach(e => {
-    const match = /^CS(\d)/.exec(e.section_id || '');
+    const match = /^(CS|IT)(\d)/.exec(e.section_id || '');
     if (match) {
-      const y = match[1];
+      const y = match[2];
       years.add(y);
       if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
       sectionsByYear.get(y).add(e.section_id);
@@ -523,9 +620,9 @@ yearFilter.addEventListener('change', () => {
   // Rebuild section list based on year
   const sectionsByYear = new Map();
   lastGeneratedSchedule.forEach(e => {
-    const match = /^CS(\d)/.exec(e.section_id || '');
+    const match = /^(CS|IT)(\d)/.exec(e.section_id || '');
     if (match) {
-      const y = match[1];
+      const y = match[2];
       if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
       sectionsByYear.get(y).add(e.section_id);
     }
@@ -593,8 +690,8 @@ function applyFilters(data) {
   return data.filter(e => {
     let ok = true;
     if (y !== 'all') {
-      const m = /^CS(\d)/.exec(e.section_id || '');
-      ok = ok && m && m[1] === y;
+      const m = /^(CS|IT)(\d)/.exec(e.section_id || '');
+      ok = ok && m && m[2] === y;
     }
     if (s !== 'all') ok = ok && e.section_id === s;
     if (r !== 'all') {
@@ -780,21 +877,59 @@ if (viewMode) {
 
 // Lazy-load per-tab data loaders
 async function loadSubjectsTable() {
+  // Check if the subject elements exist before loading
+  const csElement = document.getElementById('csSubjectsData');
+  const itElement = document.getElementById('itSubjectsData');
+  
+  if (csElement) {
+    await loadCSSubjectsTable();
+  }
+  if (itElement) {
+    await loadITSubjectsTable();
+  }
+}
+
+async function loadCSSubjectsTable() {
   try {
     const subjectsResponse = await fetch('/data/cs_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!subjectsResponse.ok) throw new Error('Failed to load subjects');
-    subjectsCache = await subjectsResponse.json();
-    renderTable(subjectsCache, 'subjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    if (!subjectsResponse.ok) throw new Error('Failed to load CS subjects');
+    csSubjectsCache = await subjectsResponse.json();
+    renderTable(csSubjectsCache, 'csSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load subjects:', e);
-    document.getElementById('subjectsData').innerHTML = '<p>No data available.</p>';
+    console.warn('Could not load CS subjects:', e);
+    const element = document.getElementById('csSubjectsData');
+    if (element) {
+      element.innerHTML = '<p>No CS data available.</p>';
+    }
   }
   // Attach client-side search handler
-  const sInput = document.getElementById('subjectsSearch');
+  const sInput = document.getElementById('csSubjectsSearch');
   if (sInput) {
-    sInput.oninput = () => filterTable('subjectsData', subjectsCache, ['subject_code', 'subject_name']);
+    sInput.oninput = () => filterTable('csSubjectsData', csSubjectsCache, ['subject_code', 'subject_name']);
+  }
+}
+
+async function loadITSubjectsTable() {
+  try {
+    const subjectsResponse = await fetch('/data/it_curriculum', {
+      headers: getAuthHeaders()
+    });
+    if (!subjectsResponse.ok) throw new Error('Failed to load IT subjects');
+    itSubjectsCache = await subjectsResponse.json();
+    renderTable(itSubjectsCache, 'itSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  } catch (e) {
+    console.warn('Could not load IT subjects:', e);
+    const element = document.getElementById('itSubjectsData');
+    if (element) {
+      element.innerHTML = '<p>No IT data available.</p>';
+    }
+  }
+  // Attach client-side search handler
+  const sInput = document.getElementById('itSubjectsSearch');
+  if (sInput) {
+    sInput.oninput = () => filterTable('itSubjectsData', itSubjectsCache, ['subject_code', 'subject_name']);
   }
 }
 
@@ -805,14 +940,14 @@ async function loadTeachersTable() {
     });
     if (!teachersResponse.ok) throw new Error('Failed to load teachers');
     teachersCache = await teachersResponse.json();
-    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
+    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach', 'availability_days']);
   } catch (e) {
     console.warn('Could not load teachers:', e);
     document.getElementById('teachersData').innerHTML = '<p>No data available.</p>';
   }
   const tInput = document.getElementById('teachersSearch');
   if (tInput) {
-    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach']);
+    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach', 'availability_days']);
   }
 }
 
@@ -848,16 +983,16 @@ function filterTable(elementId, data, searchableFields) {
   const input = document.getElementById(elementId.replace('Data','Search')) || document.querySelector(`#${elementId.split('Data')[0]}Search`);
   const q = (input && input.value || '').trim().toLowerCase();
   if (!q) {
-    // show full
-    if (elementId === 'subjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
-    else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
-    else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
-    return;
-  }
-  const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
-  // reuse renderTable but with filtered data
-  if (elementId === 'subjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
-  else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
+  // show full
+  if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
+  else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
+  return;
+}
+const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
+// reuse renderTable but with filtered data
+if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
 }
 
@@ -874,7 +1009,10 @@ async function loadDataManagementTables() {
 document.querySelectorAll('#dataTabs button[data-bs-toggle="tab"]').forEach(btn => {
   btn.addEventListener('shown.bs.tab', (e) => {
     const tab = e.target.dataset.tab;
-    if (tab === 'subjects') loadSubjectsTable();
+    if (tab === 'subjects') {
+      // Small delay to ensure DOM is rendered
+      setTimeout(() => loadSubjectsTable(), 100);
+    }
     else if (tab === 'teachers') loadTeachersTable();
     else if (tab === 'rooms') loadRoomsTable();
   });
@@ -901,14 +1039,25 @@ function renderTable(data, elementId, headers) {
     data.forEach(row => {
       tableHtml += '<tr>';
       tableHtml += '<td><input type="checkbox" class="form-check-input" data-role="row-select"></td>';
-      headers.forEach(header => { tableHtml += `<td>${row[header]}</td>`; });
+      headers.forEach(header => { 
+        let value = row[header];
+        if (Array.isArray(value)) {
+          value = value.join(', ');
+        }
+        tableHtml += `<td>${value}</td>`; 
+      });
       tableHtml += '</tr>';
     });
   } else {
     tableHtml += `<tr><td colspan="${headers.length + 1}" class="text-center text-muted">No data available.</td></tr>`;
   }
   tableHtml += '</tbody></table>';
-  document.getElementById(elementId).innerHTML = tableHtml;
+  const element = document.getElementById(elementId);
+  if (!element) {
+    console.error(`Element with ID '${elementId}' not found`);
+    return;
+  }
+  element.innerHTML = tableHtml;
   // enable row selection
   const container = document.getElementById(elementId);
   const rows = container.querySelectorAll('tbody tr');
@@ -989,6 +1138,7 @@ function promptForData(fields, initial = {}) {
   const fieldLabels = {
     'teacher_name': 'Teacher Name',
     'can_teach': 'Subjects (comma-separated)',
+    'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
     'subject_code': 'Subject Code',
@@ -1003,7 +1153,15 @@ function promptForData(fields, initial = {}) {
   
   for (const f of fields) {
     const label = fieldLabels[f] || f;
-    const val = prompt(`Enter ${label}:`, initial[f] != null ? String(initial[f]) : '');
+    let initialValue = '';
+    if (initial[f] != null) {
+      if (Array.isArray(initial[f])) {
+        initialValue = initial[f].join(',');
+      } else {
+        initialValue = String(initial[f]);
+      }
+    }
+    const val = prompt(`Enter ${label}:`, initialValue);
     if (val === null) return null;
     result[f] = val;
   }
@@ -1011,11 +1169,12 @@ function promptForData(fields, initial = {}) {
 }
 
 function setupCrudButtons() {
-  // Subjects
-  const subAdd = document.getElementById('subjectsAdd');
-  const subEdit = document.getElementById('subjectsEdit');
-  const subDel = document.getElementById('subjectsDelete');
-  if (subAdd) subAdd.onclick = async () => {
+
+  // CS Subjects
+  const csSubAdd = document.getElementById('csSubjectsAdd');
+  const csSubEdit = document.getElementById('csSubjectsEdit');
+  const csSubDel = document.getElementById('csSubjectsDelete');
+  if (csSubAdd) csSubAdd.onclick = async () => {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const data = promptForData(fields);
     if (!data) return;
@@ -1025,31 +1184,69 @@ function setupCrudButtons() {
     data.semester = data.semester ? parseInt(data.semester, 10) : null;
     data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
     await fetch('/api/subjects', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
-    loadSubjectsTable();
+    loadCSSubjectsTable();
   };
-  if (subEdit) subEdit.onclick = async () => {
+  if (csSubEdit) csSubEdit.onclick = async () => {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
-    const selected = getSelectedRowData('subjectsData', fields);
+    const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     openBulkEditModal('subjects', fields, selected);
   };
-  if (subDel) subDel.onclick = async () => {
+  if (csSubDel) csSubDel.onclick = async () => {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
-    const selected = getSelectedRowData('subjectsData', fields);
+    const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    if (!confirm(`Delete ${selected.length} subject(s)?`)) return;
+    if (!confirm(`Delete ${selected.length} CS subject(s)?`)) return;
     for (const item of selected) {
       await fetch(`/api/subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
-    loadSubjectsTable();
+    loadCSSubjectsTable();
   };
+
+  // IT Subjects
+  const itSubAdd = document.getElementById('itSubjectsAdd');
+  const itSubEdit = document.getElementById('itSubjectsEdit');
+  const itSubDel = document.getElementById('itSubjectsDelete');
+  if (itSubAdd) itSubAdd.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const data = promptForData(fields);
+    if (!data) return;
+    data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
+    data.lab_hours_per_week = data.lab_hours_per_week ? parseInt(data.lab_hours_per_week, 10) : 0;
+    data.units = data.units ? parseInt(data.units, 10) : 0;
+    data.semester = data.semester ? parseInt(data.semester, 10) : null;
+    data.year_level = data.year_level ? parseInt(data.year_level, 10) : null;
+    await fetch('/api/it-subjects', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
+    loadITSubjectsTable();
+  };
+  if (itSubEdit) itSubEdit.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const selected = getSelectedRowData('itSubjectsData', fields);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    openBulkEditModal('it-subjects', fields, selected);
+  };
+  if (itSubDel) itSubDel.onclick = async () => {
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const selected = getSelectedRowData('itSubjectsData', fields);
+    if (!selected || selected.length === 0) return alert('Select at least one row.');
+    if (!confirm(`Delete ${selected.length} IT subject(s)?`)) return;
+    for (const item of selected) {
+      await fetch(`/api/it-subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+    }
+    loadITSubjectsTable();
+  };
+
   // Teachers
   const tAdd = document.getElementById('teachersAdd');
   const tEdit = document.getElementById('teachersEdit');
   const tDel = document.getElementById('teachersDelete');
   if (tAdd) tAdd.onclick = async () => {
-    const data = promptForData(['teacher_name','can_teach']);
+    const data = promptForData(['teacher_name','can_teach','availability_days']);
     if (!data) return;
+    // Convert availability_days string to array if provided
+    if (data.availability_days && typeof data.availability_days === 'string') {
+      data.availability_days = data.availability_days.split(',').map(day => day.trim()).filter(day => day);
+    }
     const response = await fetch('/api/teachers', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
     if (response.ok) {
       const result = await response.json();
@@ -1058,9 +1255,9 @@ function setupCrudButtons() {
     loadTeachersTable();
   };
   if (tEdit) tEdit.onclick = async () => {
-    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
+    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach','availability_days']);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    openBulkEditModal('teachers', ['teacher_name','can_teach'], selected);
+    openBulkEditModal('teachers', ['teacher_name','can_teach','availability_days'], selected);
   };
   if (tDel) tDel.onclick = async () => {
     const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
@@ -1114,6 +1311,7 @@ function openBulkEditModal(kind, fields, selectedRows) {
   const fieldLabels = {
     'teacher_name': 'Teacher Name',
     'can_teach': 'Subjects (comma-separated)',
+    'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
     'subject_code': 'Subject Code',
@@ -1169,6 +1367,12 @@ function openBulkEditModal(kind, fields, selectedRows) {
           toApply[k] = v === '' || v == null ? (k === 'semester' || k === 'year_level' ? null : 0) : parseInt(v, 10);
         }
       });
+    }
+    // Convert availability_days string to array for teachers
+    if (kind === 'teachers' && toApply.hasOwnProperty('availability_days')) {
+      if (toApply.availability_days && typeof toApply.availability_days === 'string') {
+        toApply.availability_days = toApply.availability_days.split(',').map(day => day.trim()).filter(day => day);
+      }
     }
 
     // Perform PUT per selected row
@@ -1269,20 +1473,38 @@ function createNotificationItem(notification) {
           <p class="mb-1 text-muted small">${notification.message}</p>
           <small class="text-muted">${timeAgo}</small>
         </div>
-        ${!notification.is_read ? '<span class="badge bg-primary rounded-pill ms-2">New</span>' : ''}
+        <div class="d-flex align-items-center">
+          ${!notification.is_read ? '<span class="badge bg-primary rounded-pill me-2">New</span>' : ''}
+          <button class="btn btn-sm btn-outline-danger p-1" type="button" title="Delete notification">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
       </div>
     </div>
   `;
   
-  // Add click handler to mark as read
-  li.addEventListener('click', async () => {
+  // Add click handler to mark as read (but not when clicking the delete button)
+  li.addEventListener('click', async (e) => {
+    // Don't mark as read if clicking the delete button
+    if (e.target.closest('button')) {
+      return;
+    }
+    
     if (!notification.is_read) {
       await markNotificationAsRead(notification.id);
       notification.is_read = true;
       li.querySelector('.dropdown-item').classList.remove('bg-light');
-      li.querySelector('.badge').remove();
+      const badge = li.querySelector('.badge');
+      if (badge) badge.remove();
       updateNotificationBadge(await loadUnreadNotifications());
     }
+  });
+  
+  // Add click handler for delete button
+  const deleteBtn = li.querySelector('button');
+  deleteBtn.addEventListener('click', async (e) => {
+    e.stopPropagation(); // Prevent the li click handler from firing
+    await deleteNotification(notification.id);
   });
   
   return li;
@@ -1346,6 +1568,24 @@ async function markNotificationAsRead(notificationId) {
     }
   } catch (error) {
     console.error('Error marking notification as read:', error);
+  }
+}
+
+async function deleteNotification(notificationId) {
+  try {
+    const response = await fetch(`/api/notifications/${notificationId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to delete notification');
+    } else {
+      // Reload notifications after deletion
+      await loadNotifications();
+    }
+  } catch (error) {
+    console.error('Error deleting notification:', error);
   }
 }
 

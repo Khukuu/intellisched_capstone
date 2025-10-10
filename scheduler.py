@@ -1,7 +1,7 @@
 from ortools.sat.python import cp_model
 from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 
-def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, desired_sections_per_year):
+def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, program_sections, programs=['CS']):
     logs = []
     print('Scheduler: Initializing model...')
     model = cp_model.CpModel()
@@ -15,10 +15,16 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         teacher_id = t.get('teacher_id')
         teacher_name = t.get('teacher_name')
         if teacher_id and teacher_name:
+            # Handle availability_days - default to all days if not specified
+            availability_days = t.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+            if not availability_days:  # Handle empty/null availability
+                availability_days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            
             cleaned_teachers_data.append({
                 'teacher_id': teacher_id,  # Keep as integer
                 'teacher_name': teacher_name.strip(),
-                'can_teach': str(t.get('can_teach', '' )).replace(' ', '') # Ensure it's a string before replace
+                'can_teach': str(t.get('can_teach', '' )).replace(' ', ''), # Ensure it's a string before replace
+                'availability_days': availability_days
             })
         else:
             print(f"Warning: Skipping teacher row due to missing ID or name: {t}")
@@ -38,15 +44,13 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     room_ids = [r['room_id'] for r in rooms_data]
     room_names = [r['room_name'] for r in rooms_data]
 
-    # Define granular days and time slots (30-minute increments)
-    day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-    # Assuming 8 AM to 8 PM with a lunch break (12-1 PM)
+    # Define days and time slots (30-minute increments to support 1.5 hour classes)
+    day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]  # No Sunday classes
+    # Standard hours: 7 AM to 6 PM (classes end at 6 PM)
     time_slot_labels = []
-    for h in range(8, 20): # 8 AM to 8 PM (exclusive 9 PM)
+    for h in range(7, 18): # 7 AM to 6 PM (exclusive 6 PM)
         time_slot_labels.append(f"{h:02d}:00-{h:02d}:30")
         time_slot_labels.append(f"{h:02d}:30-{h+1:02d}:00")
-    # Remove 12:00-1:00 for lunch break
-    time_slot_labels = [ts for ts in time_slot_labels if not ("12:00-12:30" in ts or "12:30-13:00" in ts)]
 
     # Map 0 MW, 1 TTh, 2 FS to actual day indices for paired scheduling
     # (Mon, Wed), (Tue, Thu), (Fri, Sat)
@@ -59,25 +63,51 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     # Prepare a list of all individual meeting events to be scheduled
     meeting_events = []
     
-    # Dynamically generate cohort sections (e.g., CS1A, CS1B) based on desired_sections_per_year
+    # Get available years from curriculum to avoid creating sections for non-existent years
+    available_years = set()
+    for subject in subjects_data:
+        if subject.get('program', '').upper() in [p.upper() for p in programs]:
+            available_years.add(int(subject.get('year_level', 0)))
+    
+    print(f"Available years in curriculum: {sorted(available_years)}")
+    
+    # Dynamically generate cohort sections for each program (e.g., CS1A, CS1B, IT1A, IT1B) based on program_sections
     all_dynamic_cohort_sections = [] 
-    for year_level, num_sections in desired_sections_per_year.items():
-        if num_sections <= 0:
-            continue
+    print(f"Debug: programs = {programs}")
+    print(f"Debug: program_sections = {program_sections}")
+    
+    for program in programs:
+        program_prefix = program.upper()
+        program_section_counts = program_sections.get(program, {})
+        print(f"Debug: Processing program {program_prefix}, section_counts = {program_section_counts}")
+        
+        for year_level, num_sections in program_section_counts.items():
+            print(f"Debug: Processing year {year_level} with {num_sections} sections")
+            if num_sections <= 0:
+                print(f"Debug: Skipping year {year_level} - no sections requested")
+                continue
+            if year_level not in available_years:
+                print(f"Skipping {program_prefix} Year {year_level} - no curriculum available")
+                continue
 
-        for section_idx in range(num_sections):
-            # Generate section letter (A, B, C...)
-            section_letter = chr(ord('A') + section_idx)
-            # Generate cohort section ID (e.g., CS1A, CS2B) - assuming 'CS' prefix for now
-            cohort_section_id = f"CS{year_level}{section_letter}"
-            all_dynamic_cohort_sections.append({
-                'section_id': cohort_section_id,
-                'year_level': str(year_level),
-                'semester': semester_filter # Attach the filtered semester for the cohort
-            })
+            for section_idx in range(num_sections):
+                # Generate section letter (A, B, C...)
+                section_letter = chr(ord('A') + section_idx)
+                # Generate cohort section ID (e.g., CS1A, CS2B or IT1A, IT2B)
+                cohort_section_id = f"{program_prefix}{year_level}{section_letter}"
+                cohort_section = {
+                    'section_id': cohort_section_id,
+                    'year_level': str(year_level),
+                    'semester': semester_filter, # Attach the filtered semester for the cohort
+                    'program': program.upper()
+                }
+                all_dynamic_cohort_sections.append(cohort_section)
+                print(f"Debug: Created cohort section: {cohort_section}")
 
     if not all_dynamic_cohort_sections:
         print("Scheduler: No dynamic cohort sections generated based on desired year levels and semester filter.")
+        print(f"Debug: semester_filter = {semester_filter}, program_sections = {program_sections}")
+        print(f"Debug: available_years = {sorted(available_years)}")
         return []
 
     # Now, for each generated cohort section, add all relevant subjects as meeting events
@@ -95,9 +125,16 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         relevant_subjects = [
             s for s in subjects_data 
             if safe_int(s.get('year_level'), None) == cohort_year_level and 
-               (not cohort_semester or safe_int(s.get('semester'), None) == safe_int(cohort_semester, None))
+               (not cohort_semester or safe_int(s.get('semester'), None) == safe_int(cohort_semester, None)) and
+               (s.get('program', '').upper() == cohort_section['program'].upper() or 
+                cohort_section['program'].upper() in s.get('available_programs', []))
         ]
 
+        print(f"Debug: Cohort {cohort_section_id} (Program: {cohort_section['program']}, Year: {cohort_year_level}, Semester: {cohort_semester}) found {len(relevant_subjects)} relevant subjects")
+        if relevant_subjects:
+            for subj in relevant_subjects[:3]:  # Show first 3 subjects
+                print(f"  - {subj.get('subject_code')} ({subj.get('program')})")
+        
         if not relevant_subjects:
             print(f"Warning: No relevant subjects found for cohort {cohort_section_id} (Year {cohort_year_level}) in Semester {cohort_semester or 'All'}. Skipping this cohort.")
             continue
@@ -128,28 +165,52 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 if r.get('is_laboratory', False)
             ]
             
-            # Apply special room assignment rules
-            # Rule 1: Specific CS subjects (CS6, CS10, CS14, CS21) must use Cisco Lab only
-            if subject_code.upper() in ['CS6', 'CS10', 'CS14', 'CS21']:
+            # Apply special room assignment rules with exclusivity
+            # Rule 1: Cisco Lab EXCLUSIVE to networking subjects (both lecture and lab sessions)
+            networking_subjects = ['CS6', 'CS10', 'CS14', 'CS21', 'IT6', 'IT11', 'IT15', 'IT20']
+            if subject_code.upper() in networking_subjects:
                 # Find Cisco Lab room
                 cisco_lab_rooms = [r['room_id'] for r in rooms_data if 'cisco' in str(r.get('room_name', '')).lower()]
                 if cisco_lab_rooms:
+                    # Both lecture and lab sessions use Cisco Lab only
                     lecture_rooms_for_subj = cisco_lab_rooms
                     lab_rooms_for_subj = cisco_lab_rooms
-                    print(f"Applied CS constraint: {subject_code} assigned to Cisco Lab only")
+                    print(f"Applied Cisco Lab constraint: {subject_code} (lecture and lab) assigned to Cisco Lab only (networking subject)")
                 else:
-                    print(f"Warning: Cisco Lab not found for CS subject {subject_code}")
+                    print(f"Warning: Cisco Lab not found for networking subject {subject_code}")
+            else:
+                # NON-networking subjects: EXCLUDE Cisco Lab rooms
+                cisco_lab_rooms = [r['room_id'] for r in rooms_data if 'cisco' in str(r.get('room_name', '')).lower()]
+                lecture_rooms_for_subj = [r for r in lecture_rooms_for_subj if r not in cisco_lab_rooms]
+                lab_rooms_for_subj = [r for r in lab_rooms_for_subj if r not in cisco_lab_rooms]
             
-            # Rule 2: Only specific PE subjects (PE1, PE2, PE3, PE4) can use LPU_Gymnasium
-            elif subject_code.upper() in ['PE1', 'PE2', 'PE3', 'PE4']:
+            # Rule 2: Gymnasium EXCLUSIVE to PE subjects only
+            pe_subjects = ['PE1', 'PE2', 'PE3', 'PE4']
+            if subject_code.upper() in pe_subjects:
                 # Find LPU_Gymnasium room
                 gym_rooms = [r['room_id'] for r in rooms_data if 'gymnasium' in str(r.get('room_name', '')).lower()]
                 if gym_rooms:
                     lecture_rooms_for_subj = gym_rooms
                     lab_rooms_for_subj = gym_rooms
-                    print(f"Applied PE constraint: {subject_code} assigned to LPU_Gymnasium only")
+                    print(f"Applied Gymnasium constraint: {subject_code} assigned to LPU_Gymnasium only (PE subject)")
                 else:
                     print(f"Warning: LPU_Gymnasium not found for PE subject {subject_code}")
+            else:
+                # NON-PE subjects: EXCLUDE Gymnasium rooms
+                gym_rooms = [r['room_id'] for r in rooms_data if 'gymnasium' in str(r.get('room_name', '')).lower()]
+                lecture_rooms_for_subj = [r for r in lecture_rooms_for_subj if r not in gym_rooms]
+                lab_rooms_for_subj = [r for r in lab_rooms_for_subj if r not in gym_rooms]
+
+            # Rule 3: Physics subjects can use regular rooms for lab sessions (no computers needed)
+            physics_subjects = ['PHYS1', 'PHYS2']
+            if subject_code.upper() in physics_subjects:
+                # Physics labs can use regular lecture rooms instead of laboratory rooms
+                # But still respect gymnasium exclusion (physics doesn't need gymnasium)
+                lab_rooms_for_subj = [
+                    r['room_id'] for r in rooms_data
+                    if not r.get('is_laboratory', False) and 'gymnasium' not in str(r.get('room_name', '')).lower()
+                ]
+                print(f"Applied Physics constraint: {subject_code} lab sessions can use regular rooms (no computers needed, excluding gymnasium)")
 
             # Skip unschedulable subjects
             if not valid_teachers_for_subj:
@@ -178,7 +239,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                         'section_id': cohort_section_id, # Use cohort ID
                         'subject_code': subject_code,
                         'type': 'lecture',
-                        'duration_slots': lecture_hours * 2,
+                        'duration_slots': int(lecture_hours * 2),
                         'valid_teachers': valid_teachers_for_subj,
                         'valid_rooms': lecture_rooms_for_subj,
                         'meeting_idx': 0 
@@ -188,7 +249,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                         'section_id': cohort_section_id, # Use cohort ID
                         'subject_code': subject_code,
                         'type': 'lab',
-                        'duration_slots': lab_hours * 2,
+                        'duration_slots': int(lab_hours * 2),
                         'valid_teachers': valid_teachers_for_subj,
                         'valid_rooms': lab_rooms_for_subj,
                         'meeting_idx': 1 
@@ -203,7 +264,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                             'section_id': cohort_section_id,
                             'subject_code': subject_code,
                             'type': 'non_lab',
-                            'duration_slots': half_slots,
+                            'duration_slots': int(half_slots * 2),
                             'valid_teachers': valid_teachers_for_subj,
                             'valid_rooms': lecture_rooms_for_subj,
                             'meeting_idx': 0
@@ -212,7 +273,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                             'section_id': cohort_section_id,
                             'subject_code': subject_code,
                             'type': 'non_lab',
-                            'duration_slots': half_slots,
+                            'duration_slots': int(half_slots * 2),
                             'valid_teachers': valid_teachers_for_subj,
                             'valid_rooms': lecture_rooms_for_subj,
                             'meeting_idx': 1
@@ -223,7 +284,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                             'section_id': cohort_section_id,
                             'subject_code': subject_code,
                             'type': 'non_lab',
-                            'duration_slots': total_slots,
+                            'duration_slots': int(total_slots * 2),
                             'valid_teachers': valid_teachers_for_subj,
                             'valid_rooms': lecture_rooms_for_subj,
                             'meeting_idx': 0
@@ -262,6 +323,35 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             f'teacher_{i}'
         )
         assigned_teachers_vars.append(teacher_var)
+        
+        # Add teacher availability day constraints
+        # For each valid teacher, ensure they are only assigned to days they're available
+        for teacher_idx, teacher_id in enumerate(event['valid_teachers']):
+            teacher_data = teacher_map.get(teacher_id)
+            if teacher_data and 'availability_days' in teacher_data:
+                teacher_available_days = teacher_data['availability_days']
+                teacher_name = teacher_data.get('teacher_name', 'Unknown')
+                
+                
+                # Create a boolean variable for this teacher being selected
+                # The teacher_var represents the index in valid_teachers, teacher_idx is the current teacher's position
+                teacher_selected = model.NewBoolVar(f'teacher_selected_{i}_{teacher_idx}')
+                model.Add(teacher_var == teacher_idx).OnlyEnforceIf(teacher_selected)
+                model.Add(teacher_var != teacher_idx).OnlyEnforceIf(teacher_selected.Not())
+                
+                # For each day, if this teacher is selected, ensure the day is in their availability
+                for day_idx, day_label in enumerate(day_labels):
+                    if day_label not in teacher_available_days:
+                        
+                        # Create boolean variable for day assignment
+                        day_assigned = model.NewBoolVar(f'day_assigned_{i}_{day_idx}')
+                        model.Add(assigned_days[i] == day_idx).OnlyEnforceIf(day_assigned)
+                        model.Add(assigned_days[i] != day_idx).OnlyEnforceIf(day_assigned.Not())
+                        
+                        # If teacher is selected, they cannot be assigned to unavailable days
+                        # This means: NOT(teacher_selected AND day_assigned) when day is not available
+                        # Which is equivalent to: NOT(teacher_selected) OR NOT(day_assigned)
+                        model.AddBoolOr([teacher_selected.Not(), day_assigned.Not()])
 
         # Ensure valid_rooms is not empty before creating domain
         if not event['valid_rooms']:
@@ -345,44 +435,11 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         )
         event_intervals.append(interval)
     
-    # Add no-overlap constraint for each room (except LPU_Gymnasium for PE subjects only)
+    # Add no-overlap constraint for each room (except LPU_Gymnasium - can host multiple PE classes)
     for room_idx, room_id in enumerate(room_ids):
         if room_id in gym_room_ids:
-            # Only skip room overlap constraint for LPU_Gymnasium if both events are PE subjects
-            print(f"Checking LPU_Gymnasium constraint for room_id: {room_id}")
-            # Find all events that can use this room
-            events_for_room = []
-            for i, event in enumerate(meeting_events):
-                if room_id in event['valid_rooms']:
-                    events_for_room.append(i)
-            
-            if len(events_for_room) > 1:
-                print(f"Adding special LPU_Gymnasium constraint for room {room_id} with {len(events_for_room)} events")
-                
-                # Create conditional intervals for this room
-                room_intervals = []
-                for i in events_for_room:
-                    # Check if this event is a PE subject
-                    is_pe_subject = meeting_events[i]['subject_code'].upper() in ['PE1', 'PE2', 'PE3', 'PE4']
-                    
-                    # Create a conditional interval that only exists if this event is assigned to this room
-                    room_assigned = model.NewBoolVar(f'room_{room_id}_assigned_{i}')
-                    model.Add(assigned_rooms_vars[i] == room_idx).OnlyEnforceIf(room_assigned)
-                    model.Add(assigned_rooms_vars[i] != room_idx).OnlyEnforceIf(room_assigned.Not())
-                    
-                    # Create interval that only exists when room is assigned
-                    room_interval = model.NewOptionalIntervalVar(
-                        assigned_starts[i], 
-                        int(meeting_events[i]['duration_slots']), 
-                        assigned_starts[i] + int(meeting_events[i]['duration_slots']),
-                        room_assigned,
-                        f'room_{room_id}_interval_{i}'
-                    )
-                    room_intervals.append(room_interval)
-                
-                # Add no-overlap constraint for this room
-                model.AddNoOverlap(room_intervals)
-                print(f"Applied AddNoOverlap constraint for LPU_Gymnasium with {len(room_intervals)} intervals")
+            # Skip room overlap constraint for LPU_Gymnasium - it can host multiple PE classes simultaneously
+            print(f"Skipping overlap constraint for LPU_Gymnasium (room_id: {room_id}) - can host multiple PE classes")
             continue
             
         # Find all events that can use this room
@@ -417,10 +474,18 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             print(f"Applied AddNoOverlap constraint for room {room_id} with {len(room_intervals)} intervals")
 
     # Pairwise no-overlap for sections on the same day (prevent students' schedule clashes)
+    # Only applies within the same program - IT and CS can coexist in same timeslot
     for i in range(len(meeting_events)):
         for j in range(i + 1, len(meeting_events)):
-            if meeting_events[i]['section_id'] != meeting_events[j]['section_id']:
+            # Extract program from section_id (e.g., "CS1A" -> "CS", "IT2B" -> "IT")
+            section_i = meeting_events[i]['section_id']
+            section_j = meeting_events[j]['section_id']
+            
+            # Only apply section overlap constraint if same section
+            # Different programs (IT vs CS) can coexist in same timeslot
+            if section_i != section_j:
                 continue
+                
             # Same day indicator for section
             same_day_s = model.NewBoolVar(f'same_day_section_{i}_{j}')
             model.Add(assigned_days[i] == assigned_days[j]).OnlyEnforceIf(same_day_s)
@@ -455,22 +520,64 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             lecture_event_idx = next(i for i in indices if meeting_events[i]['type'] == 'lecture')
             lab_event_idx = next(i for i in indices if meeting_events[i]['type'] == 'lab')
 
-            mw_selected = model.NewBoolVar(f'daypair_MW_{section_id}_{subject_code}')
-            tth_selected = model.NewBoolVar(f'daypair_TTh_{section_id}_{subject_code}')
-            fs_selected = model.NewBoolVar(f'daypair_FS_{section_id}_{subject_code}')
-
-            # Enforce lecture on first day and lab on second day of the pair
-            model.Add(assigned_days[lecture_event_idx] == day_group_pairs_indices["MW"][0]).OnlyEnforceIf(mw_selected)
-            model.Add(assigned_days[lab_event_idx] == day_group_pairs_indices["MW"][1]).OnlyEnforceIf(mw_selected)
-
-            model.Add(assigned_days[lecture_event_idx] == day_group_pairs_indices["TTh"][0]).OnlyEnforceIf(tth_selected)
-            model.Add(assigned_days[lab_event_idx] == day_group_pairs_indices["TTh"][1]).OnlyEnforceIf(tth_selected)
-
-            model.Add(assigned_days[lecture_event_idx] == day_group_pairs_indices["FS"][0]).OnlyEnforceIf(fs_selected)
-            model.Add(assigned_days[lab_event_idx] == day_group_pairs_indices["FS"][1]).OnlyEnforceIf(fs_selected)
-
-            # Exactly one day pair must be selected
-            model.Add(mw_selected + tth_selected + fs_selected == 1)
+            # Get the teacher assigned to this subject
+            teacher_var = assigned_teachers_vars[lecture_event_idx]
+            teacher_id = meeting_events[lecture_event_idx]['valid_teachers'][0]  # Get first teacher as reference
+            teacher_data = teacher_map.get(teacher_id)
+            teacher_available_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) if teacher_data else ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            
+            # Check if teacher has restricted availability (less than all 6 days)
+            is_restricted_teacher = len(teacher_available_days) < 6
+            
+            if is_restricted_teacher:
+                # For teachers with restricted availability, prioritize availability over day pairing
+                # Schedule both lecture and lab on the same available day
+                available_day_indices = [day_labels.index(day) for day in teacher_available_days if day in day_labels]
+                
+                if len(available_day_indices) > 0:
+                    # Force both lecture and lab to be on the same day from available days
+                    # Create boolean variables for each available day
+                    same_day_vars = {}
+                    for day_idx in available_day_indices:
+                        day_name = day_labels[day_idx]
+                        same_day_vars[day_name] = model.NewBoolVar(f'same_day_{day_name}_{section_id}_{subject_code}')
+                    
+                    # Exactly one available day must be selected for both lecture and lab
+                    model.Add(sum(same_day_vars.values()) == 1)
+                    
+                    # Enforce both lecture and lab on the same selected day
+                    for day_name, day_var in same_day_vars.items():
+                        day_idx = day_labels.index(day_name)
+                        model.Add(assigned_days[lecture_event_idx] == day_idx).OnlyEnforceIf(day_var)
+                        model.Add(assigned_days[lab_event_idx] == day_idx).OnlyEnforceIf(day_var)
+                
+                # Skip day pairing constraint entirely for restricted teachers
+                # Let individual teacher availability constraints handle the scheduling
+            else:
+                # For teachers with full availability, use standard day pairing
+                available_day_pairs = []
+                if all(day in teacher_available_days for day in ['Mon', 'Wed']):
+                    available_day_pairs.append('MW')
+                if all(day in teacher_available_days for day in ['Tue', 'Thu']):
+                    available_day_pairs.append('TTh')
+                if all(day in teacher_available_days for day in ['Fri', 'Sat']):
+                    available_day_pairs.append('FS')
+                
+                # Create boolean variables only for available day pairs
+                day_pair_vars = {}
+                for pair in available_day_pairs:
+                    day_pair_vars[pair] = model.NewBoolVar(f'daypair_{pair}_{section_id}_{subject_code}')
+                
+                # Enforce lecture on first day and lab on second day of each available pair
+                for pair in available_day_pairs:
+                    first_day_idx = day_group_pairs_indices[pair][0]
+                    second_day_idx = day_group_pairs_indices[pair][1]
+                    
+                    model.Add(assigned_days[lecture_event_idx] == first_day_idx).OnlyEnforceIf(day_pair_vars[pair])
+                    model.Add(assigned_days[lab_event_idx] == second_day_idx).OnlyEnforceIf(day_pair_vars[pair])
+                
+                # Exactly one available day pair must be selected
+                model.Add(sum(day_pair_vars.values()) == 1)
 
         # Case 2: Two non-lab meetings should be on the two days of a selected day pair
         non_lab_indices = [i for i in indices if meeting_events[i]['type'] == 'non_lab']
@@ -479,20 +586,63 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             idx0 = min(non_lab_indices, key=lambda i: meeting_events[i]['meeting_idx'])
             idx1 = max(non_lab_indices, key=lambda i: meeting_events[i]['meeting_idx'])
 
-            mw_selected = model.NewBoolVar(f'daypair_MW_nonlab_{section_id}_{subject_code}')
-            tth_selected = model.NewBoolVar(f'daypair_TTh_nonlab_{section_id}_{subject_code}')
-            fs_selected = model.NewBoolVar(f'daypair_FS_nonlab_{section_id}_{subject_code}')
-
-            model.Add(assigned_days[idx0] == day_group_pairs_indices["MW"][0]).OnlyEnforceIf(mw_selected)
-            model.Add(assigned_days[idx1] == day_group_pairs_indices["MW"][1]).OnlyEnforceIf(mw_selected)
-
-            model.Add(assigned_days[idx0] == day_group_pairs_indices["TTh"][0]).OnlyEnforceIf(tth_selected)
-            model.Add(assigned_days[idx1] == day_group_pairs_indices["TTh"][1]).OnlyEnforceIf(tth_selected)
-
-            model.Add(assigned_days[idx0] == day_group_pairs_indices["FS"][0]).OnlyEnforceIf(fs_selected)
-            model.Add(assigned_days[idx1] == day_group_pairs_indices["FS"][1]).OnlyEnforceIf(fs_selected)
-
-            model.Add(mw_selected + tth_selected + fs_selected == 1)
+            # Get the teacher assigned to this subject
+            teacher_id = meeting_events[idx0]['valid_teachers'][0]  # Get first teacher as reference
+            teacher_data = teacher_map.get(teacher_id)
+            teacher_available_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) if teacher_data else ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+            
+            # Check if teacher has restricted availability (less than all 6 days)
+            is_restricted_teacher = len(teacher_available_days) < 6
+            
+            if is_restricted_teacher:
+                # For teachers with restricted availability, prioritize availability over day pairing
+                # Schedule both meetings on the same available day
+                available_day_indices = [day_labels.index(day) for day in teacher_available_days if day in day_labels]
+                
+                if len(available_day_indices) > 0:
+                    # Force both meetings to be on the same day from available days
+                    # Create boolean variables for each available day
+                    same_day_vars = {}
+                    for day_idx in available_day_indices:
+                        day_name = day_labels[day_idx]
+                        same_day_vars[day_name] = model.NewBoolVar(f'same_day_nonlab_{day_name}_{section_id}_{subject_code}')
+                    
+                    # Exactly one available day must be selected for both meetings
+                    model.Add(sum(same_day_vars.values()) == 1)
+                    
+                    # Enforce both meetings on the same selected day
+                    for day_name, day_var in same_day_vars.items():
+                        day_idx = day_labels.index(day_name)
+                        model.Add(assigned_days[idx0] == day_idx).OnlyEnforceIf(day_var)
+                        model.Add(assigned_days[idx1] == day_idx).OnlyEnforceIf(day_var)
+                
+                # Skip day pairing constraint entirely for restricted teachers
+                # Let individual teacher availability constraints handle the scheduling
+            else:
+                # For teachers with full availability, use standard day pairing
+                available_day_pairs = []
+                if all(day in teacher_available_days for day in ['Mon', 'Wed']):
+                    available_day_pairs.append('MW')
+                if all(day in teacher_available_days for day in ['Tue', 'Thu']):
+                    available_day_pairs.append('TTh')
+                if all(day in teacher_available_days for day in ['Fri', 'Sat']):
+                    available_day_pairs.append('FS')
+                
+                # Create boolean variables only for available day pairs
+                day_pair_vars = {}
+                for pair in available_day_pairs:
+                    day_pair_vars[pair] = model.NewBoolVar(f'daypair_{pair}_nonlab_{section_id}_{subject_code}')
+                
+                # Enforce first meeting on first day and second meeting on second day of each available pair
+                for pair in available_day_pairs:
+                    first_day_idx = day_group_pairs_indices[pair][0]
+                    second_day_idx = day_group_pairs_indices[pair][1]
+                    
+                    model.Add(assigned_days[idx0] == first_day_idx).OnlyEnforceIf(day_pair_vars[pair])
+                    model.Add(assigned_days[idx1] == second_day_idx).OnlyEnforceIf(day_pair_vars[pair])
+                
+                # Exactly one available day pair must be selected
+                model.Add(sum(day_pair_vars.values()) == 1)
 
     # Constraint 3: Same teacher and room for all meetings of a section
     # sections_meetings = {} # section_id: [list of event indices]
@@ -572,16 +722,33 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     logs.append('Scheduler: Solving...')
     solver = cp_model.CpSolver()
     # Relax search to improve feasibility
-    solver.parameters.max_time_in_seconds = 30.0
+    solver.parameters.max_time_in_seconds = 60.0  # Increased time limit
     solver.parameters.num_search_workers = 8
     solver.parameters.cp_model_presolve = True
     solver.parameters.linearization_level = 1
+    solver.parameters.search_branching = cp_model.PORTFOLIO_SEARCH  # Try different search strategies
     status = solver.Solve(model)
     print(f'Scheduler: Solver finished with status {status}')
     logs.append(f'Scheduler: Solver finished with status {status}')
+    
+    # Add detailed status information
+    if status == cp_model.INFEASIBLE:
+        print('Scheduler: Problem is infeasible - constraints are too strict')
+        logs.append('Scheduler: Problem is infeasible - constraints are too strict')
+    elif status == cp_model.UNKNOWN:
+        print('Scheduler: Solver could not determine feasibility within time limit')
+        logs.append('Scheduler: Solver could not determine feasibility within time limit')
+    elif status == cp_model.OPTIMAL:
+        print('Scheduler: Found optimal solution')
+        logs.append('Scheduler: Found optimal solution')
+    elif status == cp_model.FEASIBLE:
+        print('Scheduler: Found feasible solution (may not be optimal)')
+        logs.append('Scheduler: Found feasible solution (may not be optimal)')
 
     result = []
     if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        print('Scheduler: Using MAIN solver result')
+        logs.append('Scheduler: Using MAIN solver result')
         for i, event in enumerate(meeting_events):
             teacher_idx = solver.Value(assigned_teachers_vars[i])
             room_idx = solver.Value(assigned_rooms_vars[i])
@@ -599,6 +766,9 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 'start_time_slot': time_slot_labels[start_time_idx],
                 'duration_slots': int(event['duration_slots'])
             })
+        
+        # Validate the schedule for conflicts
+        validate_schedule(result, logs)
         return { 'schedule': result, 'logs': logs }
 
     # Fallback: retry without any overlap constraints to always produce a schedule
@@ -627,7 +797,33 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         fb_assigned_teachers.append(teacher_var)
         fb_assigned_rooms.append(room_var)
 
-    # In fallback, keep constraints minimal to ensure a schedule is produced
+    # In fallback, add minimal critical constraints to prevent obvious conflicts
+    # Add basic teacher and section overlap constraints (most critical)
+    for i in range(len(meeting_events)):
+        for j in range(i + 1, len(meeting_events)):
+            # Same teacher cannot teach at same time
+            same_teacher = model2.NewBoolVar(f'fb_same_teacher_{i}_{j}')
+            model2.Add(fb_assigned_teachers[i] == fb_assigned_teachers[j]).OnlyEnforceIf(same_teacher)
+            model2.Add(fb_assigned_teachers[i] != fb_assigned_teachers[j]).OnlyEnforceIf(same_teacher.Not())
+            
+            same_day = model2.NewBoolVar(f'fb_same_day_{i}_{j}')
+            model2.Add(fb_assigned_days[i] == fb_assigned_days[j]).OnlyEnforceIf(same_day)
+            model2.Add(fb_assigned_days[i] != fb_assigned_days[j]).OnlyEnforceIf(same_day.Not())
+            
+            # Time separation for same teacher on same day
+            sep_ij = model2.NewBoolVar(f'fb_sep_{i}_{j}')
+            sep_ji = model2.NewBoolVar(f'fb_sep_{j}_{i}')
+            model2.Add(fb_assigned_starts[i] + int(meeting_events[i]['duration_slots']) <= fb_assigned_starts[j]).OnlyEnforceIf(sep_ij)
+            model2.Add(fb_assigned_starts[j] + int(meeting_events[j]['duration_slots']) <= fb_assigned_starts[i]).OnlyEnforceIf(sep_ji)
+            model2.AddBoolOr([sep_ij, sep_ji, same_teacher.Not(), same_day.Not()])
+            
+            # Same section cannot have overlapping classes (different programs can coexist)
+            if meeting_events[i]['section_id'] == meeting_events[j]['section_id']:
+                sep_ij_s = model2.NewBoolVar(f'fb_sep_section_{i}_{j}')
+                sep_ji_s = model2.NewBoolVar(f'fb_sep_section_{j}_{i}')
+                model2.Add(fb_assigned_starts[i] + int(meeting_events[i]['duration_slots']) <= fb_assigned_starts[j]).OnlyEnforceIf(sep_ij_s)
+                model2.Add(fb_assigned_starts[j] + int(meeting_events[j]['duration_slots']) <= fb_assigned_starts[i]).OnlyEnforceIf(sep_ji_s)
+                model2.AddBoolOr([sep_ij_s, sep_ji_s, same_day.Not()])
 
     solver2 = cp_model.CpSolver()
     solver2.parameters.max_time_in_seconds = 10.0
@@ -637,6 +833,8 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     logs.append(f'Scheduler: Fallback solver finished with status {status2}')
 
     if status2 in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+        print('Scheduler: Using FALLBACK solver result')
+        logs.append('Scheduler: Using FALLBACK solver result')
         for i, event in enumerate(meeting_events):
             teacher_idx = solver2.Value(fb_assigned_teachers[i])
             room_idx = solver2.Value(fb_assigned_rooms[i])
@@ -654,8 +852,77 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 'start_time_slot': time_slot_labels[start_time_idx],
                 'duration_slots': int(event['duration_slots'])
             })
+        
+        # Validate the fallback schedule for conflicts
+        validate_schedule(result, logs)
         return { 'schedule': result, 'logs': logs }
 
     print('Scheduler: No feasible solution found even after fallback.')
     logs.append('Scheduler: No feasible solution found even after fallback.')
     return { 'schedule': [], 'logs': logs }
+
+def validate_schedule(schedule, logs):
+    """Validate the generated schedule for conflicts"""
+    print('Scheduler: Validating schedule for conflicts...')
+    logs.append('Scheduler: Validating schedule for conflicts...')
+    
+    conflicts = []
+    
+    # Check for section conflicts (same section, same day, overlapping times)
+    # Note: Different programs (IT vs CS) can coexist in same timeslot
+    for i, event1 in enumerate(schedule):
+        for j, event2 in enumerate(schedule[i+1:], i+1):
+            if (event1['section_id'] == event2['section_id'] and 
+                event1['day'] == event2['day']):
+                
+                # Parse time slots
+                start1 = event1['start_time_slot'].split('-')[0]
+                end1 = event1['start_time_slot'].split('-')[1]
+                start2 = event2['start_time_slot'].split('-')[0]
+                end2 = event2['start_time_slot'].split('-')[1]
+                
+                # Check for overlap
+                if (start1 < end2 and start2 < end1):
+                    conflicts.append({
+                        'type': 'section_conflict',
+                        'section': event1['section_id'],
+                        'day': event1['day'],
+                        'event1': f"{event1['subject_code']} ({event1['start_time_slot']})",
+                        'event2': f"{event2['subject_code']} ({event2['start_time_slot']})"
+                    })
+    
+    # Check for teacher conflicts (same teacher, same day, overlapping times)
+    for i, event1 in enumerate(schedule):
+        for j, event2 in enumerate(schedule[i+1:], i+1):
+            if (event1['teacher_name'] == event2['teacher_name'] and 
+                event1['day'] == event2['day']):
+                
+                # Parse time slots
+                start1 = event1['start_time_slot'].split('-')[0]
+                end1 = event1['start_time_slot'].split('-')[1]
+                start2 = event2['start_time_slot'].split('-')[0]
+                end2 = event2['start_time_slot'].split('-')[1]
+                
+                # Check for overlap
+                if (start1 < end2 and start2 < end1):
+                    conflicts.append({
+                        'type': 'teacher_conflict',
+                        'teacher': event1['teacher_name'],
+                        'day': event1['day'],
+                        'event1': f"{event1['subject_code']} ({event1['start_time_slot']})",
+                        'event2': f"{event2['subject_code']} ({event2['start_time_slot']})"
+                    })
+    
+    if conflicts:
+        print(f'Scheduler: Found {len(conflicts)} conflicts in generated schedule!')
+        logs.append(f'Scheduler: Found {len(conflicts)} conflicts in generated schedule!')
+        for conflict in conflicts:
+            if conflict['type'] == 'section_conflict':
+                msg = f"Section conflict: {conflict['section']} on {conflict['day']} - {conflict['event1']} vs {conflict['event2']}"
+            else:
+                msg = f"Teacher conflict: {conflict['teacher']} on {conflict['day']} - {conflict['event1']} vs {conflict['event2']}"
+            print(f'Scheduler: {msg}')
+            logs.append(f'Scheduler: {msg}')
+    else:
+        print('Scheduler: No conflicts found in generated schedule.')
+        logs.append('Scheduler: No conflicts found in generated schedule.')
