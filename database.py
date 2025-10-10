@@ -406,7 +406,8 @@ class ScheduleDatabase:
         SELECT 
             teacher_id,
             teacher_name,
-            can_teach
+            can_teach,
+            availability_days
         FROM teachers
         ORDER BY teacher_name
         """
@@ -494,13 +495,16 @@ class ScheduleDatabase:
     def insert_teacher(self, teacher_data: Dict[str, Any]) -> int:
         """Insert a single teacher and return the generated ID"""
         query = """
-        INSERT INTO teachers (teacher_name, can_teach)
-        VALUES (%s, %s)
+        INSERT INTO teachers (teacher_name, can_teach, availability_days)
+        VALUES (%s, %s, %s)
         RETURNING teacher_id
         """
+        # Default to all days available if not specified
+        availability_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
         params = (
             teacher_data['teacher_name'],
-            teacher_data.get('can_teach', '')
+            teacher_data.get('can_teach', ''),
+            availability_days
         )
         result = self.db.execute_query(query, params)
         return result[0]['teacher_id'] if result else None
@@ -597,12 +601,15 @@ def update_teacher(teacher_id: str, teacher_data: Dict[str, Any]) -> None:
     """Update an existing teacher in the database"""
     query = """
     UPDATE teachers 
-    SET teacher_name = %s, can_teach = %s
+    SET teacher_name = %s, can_teach = %s, availability_days = %s
     WHERE teacher_id = %s
     """
+    # Default to all days available if not specified
+    availability_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
     params = (
         teacher_data['teacher_name'],
         teacher_data.get('can_teach', ''),
+        availability_days,
         teacher_id
     )
     db.db.execute_single(query, params)

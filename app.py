@@ -44,7 +44,22 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-app.mount('/static', StaticFiles(directory='static'), name='static')
+
+# Mount static files with no-cache headers
+from fastapi.staticfiles import StaticFiles
+
+class NoCacheStaticFiles(StaticFiles):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+
+app.mount('/static', NoCacheStaticFiles(directory='static'), name='static')
 
 # JWT Configuration
 SECRET_KEY = "your-secret-key-change-in-production"  # Change this in production!

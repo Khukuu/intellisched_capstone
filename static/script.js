@@ -203,13 +203,12 @@ async function uploadFile(file, filename) {
 // Day and Time Slot labels must match scheduler.py exactly
 const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];  // No Sunday classes
 const timeSlotLabels = [
-  "06:00-06:30", "06:30-07:00", "07:00-07:30", "07:30-08:00",
-  "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
-  "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
+  "07:00-07:30", "07:30-08:00", "08:00-08:30", "08:30-09:00",
+  "09:00-09:30", "09:30-10:00", "10:00-10:30", "10:30-11:00",
+  "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-13:00",
   "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
-  "17:00-17:30", "17:30-18:00", "18:00-18:30", "18:30-19:00",
-  "19:00-19:30", "19:30-20:00"
+  "17:00-17:30", "17:30-18:00"
 ];
 
 // Timetable subject color mapping helpers
@@ -941,14 +940,14 @@ async function loadTeachersTable() {
     });
     if (!teachersResponse.ok) throw new Error('Failed to load teachers');
     teachersCache = await teachersResponse.json();
-    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
+    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach', 'availability_days']);
   } catch (e) {
     console.warn('Could not load teachers:', e);
     document.getElementById('teachersData').innerHTML = '<p>No data available.</p>';
   }
   const tInput = document.getElementById('teachersSearch');
   if (tInput) {
-    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach']);
+    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach', 'availability_days']);
   }
 }
 
@@ -1040,7 +1039,13 @@ function renderTable(data, elementId, headers) {
     data.forEach(row => {
       tableHtml += '<tr>';
       tableHtml += '<td><input type="checkbox" class="form-check-input" data-role="row-select"></td>';
-      headers.forEach(header => { tableHtml += `<td>${row[header]}</td>`; });
+      headers.forEach(header => { 
+        let value = row[header];
+        if (Array.isArray(value)) {
+          value = value.join(', ');
+        }
+        tableHtml += `<td>${value}</td>`; 
+      });
       tableHtml += '</tr>';
     });
   } else {
@@ -1133,6 +1138,7 @@ function promptForData(fields, initial = {}) {
   const fieldLabels = {
     'teacher_name': 'Teacher Name',
     'can_teach': 'Subjects (comma-separated)',
+    'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
     'subject_code': 'Subject Code',
@@ -1147,7 +1153,15 @@ function promptForData(fields, initial = {}) {
   
   for (const f of fields) {
     const label = fieldLabels[f] || f;
-    const val = prompt(`Enter ${label}:`, initial[f] != null ? String(initial[f]) : '');
+    let initialValue = '';
+    if (initial[f] != null) {
+      if (Array.isArray(initial[f])) {
+        initialValue = initial[f].join(',');
+      } else {
+        initialValue = String(initial[f]);
+      }
+    }
+    const val = prompt(`Enter ${label}:`, initialValue);
     if (val === null) return null;
     result[f] = val;
   }
@@ -1227,8 +1241,12 @@ function setupCrudButtons() {
   const tEdit = document.getElementById('teachersEdit');
   const tDel = document.getElementById('teachersDelete');
   if (tAdd) tAdd.onclick = async () => {
-    const data = promptForData(['teacher_name','can_teach']);
+    const data = promptForData(['teacher_name','can_teach','availability_days']);
     if (!data) return;
+    // Convert availability_days string to array if provided
+    if (data.availability_days && typeof data.availability_days === 'string') {
+      data.availability_days = data.availability_days.split(',').map(day => day.trim()).filter(day => day);
+    }
     const response = await fetch('/api/teachers', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
     if (response.ok) {
       const result = await response.json();
@@ -1237,9 +1255,9 @@ function setupCrudButtons() {
     loadTeachersTable();
   };
   if (tEdit) tEdit.onclick = async () => {
-    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
+    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach','availability_days']);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    openBulkEditModal('teachers', ['teacher_name','can_teach'], selected);
+    openBulkEditModal('teachers', ['teacher_name','can_teach','availability_days'], selected);
   };
   if (tDel) tDel.onclick = async () => {
     const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
@@ -1293,6 +1311,7 @@ function openBulkEditModal(kind, fields, selectedRows) {
   const fieldLabels = {
     'teacher_name': 'Teacher Name',
     'can_teach': 'Subjects (comma-separated)',
+    'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
     'subject_code': 'Subject Code',
@@ -1348,6 +1367,12 @@ function openBulkEditModal(kind, fields, selectedRows) {
           toApply[k] = v === '' || v == null ? (k === 'semester' || k === 'year_level' ? null : 0) : parseInt(v, 10);
         }
       });
+    }
+    // Convert availability_days string to array for teachers
+    if (kind === 'teachers' && toApply.hasOwnProperty('availability_days')) {
+      if (toApply.availability_days && typeof toApply.availability_days === 'string') {
+        toApply.availability_days = toApply.availability_days.split(',').map(day => day.trim()).filter(day => day);
+      }
     }
 
     // Perform PUT per selected row
