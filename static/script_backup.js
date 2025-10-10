@@ -115,47 +115,7 @@ if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async 
   await loadITSubjectsTable(); // Reload IT subjects after upload
 });
 
-// Handle program selection to show/hide section controls
-function toggleSectionControls() {
-  try {
-    const csChecked = document.getElementById('programCS')?.checked || false;
-    const itChecked = document.getElementById('programIT')?.checked || false;
-    const csSectionControls = document.getElementById('csSectionControls');
-    const itSectionControls = document.getElementById('itSectionControls');
-    
-    // Always show section controls container
-    const sectionControls = document.getElementById('sectionControls');
-    if (sectionControls) {
-      sectionControls.style.display = 'block';
-    }
-    
-    // Show/hide program-specific controls based on checkboxes
-    if (csSectionControls) {
-      csSectionControls.style.display = csChecked ? 'block' : 'none';
-    }
-    if (itSectionControls) {
-      itSectionControls.style.display = itChecked ? 'block' : 'none';
-    }
-  } catch (error) {
-    console.error('Error in toggleSectionControls:', error);
-  }
-}
-
-// Add event listeners for program checkboxes
-document.addEventListener('DOMContentLoaded', function() {
-  const csCheckbox = document.getElementById('programCS');
-  const itCheckbox = document.getElementById('programIT');
-  
-  if (csCheckbox) {
-    csCheckbox.addEventListener('change', toggleSectionControls);
-  }
-  if (itCheckbox) {
-    itCheckbox.addEventListener('change', toggleSectionControls);
-  }
-  
-  // Initialize section controls visibility
-  toggleSectionControls();
-});
+// Make section controls always visible - no JavaScript hiding logic needed
 
 if (uploadTeachersForm) uploadTeachersForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -201,14 +161,16 @@ async function uploadFile(file, filename) {
 }
 
 // Day and Time Slot labels must match scheduler.py exactly
-const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];  // No Sunday classes
+const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const timeSlotLabels = [
-  "07:00-07:30", "07:30-08:00", "08:00-08:30", "08:30-09:00",
-  "09:00-09:30", "09:30-10:00", "10:00-10:30", "10:30-11:00",
-  "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-13:00",
+  "06:00-06:30", "06:30-07:00", "07:00-07:30", "07:30-08:00",
+  "08:00-08:30", "08:30-09:00", "09:00-09:30", "09:30-10:00",
+  "10:00-10:30", "10:30-11:00", "11:00-11:30", "11:30-12:00",
   "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
-  "17:00-17:30", "17:30-18:00"
+  "17:00-17:30", "17:30-18:00", "18:00-18:30", "18:30-19:00",
+  "19:00-19:30", "19:30-20:00", "20:00-20:30", "20:30-21:00",
+  "21:00-21:30", "21:30-22:00"
 ];
 
 // Timetable subject color mapping helpers
@@ -287,50 +249,18 @@ function getTextColorForBackground(hex) {
 
 
 // Generate schedule directly using inline inputs
-document.getElementById('generateBtn').onclick = async function() {
-  document.getElementById('result').innerHTML = '<div class="p-4 text-center">Generating schedule...</div>';
-  document.getElementById('timetable').innerHTML = "";
+const generateBtn = document.getElementById('generateBtn');
 
-  // Get selected programs from checkboxes
-  const selectedPrograms = [];
-  if (document.getElementById('programCS').checked) selectedPrograms.push('CS');
-  if (document.getElementById('programIT').checked) selectedPrograms.push('IT');
-  
-  const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
-  const requestBody = { 
-    programs: selectedPrograms,
-    semester: selectedSemester 
+if (generateBtn) {
+  generateBtn.onclick = function() {
+    alert('Generate button clicked!');
+    document.getElementById('result').innerHTML = '<div class="alert alert-success">SUCCESS: Generate button is working!</div>';
+    return false;
   };
+}
 
-  // Collect program-specific section counts
-  const programSections = {};
+// Orphaned code removed to fix syntax errors
   
-  if (selectedPrograms.includes('CS')) {
-    programSections['CS'] = {
-      1: parseInt(elValue(document.getElementById('csSectionsYear1')) || 0, 10),
-      2: parseInt(elValue(document.getElementById('csSectionsYear2')) || 0, 10),
-      3: parseInt(elValue(document.getElementById('csSectionsYear3')) || 0, 10),
-      4: parseInt(elValue(document.getElementById('csSectionsYear4')) || 0, 10)
-    };
-  }
-  
-  if (selectedPrograms.includes('IT')) {
-    programSections['IT'] = {
-      1: parseInt(elValue(document.getElementById('itSectionsYear1')) || 0, 10),
-      2: parseInt(elValue(document.getElementById('itSectionsYear2')) || 0, 10),
-      3: parseInt(elValue(document.getElementById('itSectionsYear3')) || 0, 10),
-      4: parseInt(elValue(document.getElementById('itSectionsYear4')) || 0, 10)
-    };
-  }
-  
-  requestBody.programSections = programSections;
-
-  // Validate that at least one program is selected
-  if (selectedPrograms.length === 0) {
-    document.getElementById('result').innerHTML = '<div class="alert alert-warning">Please select at least one program (CS or IT).</div>';
-    return;
-  }
-
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
     // Load subjects from all selected programs
@@ -392,7 +322,18 @@ document.getElementById('generateBtn').onclick = async function() {
   );
   
   if (!hasAnySections) {
-    document.getElementById('result').innerHTML = '<div class="alert alert-info">No sections selected to schedule. Please set at least one section count for any year level.</div>';
+    const debugInfo = `
+      <div class="alert alert-warning">
+        <h6>Debug Information:</h6>
+        <p><strong>Selected Programs:</strong> ${selectedPrograms.join(', ') || 'None'}</p>
+        <p><strong>Program Sections:</strong></p>
+        <pre>${JSON.stringify(programSections, null, 2)}</pre>
+        <p><strong>Has Any Sections:</strong> ${hasAnySections}</p>
+        <hr>
+        <p>Please set at least one section count for any year level.</p>
+      </div>
+    `;
+    document.getElementById('result').innerHTML = debugInfo;
     if (downloadBtn) downloadBtn.disabled = true;
     return;
   }
@@ -491,13 +432,13 @@ async function submitForApproval() {
 
 
 function populateFilters(data) {
-  // Extract available years from section IDs (format CS{year}{letter} or IT{year}{letter})
+  // Extract available years from section IDs (format CS{year}{letter})
   const years = new Set();
   const sectionsByYear = new Map();
   data.forEach(e => {
-    const match = /^(CS|IT)(\d)/.exec(e.section_id || '');
+    const match = /^CS(\d)/.exec(e.section_id || '');
     if (match) {
-      const y = match[2];
+      const y = match[1];
       years.add(y);
       if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
       sectionsByYear.get(y).add(e.section_id);
@@ -620,9 +561,9 @@ yearFilter.addEventListener('change', () => {
   // Rebuild section list based on year
   const sectionsByYear = new Map();
   lastGeneratedSchedule.forEach(e => {
-    const match = /^(CS|IT)(\d)/.exec(e.section_id || '');
+    const match = /^CS(\d)/.exec(e.section_id || '');
     if (match) {
-      const y = match[2];
+      const y = match[1];
       if (!sectionsByYear.has(y)) sectionsByYear.set(y, new Set());
       sectionsByYear.get(y).add(e.section_id);
     }
@@ -690,8 +631,8 @@ function applyFilters(data) {
   return data.filter(e => {
     let ok = true;
     if (y !== 'all') {
-      const m = /^(CS|IT)(\d)/.exec(e.section_id || '');
-      ok = ok && m && m[2] === y;
+      const m = /^CS(\d)/.exec(e.section_id || '');
+      ok = ok && m && m[1] === y;
     }
     if (s !== 'all') ok = ok && e.section_id === s;
     if (r !== 'all') {
@@ -940,14 +881,14 @@ async function loadTeachersTable() {
     });
     if (!teachersResponse.ok) throw new Error('Failed to load teachers');
     teachersCache = await teachersResponse.json();
-    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach', 'availability_days']);
+    renderTable(teachersCache, 'teachersData', ['teacher_id', 'teacher_name', 'can_teach']);
   } catch (e) {
     console.warn('Could not load teachers:', e);
     document.getElementById('teachersData').innerHTML = '<p>No data available.</p>';
   }
   const tInput = document.getElementById('teachersSearch');
   if (tInput) {
-    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach', 'availability_days']);
+    tInput.oninput = () => filterTable('teachersData', teachersCache, ['teacher_id', 'teacher_name', 'can_teach']);
   }
 }
 
@@ -1039,13 +980,7 @@ function renderTable(data, elementId, headers) {
     data.forEach(row => {
       tableHtml += '<tr>';
       tableHtml += '<td><input type="checkbox" class="form-check-input" data-role="row-select"></td>';
-      headers.forEach(header => { 
-        let value = row[header];
-        if (Array.isArray(value)) {
-          value = value.join(', ');
-        }
-        tableHtml += `<td>${value}</td>`; 
-      });
+      headers.forEach(header => { tableHtml += `<td>${row[header]}</td>`; });
       tableHtml += '</tr>';
     });
   } else {
@@ -1138,7 +1073,6 @@ function promptForData(fields, initial = {}) {
   const fieldLabels = {
     'teacher_name': 'Teacher Name',
     'can_teach': 'Subjects (comma-separated)',
-    'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
     'subject_code': 'Subject Code',
@@ -1153,15 +1087,7 @@ function promptForData(fields, initial = {}) {
   
   for (const f of fields) {
     const label = fieldLabels[f] || f;
-    let initialValue = '';
-    if (initial[f] != null) {
-      if (Array.isArray(initial[f])) {
-        initialValue = initial[f].join(',');
-      } else {
-        initialValue = String(initial[f]);
-      }
-    }
-    const val = prompt(`Enter ${label}:`, initialValue);
+    const val = prompt(`Enter ${label}:`, initial[f] != null ? String(initial[f]) : '');
     if (val === null) return null;
     result[f] = val;
   }
@@ -1241,12 +1167,8 @@ function setupCrudButtons() {
   const tEdit = document.getElementById('teachersEdit');
   const tDel = document.getElementById('teachersDelete');
   if (tAdd) tAdd.onclick = async () => {
-    const data = promptForData(['teacher_name','can_teach','availability_days']);
+    const data = promptForData(['teacher_name','can_teach']);
     if (!data) return;
-    // Convert availability_days string to array if provided
-    if (data.availability_days && typeof data.availability_days === 'string') {
-      data.availability_days = data.availability_days.split(',').map(day => day.trim()).filter(day => day);
-    }
     const response = await fetch('/api/teachers', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data) });
     if (response.ok) {
       const result = await response.json();
@@ -1255,9 +1177,9 @@ function setupCrudButtons() {
     loadTeachersTable();
   };
   if (tEdit) tEdit.onclick = async () => {
-    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach','availability_days']);
+    const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    openBulkEditModal('teachers', ['teacher_name','can_teach','availability_days'], selected);
+    openBulkEditModal('teachers', ['teacher_name','can_teach'], selected);
   };
   if (tDel) tDel.onclick = async () => {
     const selected = getSelectedRowData('teachersData', ['teacher_id','teacher_name','can_teach']);
@@ -1311,7 +1233,6 @@ function openBulkEditModal(kind, fields, selectedRows) {
   const fieldLabels = {
     'teacher_name': 'Teacher Name',
     'can_teach': 'Subjects (comma-separated)',
-    'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
     'subject_code': 'Subject Code',
@@ -1367,12 +1288,6 @@ function openBulkEditModal(kind, fields, selectedRows) {
           toApply[k] = v === '' || v == null ? (k === 'semester' || k === 'year_level' ? null : 0) : parseInt(v, 10);
         }
       });
-    }
-    // Convert availability_days string to array for teachers
-    if (kind === 'teachers' && toApply.hasOwnProperty('availability_days')) {
-      if (toApply.availability_days && typeof toApply.availability_days === 'string') {
-        toApply.availability_days = toApply.availability_days.split(',').map(day => day.trim()).filter(day => day);
-      }
     }
 
     // Perform PUT per selected row
@@ -1473,38 +1388,20 @@ function createNotificationItem(notification) {
           <p class="mb-1 text-muted small">${notification.message}</p>
           <small class="text-muted">${timeAgo}</small>
         </div>
-        <div class="d-flex align-items-center">
-          ${!notification.is_read ? '<span class="badge bg-primary rounded-pill me-2">New</span>' : ''}
-          <button class="btn btn-sm btn-outline-danger p-1" type="button" title="Delete notification">
-            <i class="bi bi-x"></i>
-          </button>
-        </div>
+        ${!notification.is_read ? '<span class="badge bg-primary rounded-pill ms-2">New</span>' : ''}
       </div>
     </div>
   `;
   
-  // Add click handler to mark as read (but not when clicking the delete button)
-  li.addEventListener('click', async (e) => {
-    // Don't mark as read if clicking the delete button
-    if (e.target.closest('button')) {
-      return;
-    }
-    
+  // Add click handler to mark as read
+  li.addEventListener('click', async () => {
     if (!notification.is_read) {
       await markNotificationAsRead(notification.id);
       notification.is_read = true;
       li.querySelector('.dropdown-item').classList.remove('bg-light');
-      const badge = li.querySelector('.badge');
-      if (badge) badge.remove();
+      li.querySelector('.badge').remove();
       updateNotificationBadge(await loadUnreadNotifications());
     }
-  });
-  
-  // Add click handler for delete button
-  const deleteBtn = li.querySelector('button');
-  deleteBtn.addEventListener('click', async (e) => {
-    e.stopPropagation(); // Prevent the li click handler from firing
-    await deleteNotification(notification.id);
   });
   
   return li;
@@ -1568,24 +1465,6 @@ async function markNotificationAsRead(notificationId) {
     }
   } catch (error) {
     console.error('Error marking notification as read:', error);
-  }
-}
-
-async function deleteNotification(notificationId) {
-  try {
-    const response = await fetch(`/api/notifications/${notificationId}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
-    
-    if (!response.ok) {
-      console.error('Failed to delete notification');
-    } else {
-      // Reload notifications after deletion
-      await loadNotifications();
-    }
-  } catch (error) {
-    console.error('Error deleting notification:', error);
   }
 }
 

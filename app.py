@@ -44,7 +44,22 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-app.mount('/static', StaticFiles(directory='static'), name='static')
+
+# Mount static files with no-cache headers
+from fastapi.staticfiles import StaticFiles
+
+class NoCacheStaticFiles(StaticFiles):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        return response
+
+app.mount('/static', NoCacheStaticFiles(directory='static'), name='static')
 
 # JWT Configuration
 SECRET_KEY = "your-secret-key-change-in-production"  # Change this in production!
@@ -355,25 +370,44 @@ async def saved_schedules_page():
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(require_chair_role)):
     logger.info('Received request for /schedule')
-    subjects = load_subjects_from_db()
+    
+    # Get program selection (default to CS for backward compatibility)
+    programs = payload.get('programs', ['CS'])
+    if isinstance(programs, str):
+        programs = [programs]  # Handle single program as string
+    logger.info(f'Scheduling for programs: {programs}')
+    
+    subjects = load_subjects_from_db(programs)
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
 
     semester_filter = payload.get('semester')
 
-    num_sections_year_1 = payload.get('numSectionsYear1', 0)
-    num_sections_year_2 = payload.get('numSectionsYear2', 0)
-    num_sections_year_3 = payload.get('numSectionsYear3', 0)
-    num_sections_year_4 = payload.get('numSectionsYear4', 0)
+    # Handle program-specific section counts
+    program_sections = payload.get('programSections', {})
+    
+    # If old format is used, convert to new format
+    if not program_sections and any(key.startswith('numSectionsYear') for key in payload.keys()):
+        # Legacy format - use same sections for all programs
+        num_sections_year_1 = payload.get('numSectionsYear1', 0)
+        num_sections_year_2 = payload.get('numSectionsYear2', 0)
+        num_sections_year_3 = payload.get('numSectionsYear3', 0)
+        num_sections_year_4 = payload.get('numSectionsYear4', 0)
+        
+        for program in programs:
+            program_sections[program] = {
+                1: num_sections_year_1,
+                2: num_sections_year_2,
+                3: num_sections_year_3,
+                4: num_sections_year_4
+            }
+    
+    # Ensure all selected programs have section counts
+    for program in programs:
+        if program not in program_sections:
+            program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
-    desired_sections_per_year = {
-        1: num_sections_year_1,
-        2: num_sections_year_2,
-        3: num_sections_year_3,
-        4: num_sections_year_4,
-    }
-
-    logger.info(f"Filtering for semester: {semester_filter}. Desired sections per year: {desired_sections_per_year}")
+    logger.info(f"Filtering for semester: {semester_filter}. Program sections: {program_sections}")
 
     try:
         if semester_filter:
@@ -392,20 +426,40 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         available_years = {1, 2, 3, 4}
 
     logger.info(f"Available years: {available_years}")
-    logger.info(f"Desired sections per year: {desired_sections_per_year}")
+    logger.info(f"Program sections: {program_sections}")
     
-    filtered_desired_sections_per_year = {
-        year: count for year, count in desired_sections_per_year.items()
-        if count and (year in available_years)
-    }
+    # Filter program sections to only include years with available curriculum
+    # But don't reject if some years don't have curriculum - just warn and adjust
+    filtered_program_sections = {}
+    has_valid_sections = False
+    adjusted_years = []
     
-    logger.info(f"Filtered desired sections: {filtered_desired_sections_per_year}")
+    for program, sections in program_sections.items():
+        filtered_sections = {}
+        for year, count in sections.items():
+            year_int = int(year)
+            if count and (year_int in available_years):
+                filtered_sections[year_int] = count
+                has_valid_sections = True
+            elif count and (year_int not in available_years):
+                # Year requested but no curriculum available
+                adjusted_years.append(f"{program} Year {year}")
+                logger.warning(f"No curriculum available for {program} Year {year} in semester {semester_filter}")
+        
+        if filtered_sections:
+            filtered_program_sections[program] = filtered_sections
+    
+    logger.info(f"Filtered program sections: {filtered_program_sections}")
+    
+    # Log adjustments made
+    if adjusted_years:
+        logger.info(f"Adjusted sections for years without curriculum: {adjusted_years}")
 
-    if not filtered_desired_sections_per_year:
+    if not has_valid_sections:
         logger.warning('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
         return JSONResponse(content=[])
 
-    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_desired_sections_per_year)
+    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
 
     # If request explicitly asks to persist as pending schedule (Chair flow)
     if payload.get('persist', False):
@@ -469,19 +523,39 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
     """Chair generates and submits schedule for approval (status=pending)."""
     # Prefer client-provided schedule when available; fall back to server generation
     client_schedule = payload.get('schedule')
-    subjects = load_subjects_from_db()
+    programs = payload.get('programs', ['CS'])
+    if isinstance(programs, str):
+        programs = [programs]  # Handle single program as string
+    subjects = load_subjects_from_db(programs)
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
     semester_filter = payload.get('semester')
 
-    desired_sections_per_year = {
-        1: payload.get('numSectionsYear1', 0),
-        2: payload.get('numSectionsYear2', 0),
-        3: payload.get('numSectionsYear3', 0),
-        4: payload.get('numSectionsYear4', 0),
-    }
+    # Handle program-specific section counts (same logic as main endpoint)
+    program_sections = payload.get('programSections', {})
+    
+    # If old format is used, convert to new format
+    if not program_sections and any(key.startswith('numSectionsYear') for key in payload.keys()):
+        # Legacy format - use same sections for all programs
+        num_sections_year_1 = payload.get('numSectionsYear1', 0)
+        num_sections_year_2 = payload.get('numSectionsYear2', 0)
+        num_sections_year_3 = payload.get('numSectionsYear3', 0)
+        num_sections_year_4 = payload.get('numSectionsYear4', 0)
+        
+        for program in programs:
+            program_sections[program] = {
+                1: num_sections_year_1,
+                2: num_sections_year_2,
+                3: num_sections_year_3,
+                4: num_sections_year_4
+            }
+    
+    # Ensure all selected programs have section counts
+    for program in programs:
+        if program not in program_sections:
+            program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
-    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)
+    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, program_sections, programs)
     name = (payload.get('name') or 'Generated Schedule')
     semester_int = int(semester_filter) if semester_filter else None
     uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
@@ -731,7 +805,11 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
 async def get_data(filename: str, username: str = Depends(require_chair_role)):
     try:
         if filename in ['cs_curriculum', 'subjects']:
-            data = load_subjects_from_db()
+            data = load_subjects_from_db(['CS'])
+        elif filename == 'it_curriculum':
+            data = load_subjects_from_db(['IT'])
+        elif filename == 'all_curriculum':
+            data = load_subjects_from_db(['CS', 'IT'])
         elif filename == 'teachers':
             data = load_teachers_from_db()
         elif filename == 'rooms':
@@ -786,7 +864,24 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
                 if not subject['subject_code']:
                     continue
                 add_subject(subject)
-            return JSONResponse(content={'message': 'Subjects CSV uploaded successfully'})
+            return JSONResponse(content={'message': 'CS Curriculum CSV uploaded successfully'})
+        elif filename == 'it_curriculum':
+            from database import add_it_subject
+            for r in rows:
+                subject = {
+                    'subject_code': r.get('subject_code') or r.get('code') or '',
+                    'subject_name': r.get('subject_name') or r.get('name') or '',
+                    'lecture_hours_per_week': safe_int(r.get('lecture_hours_per_week') or r.get('lec_hours')),
+                    'lab_hours_per_week': safe_int(r.get('lab_hours_per_week') or r.get('lab_hours')),
+                    'units': safe_int(r.get('units')),
+                    'semester': (lambda x: (safe_int(x) or None))(r.get('semester')),
+                    'program_specialization': (r.get('program_specialization') or r.get('program') or None),
+                    'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
+                }
+                if not subject['subject_code']:
+                    continue
+                add_it_subject(subject)
+            return JSONResponse(content={'message': 'IT Curriculum CSV uploaded successfully'})
         elif filename == 'teachers':
             from database import add_teacher
             added_count = 0
@@ -866,6 +961,38 @@ async def delete_subject_endpoint(subject_code: str, username: str = Depends(req
         from database import delete_subject
         delete_subject(subject_code)
         return JSONResponse(content={'message': 'Subject deleted successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# IT Subjects API endpoints
+@app.post('/api/it-subjects')
+async def add_it_subject_endpoint(subject_data: dict, username: str = Depends(require_chair_role)):
+    """Add a new IT subject to the database"""
+    try:
+        from database import add_it_subject
+        add_it_subject(subject_data)
+        return JSONResponse(content={'message': 'IT Subject added successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/it-subjects/{subject_code}')
+async def update_it_subject_endpoint(subject_code: str, subject_data: dict, username: str = Depends(require_chair_role)):
+    """Update an existing IT subject in the database"""
+    try:
+        from database import update_it_subject
+        subject_data['subject_code'] = subject_code
+        update_it_subject(subject_code, subject_data)
+        return JSONResponse(content={'message': 'IT Subject updated successfully'})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/it-subjects/{subject_code}')
+async def delete_it_subject_endpoint(subject_code: str, username: str = Depends(require_chair_role)):
+    """Delete an IT subject from the database"""
+    try:
+        from database import delete_it_subject
+        delete_it_subject(subject_code)
+        return JSONResponse(content={'message': 'IT Subject deleted successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
