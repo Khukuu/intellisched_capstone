@@ -819,12 +819,53 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
     else:
         raise HTTPException(status_code=400, detail='Specify id or semester')
 
-    fieldnames = ['section_id', 'subject_code', 'subject_name', 'type', 'teacher_name', 'room_id', 'day', 'start_time_slot', 'duration_slots']
+    # Helper function to calculate end time from start time slot and duration
+    def calculate_time_range(start_time_slot, duration_slots):
+        if not start_time_slot or not duration_slots:
+            return start_time_slot or ''
+        
+        # Parse start time (e.g., "07:00-07:30")
+        start_time = start_time_slot.split('-')[0]  # Get "07:00"
+        start_hour, start_minute = map(int, start_time.split(':'))
+        
+        # Calculate total minutes from start
+        start_total_minutes = start_hour * 60 + start_minute
+        
+        # Duration is in 30-minute slots, so multiply by 30
+        duration_minutes = duration_slots * 30
+        
+        # Calculate end time
+        end_total_minutes = start_total_minutes + duration_minutes
+        end_hour = end_total_minutes // 60
+        end_minute = end_total_minutes % 60
+        
+        # Format end time
+        end_time = f"{end_hour:02d}:{end_minute:02d}"
+        
+        return f"{start_time}-{end_time}"
+    
+    fieldnames = ['section_id', 'subject_code', 'subject_name', 'type', 'teacher_name', 'room_id', 'day', 'time_range', 'duration_hours']
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     writer.writeheader()
     for row in schedule_data:
-        writer.writerow({k: row.get(k, '') for k in fieldnames})
+        # Calculate proper time range and duration in hours
+        time_range = calculate_time_range(row.get('start_time_slot'), row.get('duration_slots'))
+        duration_hours = (row.get('duration_slots', 0) * 30) / 60 if row.get('duration_slots') else 0
+        
+        # Create the CSV row with proper formatting
+        csv_row = {
+            'section_id': row.get('section_id', ''),
+            'subject_code': row.get('subject_code', ''),
+            'subject_name': row.get('subject_name', ''),
+            'type': row.get('type', ''),
+            'teacher_name': row.get('teacher_name', ''),
+            'room_id': row.get('room_id', ''),
+            'day': row.get('day', ''),
+            'time_range': time_range,
+            'duration_hours': f"{duration_hours:.1f}" if duration_hours > 0 else ''
+        }
+        writer.writerow(csv_row)
     csv_bytes = output.getvalue().encode('utf-8')
     headers = {"Content-Disposition": "attachment; filename=schedule.csv"}
     return Response(content=csv_bytes, media_type='text/csv', headers=headers)

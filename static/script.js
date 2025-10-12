@@ -561,16 +561,52 @@ document.getElementById('generateBtn').onclick = async function() {
   }
 };
 
-downloadBtn.onclick = function() {
+downloadBtn.onclick = async function() {
   if (!downloadBtn.disabled) {
-    const selectedSemester = semesterSelect.value;
-    let downloadUrl = '/download_schedule';
-    if (lastSavedId) {
-      downloadUrl += `?id=${encodeURIComponent(lastSavedId)}`;
-    } else if (selectedSemester) {
-      downloadUrl += `?semester=${selectedSemester}`;
+    try {
+      const selectedSemester = semesterSelect.value;
+      let downloadUrl = '/download_schedule';
+      if (lastSavedId) {
+        downloadUrl += `?id=${encodeURIComponent(lastSavedId)}`;
+      } else if (selectedSemester) {
+        downloadUrl += `?semester=${selectedSemester}`;
+      }
+      
+      // Use fetch with authentication headers
+      const response = await fetch(downloadUrl, {
+        method: 'GET',
+        headers: getAuthHeaders()
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          showNotification('Authentication required. Please log in again.', 'danger');
+        } else {
+          showNotification('Failed to download CSV. Please try again.', 'danger');
+        }
+        return;
+      }
+      
+      // Get the CSV content
+      const csvContent = await response.text();
+      
+      // Create and trigger download
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'schedule.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      showNotification('CSV file downloaded successfully!', 'success');
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+      showNotification('Error downloading CSV. Please check your connection.', 'danger');
     }
-    window.location.href = downloadUrl;
   }
 };
 
