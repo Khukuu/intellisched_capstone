@@ -59,7 +59,7 @@
                             <p class="text-muted fs-5">Manage users, system settings, and administrative tasks</p>
                         </div>
                         
-                        <div class="alert alert-info border-0 rounded-4 mb-4" style="background: rgba(184, 58, 63, 0.1); border-left: 4px solid #b83a3f !important;">
+                        <div class="alert alert-info border-0 rounded-4 mb-4" style="background: rgba(184, 58, 63, 0.1);">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Admin Access:</strong> You can approve or reject pending user accounts, manage system settings, and view analytics.
                         </div>
@@ -361,13 +361,7 @@
         // User Management Functions
         function initializeUserManagement() {
             document.getElementById('manageUsersBtn').addEventListener('click', function() {
-                const section = document.getElementById('userManagementSection');
-                if (section.style.display === 'none') {
-                    section.style.display = 'block';
-                    loadPendingUsers();
-                } else {
-                    section.style.display = 'none';
-                }
+                toggleSection('userManagementSection', 'users', loadPendingUsers);
             });
             
             // Handle tab switching
@@ -494,6 +488,7 @@
                 }
                 
                 showAlert('User approved successfully!', 'success');
+                recordActivity('user_approval', `Approved user ID: ${userId}`);
                 loadPendingUsers(); // Refresh the list
             } catch (error) {
                 console.error('Error approving user:', error);
@@ -525,6 +520,7 @@
                 }
                 
                 showAlert('User rejected successfully!', 'success');
+                recordActivity('user_rejection', `Rejected user ID: ${userId} - Reason: ${reason || 'No reason provided'}`);
                 loadPendingUsers(); // Refresh the list
             } catch (error) {
                 console.error('Error rejecting user:', error);
@@ -874,28 +870,79 @@
             };
         }
         
+        // Function to record user activity
+        async function recordActivity(activityType, description) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`/api/analytics/record-activity?activity_type=${encodeURIComponent(activityType)}&description=${encodeURIComponent(description)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.warn('Failed to record activity:', activityType);
+                }
+            } catch (error) {
+                console.warn('Error recording activity:', error);
+            }
+        }
+        
+        // Section toggle function with mutual exclusivity
+        function toggleSection(sectionId, sectionType, loadFunction) {
+            const targetSection = document.getElementById(sectionId);
+            const isCurrentlyVisible = targetSection.style.display !== 'none';
+            
+            // Close all other sections first
+            const allSections = [
+                'userManagementSection',
+                'analyticsSection', 
+                'systemSettingsSection'
+            ];
+            
+            allSections.forEach(id => {
+                if (id !== sectionId) {
+                    const section = document.getElementById(id);
+                    if (section) {
+                        section.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Toggle the target section
+            if (isCurrentlyVisible) {
+                // If it's currently visible, hide it
+                targetSection.style.display = 'none';
+            } else {
+                // If it's hidden, show it and load data
+                targetSection.style.display = 'block';
+                
+                // Record activity for opening sections
+                if (sectionId === 'userManagementSection') {
+                    recordActivity('admin_user_management', 'Opened user management section');
+                } else if (sectionId === 'analyticsSection') {
+                    recordActivity('admin_analytics', 'Opened analytics section');
+                } else if (sectionId === 'systemSettingsSection') {
+                    recordActivity('admin_settings', 'Opened system settings section');
+                }
+                
+                if (typeof loadFunction === 'function') {
+                    loadFunction();
+                }
+            }
+        }
+        
         // Analytics and Settings Functions
         function initializeAnalyticsAndSettings() {
             // Analytics button
             document.getElementById('analyticsBtn').addEventListener('click', function() {
-                const section = document.getElementById('analyticsSection');
-                if (section.style.display === 'none') {
-                    section.style.display = 'block';
-                    loadAnalyticsOverview();
-                } else {
-                    section.style.display = 'none';
-                }
+                toggleSection('analyticsSection', 'analytics', loadAnalyticsOverview);
             });
             
             // System Settings button
             document.getElementById('systemSettingsBtn').addEventListener('click', function() {
-                const section = document.getElementById('systemSettingsSection');
-                if (section.style.display === 'none') {
-                    section.style.display = 'block';
-                    loadSystemSettings();
-                } else {
-                    section.style.display = 'none';
-                }
+                toggleSection('systemSettingsSection', 'settings', loadSystemSettings);
             });
             
             // Analytics tab switching
@@ -944,7 +991,7 @@
             let html = `
                 <div class="row g-4 mb-4">
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(40, 167, 69, 0.1); border-left: 4px solid #28a745 !important;">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(40, 167, 69, 0.1);">
                             <div class="card-body">
                                 <i class="bi bi-people-fill text-success mb-2" style="font-size: 2rem;"></i>
                                 <h5 class="card-title text-success">Total Users</h5>
@@ -953,7 +1000,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(0, 123, 255, 0.1); border-left: 4px solid #007bff !important;">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(0, 123, 255, 0.1);">
                             <div class="card-body">
                                 <i class="bi bi-calendar-check-fill text-primary mb-2" style="font-size: 2rem;"></i>
                                 <h5 class="card-title text-primary">Total Schedules</h5>
@@ -962,7 +1009,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(255, 193, 7, 0.1); border-left: 4px solid #ffc107 !important;">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(255, 193, 7, 0.1);">
                             <div class="card-body">
                                 <i class="bi bi-book-fill text-warning mb-2" style="font-size: 2rem;"></i>
                                 <h5 class="card-title text-warning">Total Subjects</h5>
@@ -971,7 +1018,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(220, 53, 69, 0.1); border-left: 4px solid #dc3545 !important;">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(220, 53, 69, 0.1);">
                             <div class="card-body">
                                 <i class="bi bi-person-badge-fill text-danger mb-2" style="font-size: 2rem;"></i>
                                 <h5 class="card-title text-danger">Total Teachers</h5>
@@ -1235,6 +1282,7 @@
                 }
                 
                 showAlert('Setting updated successfully!', 'success');
+                recordActivity('settings_update', `Updated setting: ${key} = ${value}`);
                 loadSystemSettings(); // Refresh the settings
             } catch (error) {
                 console.error('Error updating setting:', error);

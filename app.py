@@ -182,6 +182,15 @@ async def login(payload: dict):
         
         logger.info(f"Login successful for user {username}")
         
+        # Record user activity
+        try:
+            from database import get_user_id_by_username, record_user_activity
+            user_id = get_user_id_by_username(username)
+            if user_id:
+                record_user_activity(user_id, "login", f"User {username} logged in successfully")
+        except Exception as e:
+            logger.warning(f"Could not record login activity: {e}")
+        
         # Create access token
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
@@ -470,6 +479,15 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         return JSONResponse(content=[])
 
     result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
+
+    # Record user activity
+    try:
+        from database import get_user_id_by_username, record_user_activity
+        user_id = get_user_id_by_username(username)
+        if user_id:
+            record_user_activity(user_id, "schedule_generation", f"Generated schedule for programs: {programs}")
+    except Exception as e:
+        logger.warning(f"Could not record schedule generation activity: {e}")
 
     # If request explicitly asks to persist as pending schedule (Chair flow)
     if payload.get('persist', False):
@@ -1337,6 +1355,15 @@ async def approve_user_endpoint(user_id: int, username: str = Depends(require_ad
     try:
         success = approve_user(user_id, username)
         if success:
+            # Record admin activity
+            try:
+                from database import get_user_id_by_username, record_user_activity
+                admin_user_id = get_user_id_by_username(username)
+                if admin_user_id:
+                    record_user_activity(admin_user_id, "user_approval", f"Approved user ID: {user_id}")
+            except Exception as e:
+                logger.warning(f"Could not record approval activity: {e}")
+            
             return JSONResponse(content={'message': 'User approved successfully'})
         else:
             raise HTTPException(status_code=500, detail="Failed to approve user")
