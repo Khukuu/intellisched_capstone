@@ -57,6 +57,97 @@ function getAuthHeaders() {
   };
 }
 
+// Enhanced UI feedback functions
+function showLoadingState(buttonId, text = 'Processing...') {
+  const button = document.getElementById(buttonId);
+  if (button) {
+    button.disabled = true;
+    button.classList.add('loading');
+    button.dataset.originalText = button.innerHTML;
+    button.innerHTML = text;
+  }
+}
+
+function hideLoadingState(buttonId, originalText = null) {
+  const button = document.getElementById(buttonId);
+  if (button) {
+    button.disabled = false;
+    button.classList.remove('loading');
+    button.innerHTML = originalText || button.dataset.originalText || button.innerHTML;
+  }
+}
+
+function showNotification(message, type = 'info', duration = 5000) {
+  // Create notification element
+  const notification = document.createElement('div');
+  notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+  notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+  
+  notification.innerHTML = `
+    <i class="bi bi-${getIconForType(type)} me-2"></i>
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Auto-remove after duration
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.remove();
+    }
+  }, duration);
+}
+
+function getIconForType(type) {
+  const icons = {
+    'success': 'check-circle',
+    'danger': 'exclamation-triangle',
+    'warning': 'exclamation-circle',
+    'info': 'info-circle'
+  };
+  return icons[type] || 'info-circle';
+}
+
+function addTooltip(elementId, text) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.setAttribute('data-bs-toggle', 'tooltip');
+    element.setAttribute('data-bs-placement', 'top');
+    element.setAttribute('title', text);
+  }
+}
+
+// Enhanced error handling
+function handleApiError(error, context = 'operation') {
+  console.error(`Error in ${context}:`, error);
+  
+  let message = 'An unexpected error occurred. Please try again.';
+  
+  if (error.response) {
+    // Server responded with error status
+    if (error.response.status === 401) {
+      message = 'Session expired. Please log in again.';
+      setTimeout(() => {
+        localStorage.clear();
+        window.location.href = '/login';
+      }, 2000);
+    } else if (error.response.status === 403) {
+      message = 'Access denied. You do not have permission for this action.';
+    } else if (error.response.status === 500) {
+      message = 'Server error. Please try again later.';
+    } else if (error.response.data && error.response.data.detail) {
+      message = error.response.data.detail;
+    }
+  } else if (error.request) {
+    // Network error
+    message = 'Network error. Please check your connection and try again.';
+  }
+  
+  showNotification(message, 'danger');
+  return message;
+}
+
 // Safe value getter for possibly-null elements
 function elValue(el) {
   try { return el ? el.value : null; } catch (e) { return null; }
@@ -288,48 +379,84 @@ function getTextColorForBackground(hex) {
 
 // Generate schedule directly using inline inputs
 document.getElementById('generateBtn').onclick = async function() {
-  document.getElementById('result').innerHTML = '<div class="p-4 text-center">Generating schedule...</div>';
-  document.getElementById('timetable').innerHTML = "";
+  try {
+    // Show loading state
+    showLoadingState('generateBtn', '<i class="bi bi-arrow-clockwise me-2"></i>Generating...');
+    
+    // Clear previous results
+    document.getElementById('result').innerHTML = `
+      <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+        <div>
+          <i class="bi bi-arrow-clockwise" style="font-size: 3rem; opacity: 0.3; animation: spin 1s linear infinite;"></i>
+          <p class="mt-3 mb-0">Generating your schedule...</p>
+          <p class="small">This may take a few moments</p>
+        </div>
+      </div>
+    `;
+    document.getElementById('timetable').innerHTML = `
+      <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+        <div>
+          <i class="bi bi-arrow-clockwise" style="font-size: 3rem; opacity: 0.3; animation: spin 1s linear infinite;"></i>
+          <p class="mt-3 mb-0">Processing timetable...</p>
+        </div>
+      </div>
+    `;
 
-  // Get selected programs from checkboxes
-  const selectedPrograms = [];
-  if (document.getElementById('programCS').checked) selectedPrograms.push('CS');
-  if (document.getElementById('programIT').checked) selectedPrograms.push('IT');
-  
-  const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
-  const requestBody = { 
-    programs: selectedPrograms,
-    semester: selectedSemester 
-  };
-
-  // Collect program-specific section counts
-  const programSections = {};
-  
-  if (selectedPrograms.includes('CS')) {
-    programSections['CS'] = {
-      1: parseInt(elValue(document.getElementById('csSectionsYear1')) || 0, 10),
-      2: parseInt(elValue(document.getElementById('csSectionsYear2')) || 0, 10),
-      3: parseInt(elValue(document.getElementById('csSectionsYear3')) || 0, 10),
-      4: parseInt(elValue(document.getElementById('csSectionsYear4')) || 0, 10)
+    // Get selected programs from checkboxes
+    const selectedPrograms = [];
+    if (document.getElementById('programCS').checked) selectedPrograms.push('CS');
+    if (document.getElementById('programIT').checked) selectedPrograms.push('IT');
+    
+    const selectedSemester = elValue(document.getElementById('semesterSelect')) || null;
+    const requestBody = { 
+      programs: selectedPrograms,
+      semester: selectedSemester 
     };
-  }
-  
-  if (selectedPrograms.includes('IT')) {
-    programSections['IT'] = {
-      1: parseInt(elValue(document.getElementById('itSectionsYear1')) || 0, 10),
-      2: parseInt(elValue(document.getElementById('itSectionsYear2')) || 0, 10),
-      3: parseInt(elValue(document.getElementById('itSectionsYear3')) || 0, 10),
-      4: parseInt(elValue(document.getElementById('itSectionsYear4')) || 0, 10)
-    };
-  }
-  
-  requestBody.programSections = programSections;
 
-  // Validate that at least one program is selected
-  if (selectedPrograms.length === 0) {
-    document.getElementById('result').innerHTML = '<div class="alert alert-warning">Please select at least one program (CS or IT).</div>';
-    return;
-  }
+    // Collect program-specific section counts
+    const programSections = {};
+    
+    if (selectedPrograms.includes('CS')) {
+      programSections['CS'] = {
+        1: parseInt(elValue(document.getElementById('csSectionsYear1')) || 0, 10),
+        2: parseInt(elValue(document.getElementById('csSectionsYear2')) || 0, 10),
+        3: parseInt(elValue(document.getElementById('csSectionsYear3')) || 0, 10),
+        4: parseInt(elValue(document.getElementById('csSectionsYear4')) || 0, 10)
+      };
+    }
+    
+    if (selectedPrograms.includes('IT')) {
+      programSections['IT'] = {
+        1: parseInt(elValue(document.getElementById('itSectionsYear1')) || 0, 10),
+        2: parseInt(elValue(document.getElementById('itSectionsYear2')) || 0, 10),
+        3: parseInt(elValue(document.getElementById('itSectionsYear3')) || 0, 10),
+        4: parseInt(elValue(document.getElementById('itSectionsYear4')) || 0, 10)
+      };
+    }
+    
+    requestBody.programSections = programSections;
+
+    // Validate that at least one program is selected
+    if (selectedPrograms.length === 0) {
+      hideLoadingState('generateBtn');
+      document.getElementById('result').innerHTML = `
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+          <div class="card-header bg-light border-0">
+            <h5 class="mb-0 fw-semibold">
+              <i class="bi bi-exclamation-triangle text-warning me-2"></i>Configuration Required
+            </h5>
+          </div>
+          <div class="card-body p-4">
+            <div class="alert alert-warning">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              Please select at least one program (CS or IT) to generate a schedule.
+            </div>
+          </div>
+        </div>
+      `;
+      showNotification('Please select at least one program before generating a schedule.', 'warning');
+      return;
+    }
 
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
@@ -424,6 +551,13 @@ document.getElementById('generateBtn').onclick = async function() {
   } catch (e) {
     console.error('Error generating schedule', e);
     document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error generating schedule. See console.</div>';
+  } finally {
+    hideLoadingState('generateBtn');
+  }
+  } catch (error) {
+    console.error('Error in generate schedule function:', error);
+    handleApiError(error, 'schedule generation');
+    hideLoadingState('generateBtn');
   }
 };
 
@@ -463,7 +597,7 @@ async function submitForApproval() {
       const body = {
         name,
         semester: semesterSelect ? semesterSelect.value : undefined,
-      schedule: lastGeneratedSchedule,
+        schedule: lastGeneratedSchedule,
         numSectionsYear1: parseInt(elValue(document.getElementById('numSectionsYear1')) || 0, 10),
         numSectionsYear2: parseInt(elValue(document.getElementById('numSectionsYear2')) || 0, 10),
         numSectionsYear3: parseInt(elValue(document.getElementById('numSectionsYear3')) || 0, 10),
@@ -1115,6 +1249,15 @@ document.addEventListener('DOMContentLoaded', function() {
   loadRoomsTable();
   // Hook up CRUD action buttons
   setupCrudButtons();
+  
+  // Initialize tooltips
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+  
+  // Apply initial view mode
+  applyViewMode();
 });
 
 function getSelectedRowData(elementId, headers) {
@@ -1324,17 +1467,34 @@ function openBulkEditModal(kind, fields, selectedRows) {
     'year_level': 'Year Level'
   };
 
-  // Build form: checkboxes for fields and inputs for new values
+  // Get the first selected row to pre-populate values (for single selection)
+  const firstRow = selectedRows.length === 1 ? selectedRows[0] : null;
+
+  // Build form: simple inputs for current values
   let html = '';
   html += `<p>${selectedRows.length} row(s) selected.</p>`;
-  html += '<div class="table-responsive"><table class="table"><thead><tr><th>Apply</th><th>Field</th><th>New value</th></tr></thead><tbody>';
+  html += '<div class="table-responsive"><table class="table"><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody>';
   fields.forEach(f => {
     const disabled = (f.endsWith('_id') || f === 'teacher_id' || f === 'room_id' || f === 'section_id') ? 'disabled' : '';
     const label = fieldLabels[f] || f;
+    
+    // Get current value for pre-population
+    let currentValue = '';
+    if (firstRow && firstRow[f] !== undefined) {
+      currentValue = firstRow[f];
+      // Handle array fields (like availability_days)
+      if (Array.isArray(currentValue)) {
+        currentValue = currentValue.join(', ');
+      }
+      // Handle boolean fields
+      if (typeof currentValue === 'boolean') {
+        currentValue = currentValue ? 'yes' : 'no';
+      }
+    }
+    
     html += `<tr>
-      <td><input type="checkbox" class="form-check-input" data-role="field-check" data-field="${f}" ${disabled && 'disabled'}></td>
       <td>${label}</td>
-      <td><input type="text" class="form-control form-control-sm" data-role="field-input" data-field="${f}" ${disabled && 'disabled'}></td>
+      <td><input type="text" class="form-control form-control-sm" data-role="field-input" data-field="${f}" data-original="${currentValue}" value="${currentValue}" ${disabled && 'disabled'}></td>
     </tr>`;
   });
   html += '</tbody></table></div>';
@@ -1342,18 +1502,25 @@ function openBulkEditModal(kind, fields, selectedRows) {
 
   // Attach handler
   saveBtn.onclick = async () => {
-    const checks = Array.from(content.querySelectorAll('input[data-role="field-check"]'));
     const inputs = Array.from(content.querySelectorAll('input[data-role="field-input"]'));
     const toApply = {};
-    checks.forEach(chk => {
-      if (chk.checked && !chk.disabled) {
-        const f = chk.getAttribute('data-field');
-        const inp = inputs.find(i => i.getAttribute('data-field') === f);
-        toApply[f] = inp ? inp.value : '';
+    
+    // Auto-detect changed fields by comparing current value with original
+    inputs.forEach(input => {
+      if (!input.disabled) {
+        const field = input.getAttribute('data-field');
+        const originalValue = input.getAttribute('data-original');
+        const currentValue = input.value;
+        
+        // Only include fields that have actually changed
+        if (currentValue !== originalValue) {
+          toApply[field] = currentValue;
+        }
       }
     });
+    
     if (Object.keys(toApply).length === 0) {
-      alert('Select at least one field to apply.');
+      alert('No changes detected. Please modify at least one field before saving.');
       return;
     }
     // Cast booleans/ints where needed
@@ -1573,19 +1740,30 @@ async function markNotificationAsRead(notificationId) {
 
 async function deleteNotification(notificationId) {
   try {
+    showLoadingState('deleteBtn', 'Deleting...');
+    
     const response = await fetch(`/api/notifications/${notificationId}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });
     
     if (!response.ok) {
-      console.error('Failed to delete notification');
+      if (response.status === 404) {
+        showNotification('Notification not found or already deleted.', 'warning');
+      } else {
+        showNotification('Failed to delete notification. Please try again.', 'danger');
+      }
+      console.error('Failed to delete notification:', response.status, response.statusText);
     } else {
+      showNotification('Notification deleted successfully.', 'success');
       // Reload notifications after deletion
       await loadNotifications();
     }
   } catch (error) {
     console.error('Error deleting notification:', error);
+    showNotification('Error deleting notification. Please check your connection.', 'danger');
+  } finally {
+    hideLoadingState('deleteBtn');
   }
 }
 
