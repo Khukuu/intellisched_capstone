@@ -65,27 +65,28 @@
             <div class="col-12">
                 <div class="card p-4 shadow-sm mb-4 rounded-4 card-mac-style" style="width:90vw;max-width:100vw;left:50%;transform:translateX(-50%);position:relative;">
                     <div class="card-body">
-                        <div class="text-center mb-4">
-                            <i class="bi bi-shield-check-fill mb-3" style="font-size: 4rem; color: #b83a3f; filter: drop-shadow(0 4px 8px rgba(184, 58, 63, 0.3));"></i>
-                            <h1 class="card-title mb-3">Schedule Approval Dashboard</h1>
-                            <p class="text-muted fs-5">Review and approve schedules submitted by department chairs</p>
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="bi bi-shield-check-fill me-3" style="font-size: 2rem; color: #b83a3f;"></i>
+                            <div>
+                                <h1 class="card-title mb-1 fw-bold">Schedule Approval Dashboard</h1>
+                                <p class="text-muted mb-0">Review and approve schedules submitted by department chairs</p>
+                            </div>
                         </div>
                         
                         <!-- Pending Schedules Section -->
-                        <div class="card border-0 shadow-sm rounded-4 mb-4" style="background: rgba(255,255,255,0.7);">
-                            <div class="card-header border-0 bg-transparent pb-0 d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-clock-history-fill me-2" style="color: #b83a3f;"></i>
-                                    Pending Approvals
-                                </h5>
-                                <div class="d-flex align-items-center gap-2">
-                                    <small class="text-muted" id="pendingLastUpdate">Last updated: --</small>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="loadPendingSchedules()">
-                                        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
-                                    </button>
+                        <div class="card border-0 shadow-sm rounded-3 mb-4" style="background: rgba(255,255,255,0.9);">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h5 class="mb-0 fw-semibold">
+                                        <i class="bi bi-clock-history-fill text-warning me-2"></i>Pending Approvals
+                                    </h5>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <small class="text-muted" id="pendingLastUpdate">Last updated: --</small>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="loadPendingSchedules()">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card-body">
                                 <div id="pendingSchedules">
                                     <div class="text-center">
                                         <div class="spinner-border text-primary" role="status">

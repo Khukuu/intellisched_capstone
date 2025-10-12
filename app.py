@@ -1041,10 +1041,11 @@ async def update_teacher_endpoint(teacher_id: str, teacher_data: dict, username:
     """Update an existing teacher in the database"""
     try:
         from database import update_teacher
-        teacher_data['teacher_id'] = teacher_id
+        logger.info(f"Updating teacher {teacher_id} with data: {teacher_data}")
         update_teacher(teacher_id, teacher_data)
         return JSONResponse(content={'message': 'Teacher updated successfully'})
     except Exception as e:
+        logger.error(f"Error updating teacher {teacher_id}: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete('/api/teachers/{teacher_id}')
@@ -1286,6 +1287,19 @@ async def mark_notification_read_endpoint(notification_id: int, username: str = 
             return JSONResponse(content={'message': 'Notification marked as read'})
         else:
             raise HTTPException(status_code=500, detail="Failed to mark notification as read")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/notifications/{notification_id}')
+async def delete_notification_endpoint(notification_id: int, username: str = Depends(verify_token)):
+    """Delete a notification"""
+    try:
+        from database import delete_notification
+        success = delete_notification(notification_id)
+        if success:
+            return JSONResponse(content={'message': 'Notification deleted successfully'})
+        else:
+            raise HTTPException(status_code=404, detail="Notification not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
