@@ -33,14 +33,19 @@
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar mb-4">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-shield-check-fill me-2" aria-hidden="true"></i>
-                <span class="fs-5">IntelliSched Dean</span>
+                <i class="bi bi-calendar3-fill me-2" aria-hidden="true"></i>
+                <span class="fs-5">IntelliSched</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="d-flex align-items-center ms-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
                     <div class="dropdown me-3">
                         <button class="btn btn-outline-light btn-sm rounded-pill position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-bell"></i>
@@ -49,7 +54,14 @@
                             </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" id="notificationDropdownMenu" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
-                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            <li>
+                                <div class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <span>Notifications</span>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="clearAllNotifications()" title="Clear all notifications">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li id="noNotifications" class="dropdown-item-text text-muted text-center py-3">No notifications</li>
                         </ul>
@@ -179,6 +191,45 @@
                             <button class="nav-link" id="timetable-tab" data-bs-toggle="tab" data-bs-target="#viewTimetable" type="button" role="tab">Timetable</button>
                         </li>
                     </ul>
+                    
+                    <!-- View Filters -->
+                    <div class="card border-0 shadow-sm rounded-3 mb-3" style="background: rgba(255,255,255,0.9);">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-funnel me-2" style="color: #b83a3f;"></i>
+                                <h6 class="mb-0 fw-semibold">Filter Schedule</h6>
+                            </div>
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-3">
+                                    <label for="viewYearFilter" class="form-label small">Year Level</label>
+                                    <select id="viewYearFilter" class="form-select form-select-sm">
+                                        <option value="all">All Years</option>
+                                        <option value="1">1st Year</option>
+                                        <option value="2">2nd Year</option>
+                                        <option value="3">3rd Year</option>
+                                        <option value="4">4th Year</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="viewSectionFilter" class="form-label small">Section</label>
+                                    <select id="viewSectionFilter" class="form-select form-select-sm">
+                                        <option value="all">All Sections</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="viewRoomFilter" class="form-label small">Room</label>
+                                    <select id="viewRoomFilter" class="form-select form-select-sm">
+                                        <option value="all">All Rooms</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="viewSearchInput" class="form-label small">Search</label>
+                                    <input type="text" id="viewSearchInput" class="form-control form-control-sm" placeholder="Search...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="viewTable" role="tabpanel">
                             <div id="viewScheduleContent">
@@ -247,6 +298,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         let currentScheduleId = null;
+        let currentViewScheduleData = [];
+        let currentViewScheduleMeta = {};
         
         // Authentication check
         document.addEventListener('DOMContentLoaded', function() {
@@ -373,6 +426,9 @@
                                         <button class="btn btn-sm btn-outline-primary" onclick="viewSchedule('${schedule.schedule_id}')">
                                             <i class="bi bi-eye"></i> View
                                         </button>
+                                        <button class="btn btn-sm btn-outline-info" onclick="downloadScheduleCSV('${schedule.schedule_id}')">
+                                            <i class="bi bi-download"></i> CSV
+                                        </button>
                                         <button class="btn btn-sm btn-success" onclick="openApprovalModal('${schedule.schedule_id}', 'approve')">
                                             <i class="bi bi-check"></i> Approve
                                         </button>
@@ -384,6 +440,9 @@
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-outline-primary" onclick="viewSchedule('${schedule.schedule_id}')">
                                             <i class="bi bi-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-info" onclick="downloadScheduleCSV('${schedule.schedule_id}')">
+                                            <i class="bi bi-download"></i> CSV
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger" onclick="deleteApprovedSchedule('${schedule.schedule_id}')">
                                             <i class="bi bi-trash"></i> Delete
@@ -455,11 +514,293 @@
             }
         }
         
+
+        function setupViewFilters() {
+            if (currentViewScheduleData.length === 0) return;
+            
+            // Extract unique values for filter dropdowns
+            const years = new Set();
+            const sections = new Set();
+            const rooms = new Set();
+            
+            currentViewScheduleData.forEach(row => {
+                // Extract year from section ID (e.g., CS1A -> 1)
+                const yearMatch = /^(CS|IT)(\d)/.exec(row.section_id || '');
+                if (yearMatch) {
+                    years.add(yearMatch[2]);
+                }
+                
+                // Collect sections and rooms
+                if (row.section_id) sections.add(row.section_id);
+                if (row.room_id) rooms.add(row.room_id);
+            });
+            
+            // Populate year filter
+            const yearFilter = document.getElementById('viewYearFilter');
+            yearFilter.innerHTML = '<option value="all">All Years</option>';
+            Array.from(years).sort().forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}${year === '1' ? 'st' : year === '2' ? 'nd' : year === '3' ? 'rd' : 'th'} Year`;
+                yearFilter.appendChild(option);
+            });
+            
+            // Populate section filter
+            const sectionFilter = document.getElementById('viewSectionFilter');
+            sectionFilter.innerHTML = '<option value="all">All Sections</option>';
+            Array.from(sections).sort().forEach(section => {
+                const option = document.createElement('option');
+                option.value = section;
+                option.textContent = section;
+                sectionFilter.appendChild(option);
+            });
+            
+            // Populate room filter
+            const roomFilter = document.getElementById('viewRoomFilter');
+            roomFilter.innerHTML = '<option value="all">All Rooms</option>';
+            Array.from(rooms).sort().forEach(room => {
+                const option = document.createElement('option');
+                option.value = room;
+                option.textContent = room;
+                roomFilter.appendChild(option);
+            });
+            
+            // Set up event listeners
+            yearFilter.addEventListener('change', applyViewFilters);
+            sectionFilter.addEventListener('change', applyViewFilters);
+            roomFilter.addEventListener('change', applyViewFilters);
+            document.getElementById('viewSearchInput').addEventListener('input', applyViewFilters);
+        }
+
+        function applyViewFilters() {
+            if (currentViewScheduleData.length === 0) return;
+            
+            const yearFilter = document.getElementById('viewYearFilter').value;
+            const sectionFilter = document.getElementById('viewSectionFilter').value;
+            const roomFilter = document.getElementById('viewRoomFilter').value;
+            const searchTerm = document.getElementById('viewSearchInput').value.toLowerCase();
+            
+            // Filter the data
+            let filteredData = currentViewScheduleData.filter(row => {
+                // Year filter
+                if (yearFilter !== 'all') {
+                    const yearMatch = /^(CS|IT)(\d)/.exec(row.section_id || '');
+                    if (!yearMatch || yearMatch[2] !== yearFilter) return false;
+                }
+                
+                // Section filter
+                if (sectionFilter !== 'all' && row.section_id !== sectionFilter) return false;
+                
+                // Room filter
+                if (roomFilter !== 'all' && row.room_id !== roomFilter) return false;
+                
+                // Search filter
+                if (searchTerm) {
+                    const searchableText = [
+                        row.section_id,
+                        row.subject_name,
+                        row.subject_code,
+                        row.teacher_name,
+                        row.room_id,
+                        row.day,
+                        row.type
+                    ].join(' ').toLowerCase();
+                    if (!searchableText.includes(searchTerm)) return false;
+                }
+                
+                return true;
+            });
+            
+            // Render filtered data
+            renderViewScheduleTable(filteredData);
+            renderViewScheduleTimetable(filteredData);
+        }
+
+        function renderViewScheduleTable(filteredData) {
+            const container = document.getElementById('viewScheduleContent');
+            
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No classes match the current filters.</div>';
+                return;
+            }
+            
+            const html = `
+                <div class="mb-3">
+                    <strong>Name:</strong> ${currentViewScheduleMeta.name || ''} &nbsp; 
+                    <strong>Semester:</strong> ${currentViewScheduleMeta.semester || ''}
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Section</th>
+                                <th>Subject</th>
+                                <th>Type</th>
+                                <th>Teacher</th>
+                                <th>Room</th>
+                                <th>Day</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filteredData.map(item => `
+                                <tr>
+                                    <td><span class="badge bg-secondary rounded-pill">${item.section_id || 'N/A'}</span></td>
+                                    <td>
+                                        <strong>${item.subject_code || 'N/A'}</strong><br>
+                                        <small class="text-muted">${item.subject_name || 'N/A'}</small>
+                                    </td>
+                                    <td><span class="badge bg-info rounded-pill">${item.type || 'N/A'}</span></td>
+                                    <td>${item.teacher_name || 'N/A'}</td>
+                                    <td>${item.room_id || 'N/A'}</td>
+                                    <td>${item.day || 'N/A'}</td>
+                                    <td>${computeEventTimeRange(item)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+function renderViewScheduleTimetable(filteredData) {
+    const ttContainer = document.getElementById('viewScheduleTimetable');
+    const dayLabels = ["Mon","Tue","Wed","Thu","Fri","Sat"];
+    
+    // Create a timetable matrix to track all events across all time slots
+    const timetable = Array.from({length: timeSlotLabels.length}, () => Array.from({length: dayLabels.length}, () => []));
+    
+    // Populate the timetable with all events
+    filteredData.forEach(event => {
+        const dayIdx = dayLabels.indexOf(event.day);
+        const startSlotIdx = timeSlotLabels.indexOf(event.start_time_slot);
+        const duration = parseInt(event.duration_slots, 10) || 1;
+        
+        if (dayIdx !== -1 && startSlotIdx !== -1) {
+            // Add event to all time slots it occupies
+            for (let i = 0; i < duration && startSlotIdx + i < timeSlotLabels.length; i++) {
+                timetable[startSlotIdx + i][dayIdx].push(event);
+            }
+        }
+    });
+    
+    // Create a map to track which cells should be skipped (due to rowspan)
+    const skipCells = new Set();
+    
+    let tthtml = '<div class="table-responsive"><table class="table table-bordered"><thead><tr><th>Time Slot</th>';
+    for (const day of dayLabels) tthtml += `<th>${day}</th>`;
+    tthtml += '</tr></thead><tbody>';
+    
+    for (let t = 0; t < timeSlotLabels.length; t++) {
+        tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
+        for (let d = 0; d < dayLabels.length; d++) {
+            const cellKey = `${t}-${d}`;
+            
+            // Skip this cell if it's already occupied by a rowspan from above
+            if (skipCells.has(cellKey)) {
+                continue;
+            }
+            
+            // Find ALL events that START at this time slot and day (including overlapping ones)
+            // Only render events that actually start at this time slot, not continuing events
+            const eventsStartingHere = filteredData.filter(event => {
+                const dayIdx = dayLabels.indexOf(event.day);
+                const startSlotIdx = timeSlotLabels.indexOf(event.start_time_slot);
+                return dayIdx === d && startSlotIdx === t;
+            });
+            
+            if (eventsStartingHere.length > 0) {
+                // Remove duplicates based on section + subject + day
+                const uniqueEvents = [];
+                const seenEvents = new Set();
+                eventsStartingHere.forEach(event => {
+                    const key = `${event.section_id}-${event.subject_code}-${event.day}-${event.start_time_slot}`;
+                    if (!seenEvents.has(key)) {
+                        uniqueEvents.push(event);
+                        seenEvents.add(key);
+                    }
+                });
+                
+                if (uniqueEvents.length > 0) {
+                    // Calculate the maximum duration among all events in this slot
+                    // Ensure duration_slots is parsed as integer, default to 1 if missing
+                    const maxDuration = Math.max(...uniqueEvents.map(e => parseInt(e.duration_slots, 10) || 1));
+                    
+                    // Handle different numbers of overlapping events differently
+                    if (uniqueEvents.length === 1) {
+                        // Single event - apply background directly to td like chair interface
+                        const event = uniqueEvents[0];
+                        const eventDuration = parseInt(event.duration_slots, 10) || 1;
+                        const subj = event.subject_name || event.subject_code || '';
+                        const range = computeEventTimeRange(event);
+                        const bg = getSubjectColor(event.subject_code, event.type);
+                        const fg = getTextColorForBackground(bg);
+                        
+                        // Mark cells below as occupied by this specific event's rowspan
+                        for (let i = 1; i < eventDuration && t + i < timeSlotLabels.length; i++) {
+                            skipCells.add(`${t + i}-${d}`);
+                        }
+                        
+                        tthtml += `<td rowspan="${eventDuration}" style="background:${bg}; color:${fg}; padding:6px 8px; vertical-align: top;">
+                            <b>${subj}</b><br>
+                            <small style="opacity:.85;">(${range})</small><br>
+                            <small>${event.section_id}</small><br>
+                            <small>${event.teacher_name}</small><br>
+                            <small>${event.room_id}</small>
+                        </td>`;
+                    } else if (uniqueEvents.length >= 2) {
+                        // 2+ events - use expandable summary for better readability
+                        // Mark cells below as occupied by this rowspan
+                        for (let i = 1; i < maxDuration && t + i < timeSlotLabels.length; i++) {
+                            skipCells.add(`${t + i}-${d}`);
+                        }
+                        
+                        const totalEvents = uniqueEvents.length;
+                        const bg = '#f8f9fa';
+                        const fg = '#495057';
+                        
+                        tthtml += `<td rowspan="${maxDuration}" style="vertical-align: top; padding: 1px;">`;
+                        
+                        uniqueEvents.forEach((event, index) => {
+                            const subj = event.subject_name || event.subject_code || '';
+                            const range = computeEventTimeRange(event);
+                            const eventBg = getSubjectColor(event.subject_code, event.type);
+                            const eventFg = getTextColorForBackground(eventBg);
+                            
+                            tthtml += `<div style="background:${eventBg}; color:${eventFg}; padding:3px 5px; border-radius:3px; margin:2px 0; font-size:9px; line-height:1.2; border-left: 3px solid ${eventBg};">
+                                <b>${subj}</b><br>
+                                <small style="opacity:.85;">(${range})</small><br>
+                                <small>${event.section_id} • ${event.teacher_name}</small><br>
+                                <small>${event.room_id}</small>
+                            </div>`;
+                        });
+                        
+                        tthtml += `</td>`;
+                    }
+                } else {
+                    tthtml += '<td></td>';
+                }
+            } else {
+                tthtml += '<td></td>';
+            }
+        }
+        tthtml += '</tr>';
+    }
+    
+    tthtml += '</tbody></table></div>';
+    ttContainer.innerHTML = tthtml;
+}
+
+
         async function viewSchedule(scheduleId) {
             try {
                 const modal = new bootstrap.Modal(document.getElementById('viewScheduleModal'));
                 const container = document.getElementById('viewScheduleContent');
+                const ttContainer = document.getElementById('viewScheduleTimetable');
                 container.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+                ttContainer.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
                 modal.show();
 
                 const resp = await fetch(`/api/schedule/${encodeURIComponent(scheduleId)}?t=${Date.now()}`, {
@@ -474,77 +815,16 @@
                 }
                 const data = await resp.json();
                 const rows = Array.isArray(data.schedule) ? data.schedule : [];
-
-                // Build table view
-                let tableHtml = '';
-                tableHtml += `<div class=\"mb-3\"><strong>Name:</strong> ${data.name || ''} &nbsp; <strong>Semester:</strong> ${data.semester || ''}</div>`;
-                tableHtml += '<div class=\"table-responsive\"><table class=\"table table-striped table-bordered\"><thead><tr>'+
-                             '<th>Section</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th>'+
-                             '</tr></thead><tbody>';
-                for (const row of rows) {
-                    const subj = row.subject_name || row.subject_code || '';
-                    const timeRange = computeEventTimeRange(row);
-                    tableHtml += `<tr>`+
-                                 `<td>${row.section_id || ''}</td>`+
-                                 `<td>${subj}</td>`+
-                                 `<td>${row.type || ''}</td>`+
-                                 `<td>${row.teacher_name || ''}</td>`+
-                                 `<td>${row.room_id || ''}</td>`+
-                                 `<td>${row.day || ''}</td>`+
-                                 `<td>${timeRange}</td>`+
-                                 `</tr>`;
-                }
-                if (rows.length === 0) {
-                    tableHtml += '<tr><td colspan=\"7\" class=\"text-center text-muted\">No data.</td></tr>';
-                }
-                tableHtml += '</tbody></table></div>';
-                container.innerHTML = tableHtml;
-
-                // Build timetable view
-                const ttContainer = document.getElementById('viewScheduleTimetable');
-                const dayLabels = ["Mon","Tue","Wed","Thu","Fri","Sat"];
-                const timetable = Array.from({length: timeSlotLabels.length}, () => Array.from({length: dayLabels.length}, () => []));
-                rows.forEach(ev => {
-                    const d = dayLabels.indexOf(ev.day);
-                    const s = timeSlotLabels.indexOf(ev.start_time_slot);
-                    const dur = parseInt(ev.duration_slots, 10) || 0;
-                    if (d !== -1 && s !== -1 && dur > 0) {
-                        for (let i = 0; i < dur && (s + i) < timeSlotLabels.length; i++) {
-                            timetable[s + i][d].push(ev);
-                        }
-                    }
-                });
-                let tthtml = '<div class=\"table-responsive\"><table class=\"table table-bordered\"><thead><tr><th>Time Slot</th>';
-                for (const day of dayLabels) tthtml += `<th>${day}</th>`;
-                tthtml += '</tr></thead><tbody>';
-                for (let t = 0; t < timeSlotLabels.length; t++) {
-                    tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
-                    for (let d = 0; d < dayLabels.length; d++) {
-                        const eventsInCell = timetable[t][d];
-                        if (eventsInCell.length === 0) { tthtml += '<td></td>'; continue; }
-                        const startsHere = eventsInCell.filter(e => timeSlotLabels.indexOf(e.start_time_slot) === t);
-                        if (startsHere.length > 0) {
-                            const e = startsHere[0];
-                            const span = Math.min(parseInt(e.duration_slots, 10) || 1, timeSlotLabels.length - t);
-                            const subj = e.subject_name || e.subject_code || '';
-                            const range = computeEventTimeRange(e);
-                            tthtml += `<td rowspan=\"${span}\">`+
-                                      `<b>${subj}</b><br><small>(${range})</small><br>`+
-                                      `${e.section_id || ''}<br>${e.teacher_name || ''}<br>${e.room_id || ''}`+
-                                      `</td>`;
-                            for (let k = 1; k < span; k++) {
-                                // mark following rows to skip cell for this day
-                                if (!timetable[t + k]) break;
-                                timetable[t + k][d] = [];
-                            }
-                        } else {
-                            tthtml += '<td></td>';
-                        }
-                    }
-                    tthtml += '</tr>';
-                }
-                tthtml += '</tbody></table></div>';
-                ttContainer.innerHTML = tthtml;
+                
+                // Store the data for filtering
+                currentViewScheduleData = rows;
+                currentViewScheduleMeta = data;
+                
+                // Set up view filters
+                setupViewFilters();
+                
+                // Apply initial filters and render
+                applyViewFilters();
             } catch (e) {
                 console.error(e);
                 const container = document.getElementById('viewScheduleContent');
@@ -578,15 +858,119 @@
             }
         }
 
+        async function downloadScheduleCSV(scheduleId) {
+            try {
+                const response = await fetch(`/download_schedule?id=${encodeURIComponent(scheduleId)}`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `schedule_${scheduleId}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    alert('CSV downloaded successfully!');
+                } else {
+                    const error = await response.json().catch(() => ({}));
+                    alert(`Error: ${error.detail || 'Failed to download CSV'}`);
+                }
+            } catch (error) {
+                console.error('Error downloading CSV:', error);
+                alert('Error downloading CSV. Please try again.');
+            }
+        }
+
         // Utility used by viewSchedule to compute end time
         const timeSlotLabels = [
-          "08:00-08:30","08:30-09:00","09:00-09:30","09:30-10:00",
-          "10:00-10:30","10:30-11:00","11:00-11:30","11:30-12:00",
-          "13:00-13:30","13:30-14:00","14:00-14:30","14:30-15:00",
-          "15:00-15:30","15:30-16:00","16:00-16:30","16:30-17:00",
-          "17:00-17:30","17:30-18:00","18:00-18:30","18:30-19:00",
-          "19:00-19:30","19:30-20:00"
+          "07:00-07:30", "07:30-08:00", "08:00-08:30", "08:30-09:00",
+          "09:00-09:30", "09:30-10:00", "10:00-10:30", "10:30-11:00",
+          "11:00-11:30", "11:30-12:00", "12:00-12:30", "12:30-13:00",
+          "13:00-13:30", "13:30-14:00", "14:00-14:30", "14:30-15:00",
+          "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
+          "17:00-17:30", "17:30-18:00"
         ];
+
+        // Subject color mapping helpers (from chair interface)
+        const SUBJECT_COLOR_PALETTE = [
+          '#AEC6CF', /* pastel blue */
+          '#FFB3BA', /* pastel pink */
+          '#FFDFBA', /* pastel peach */
+          '#FFFFBA', /* pastel yellow */
+          '#BFFCC6', /* pastel green */
+          '#CDE7FF', /* baby blue */
+          '#E4C1F9', /* pastel lavender */
+          '#F1CBFF', /* light mauve */
+          '#FDE2E4', /* rose */
+          '#E2F0CB', /* light green */
+          '#FBE7C6', /* apricot */
+          '#D7E3FC', /* periwinkle */
+          '#D4F0F0', /* powder */
+          '#F6EAC2', /* light sand */
+          '#FFD6E0', /* light pink */
+          '#C1F9E4', /* mint */
+          '#C9C0FF', /* light purple */
+          '#BFD1FF'  /* soft blue */
+        ];
+
+        // Special colors for laboratory subjects - more vibrant and prominent
+        const LAB_COLOR_PALETTE = [
+          '#FF6B6B', /* vibrant red */
+          '#4ECDC4', /* teal */
+          '#45B7D1', /* bright blue */
+          '#96CEB4', /* mint green */
+          '#FFEAA7', /* golden yellow */
+          '#DDA0DD', /* medium orchid */
+          '#98D8C8', /* turquoise */
+          '#F7DC6F', /* bright yellow */
+          '#BB8FCE', /* light purple */
+          '#85C1E9', /* light blue */
+          '#F8C471', /* orange */
+          '#82E0AA', /* light green */
+          '#F1948A', /* salmon */
+          '#85C1E9', /* sky blue */
+          '#D7BDE2'  /* light purple */
+        ];
+
+        const subjectColorCache = {};
+        
+        function hashStringToInt(str) {
+          let hash = 0;
+          for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) - hash) + str.charCodeAt(i);
+            hash |= 0;
+          }
+          return Math.abs(hash);
+        }
+        
+        function getSubjectColor(subjectCode, subjectType = null) {
+          const key = String(subjectCode || '');
+          const cacheKey = `${key}_${subjectType || 'default'}`;
+          if (subjectColorCache[cacheKey]) return subjectColorCache[cacheKey];
+          
+          // Use lab colors for laboratory subjects, regular colors for others
+          const palette = (subjectType === 'lab') ? LAB_COLOR_PALETTE : SUBJECT_COLOR_PALETTE;
+          const idx = hashStringToInt(key) % palette.length;
+          const color = palette[idx];
+          subjectColorCache[cacheKey] = color;
+          return color;
+        }
+        
+        function getTextColorForBackground(hex) {
+          // Expect #RRGGBB
+          const c = hex.replace('#', '');
+          if (c.length !== 6) return '#fff';
+          const r = parseInt(c.substr(0,2), 16);
+          const g = parseInt(c.substr(2,2), 16);
+          const b = parseInt(c.substr(4,2), 16);
+          // Relative luminance (sRGB)
+          const lum = 0.2126*(r/255) + 0.7152*(g/255) + 0.0722*(b/255);
+          return lum > 0.6 ? '#000' : '#fff';
+        }
         function computeEventTimeRange(event) {
           const startIdx = timeSlotLabels.indexOf(event.start_time_slot);
           const dur = parseInt(event.duration_slots, 10) || 0;
@@ -613,6 +997,38 @@
         });
 
         // Notification functions
+        function showNotification(message, type = 'info', duration = 5000) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+            
+            notification.innerHTML = `
+                <i class="bi bi-${getIconForType(type)} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after duration
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, duration);
+        }
+
+        function getIconForType(type) {
+            const icons = {
+                'success': 'check-circle',
+                'danger': 'exclamation-triangle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
         async function loadNotifications() {
             try {
                 const response = await fetch('/api/notifications', {
@@ -686,18 +1102,24 @@
                             <p class="mb-1 text-muted small">${notification.message}</p>
                             <small class="text-muted">${timeAgo}</small>
                         </div>
-                        ${!notification.is_read ? '<span class="badge bg-primary rounded-pill ms-2">New</span>' : ''}
+                        <div class="d-flex align-items-center gap-2">
+                            ${!notification.is_read ? '<span class="badge bg-primary rounded-pill">New</span>' : ''}
+                            <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteNotification(${notification.id})" title="Delete notification">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
             
-            // Add click handler to mark as read
-            li.addEventListener('click', async () => {
-                if (!notification.is_read) {
+            // Add click handler to mark as read (only for the main content area, not buttons)
+            li.addEventListener('click', async (e) => {
+                if (!e.target.closest('button') && !notification.is_read) {
                     await markNotificationAsRead(notification.id);
                     notification.is_read = true;
                     li.querySelector('.dropdown-item').classList.remove('bg-light');
-                    li.querySelector('.badge').remove();
+                    const badge = li.querySelector('.badge');
+                    if (badge) badge.remove();
                     updateNotificationBadge(await loadUnreadNotifications());
                 }
             });
@@ -763,6 +1185,74 @@
                 }
             } catch (error) {
                 console.error('Error marking notification as read:', error);
+            }
+        }
+
+        async function deleteNotification(notificationId) {
+            try {
+                const response = await fetch(`/api/notifications/${notificationId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('Notification not found or already deleted.', 'warning');
+                    } else {
+                        showNotification('Failed to delete notification. Please try again.', 'danger');
+                    }
+                    console.error('Failed to delete notification:', response.status, response.statusText);
+                } else {
+                    showNotification('Notification deleted successfully.', 'success');
+                    // Reload notifications after deletion
+                    await loadNotifications();
+                }
+            } catch (error) {
+                console.error('Error deleting notification:', error);
+                showNotification('Error deleting notification. Please check your connection.', 'danger');
+            }
+        }
+
+        async function clearAllNotifications() {
+            if (!confirm('Are you sure you want to delete all notifications? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                // Get all notifications first
+                const response = await fetch('/api/notifications', {
+                    headers: getAuthHeaders()
+                });
+                
+                if (!response.ok) {
+                    showNotification('Failed to load notifications.', 'danger');
+                    return;
+                }
+                
+                const notifications = await response.json();
+                
+                if (notifications.length === 0) {
+                    showNotification('No notifications to delete.', 'info');
+                    return;
+                }
+                
+                // Delete all notifications
+                const deletePromises = notifications.map(notification => 
+                    fetch(`/api/notifications/${notification.id}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                    })
+                );
+                
+                await Promise.all(deletePromises);
+                showNotification(`Successfully deleted ${notifications.length} notifications.`, 'success');
+                
+                // Reload notifications
+                await loadNotifications();
+                
+            } catch (error) {
+                console.error('Error clearing all notifications:', error);
+                showNotification('Error clearing notifications. Please try again.', 'danger');
             }
         }
 
