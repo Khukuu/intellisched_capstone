@@ -58,7 +58,14 @@
               </span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" id="notificationDropdownMenu" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
-              <li><h6 class="dropdown-header">Notifications</h6></li>
+              <li>
+                <div class="dropdown-header d-flex justify-content-between align-items-center">
+                  <span>Notifications</span>
+                  <button class="btn btn-sm btn-outline-danger" onclick="clearAllNotifications()" title="Clear all notifications">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </li>
               <li><hr class="dropdown-divider"></li>
               <li id="noNotifications" class="dropdown-item-text text-muted text-center py-3">No notifications</li>
             </ul>

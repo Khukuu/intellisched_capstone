@@ -897,93 +897,118 @@ function renderScheduleAndTimetable(data) {
   }
   downloadBtn.disabled = filtered.length === 0;
 
-  // Timetable (right)
+  // Timetable (right) - Advanced rendering with proper rowspan and overlapping events
   const timetable = Array.from({length: timeSlotLabels.length}, () => Array.from({length: dayLabels.length}, () => []));
+  
+  // Populate the timetable with all events
   filtered.forEach(event => {
     const dayIdx = dayLabels.indexOf(event.day);
     const startSlotIdx = timeSlotLabels.indexOf(event.start_time_slot);
-    const duration = event.duration_slots;
+    const duration = parseInt(event.duration_slots, 10) || 1;
+    
     if (dayIdx !== -1 && startSlotIdx !== -1) {
-      for (let i = 0; i < duration; i++) {
-        if (startSlotIdx + i < timeSlotLabels.length) {
-          timetable[startSlotIdx + i][dayIdx].push(event);
-        }
+      // Add event to all time slots it occupies
+      for (let i = 0; i < duration && startSlotIdx + i < timeSlotLabels.length; i++) {
+        timetable[startSlotIdx + i][dayIdx].push(event);
       }
     }
   });
-
+  
+  // Create a map to track which cells should be skipped (due to rowspan)
+  const skipCells = new Set();
+  
   let tthtml = '<div class="table-responsive"><table class="table table-bordered"><thead><tr><th>Time Slot</th>';
   for (const day of dayLabels) tthtml += `<th>${day}</th>`;
   tthtml += '</tr></thead><tbody>';
-  const singleSectionView = sectionFilter && sectionFilter.value !== 'all';
-  if (singleSectionView) {
-    // Rowspan rendering for a single section to reflect duration visually
-    const skip = Array.from({ length: timeSlotLabels.length }, () => Array(dayLabels.length).fill(false));
-    const startsMap = Array.from({ length: timeSlotLabels.length }, () => Array.from({ length: dayLabels.length }, () => []));
-    filtered.forEach(event => {
-      const dIdx = dayLabels.indexOf(event.day);
-      const sIdx = timeSlotLabels.indexOf(event.start_time_slot);
-      if (dIdx !== -1 && sIdx !== -1) startsMap[sIdx][dIdx].push(event);
-    });
-    for (let t = 0; t < timeSlotLabels.length; t++) {
-      tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
-      for (let d = 0; d < dayLabels.length; d++) {
-        if (skip[t][d]) continue;
-        const starts = startsMap[t][d];
-        if (!starts || starts.length === 0) {
-          tthtml += '<td></td>';
-        } else {
-          const ev = starts[0];
-          const span = Math.min(parseInt(ev.duration_slots, 10) || 1, timeSlotLabels.length - t);
-          const subj = ev.subject_name || ev.subject_code || '';
-          const range = computeEventTimeRange(ev);
-          const bg = getSubjectColor(ev.subject_code, ev.type);
-          const fg = getTextColorForBackground(bg);
-          tthtml += `<td rowspan="${span}" style="background:${bg}; color:${fg};">
-            <b>${subj}</b> <small style=\"color:#000; opacity:.85\">(${range})</small><br>
-            ${ev.section_id}<br>${ev.teacher_name}<br>${getRoomName(ev.room_id)}
-          </td>`;
-          for (let k = 1; k < span; k++) skip[t + k][d] = true;
-        }
+  
+  for (let t = 0; t < timeSlotLabels.length; t++) {
+    tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
+    for (let d = 0; d < dayLabels.length; d++) {
+      const cellKey = `${t}-${d}`;
+      
+      // Skip this cell if it's already occupied by a rowspan from above
+      if (skipCells.has(cellKey)) {
+        continue;
       }
-      tthtml += '</tr>';
-    }
-  } else {
-    // Combined view: show subject and full time range in the start slot
-    for (let t = 0; t < timeSlotLabels.length; t++) {
-      tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
-      for (let d = 0; d < dayLabels.length; d++) {
-        const eventsInSlot = timetable[t][d];
-        if (eventsInSlot.length > 0) {
-          const uniqueEvents = [];
-          const seenEventIds = new Set();
-          eventsInSlot.forEach(event => {
-            const id = event.section_id + event.type + event.start_time_slot + event.day;
-            if (timeSlotLabels.indexOf(event.start_time_slot) === t && !seenEventIds.has(id)) {
-              uniqueEvents.push(event);
-              seenEventIds.add(id);
+      
+      // Find ALL events that START at this time slot and day (including overlapping ones)
+      const eventsStartingHere = filtered.filter(event => {
+        const dayIdx = dayLabels.indexOf(event.day);
+        const startSlotIdx = timeSlotLabels.indexOf(event.start_time_slot);
+        return dayIdx === d && startSlotIdx === t;
+      });
+      
+      if (eventsStartingHere.length > 0) {
+        // Remove duplicates based on section + subject + day
+        const uniqueEvents = [];
+        const seenEvents = new Set();
+        eventsStartingHere.forEach(event => {
+          const key = `${event.section_id}-${event.subject_code}-${event.day}-${event.start_time_slot}`;
+          if (!seenEvents.has(key)) {
+            uniqueEvents.push(event);
+            seenEvents.add(key);
+          }
+        });
+        
+        if (uniqueEvents.length > 0) {
+          // Calculate the maximum duration among all events in this slot
+          const maxDuration = Math.max(...uniqueEvents.map(e => parseInt(e.duration_slots, 10) || 1));
+          
+          // Handle different numbers of overlapping events differently
+          if (uniqueEvents.length === 1) {
+            // Single event - apply background directly to td like dean interface
+            const event = uniqueEvents[0];
+            const eventDuration = parseInt(event.duration_slots, 10) || 1;
+            const subj = event.subject_name || event.subject_code || '';
+            const range = computeEventTimeRange(event);
+            const bg = getSubjectColor(event.subject_code, event.type);
+            const fg = getTextColorForBackground(bg);
+            
+            // Mark cells below as occupied by this specific event's rowspan
+            for (let i = 1; i < eventDuration && t + i < timeSlotLabels.length; i++) {
+              skipCells.add(`${t + i}-${d}`);
             }
-          });
-          if (uniqueEvents.length > 0) {
-            tthtml += '<td>' + uniqueEvents.map(slot => {
-              const subj = slot.subject_name || slot.subject_code || '';
-              const range = computeEventTimeRange(slot);
-              const bg = getSubjectColor(slot.subject_code, slot.type);
-              const fg = getTextColorForBackground(bg);
-              return `<div style=\"background:${bg}; color:${fg}; padding:4px 6px; border-radius:6px; margin-bottom:4px;\">
-                <b>${subj}</b> <small style=\"opacity:.85; color:#000\">(${range})</small><br>
-                ${slot.section_id}<br>${slot.teacher_name}<br>${getRoomName(slot.room_id)}
-              </div>`;
-            }).join('') + '</td>';
+            
+            tthtml += `<td rowspan="${eventDuration}" style="background:${bg}; color:${fg}; padding:6px 8px; vertical-align: top;">
+              <b>${subj}</b><br>
+              <small style="opacity:.85;">(${range})</small><br>
+              <small>${event.section_id}</small><br>
+              <small>${event.teacher_name}</small><br>
+              <small>${getRoomName(event.room_id)}</small>
+            </td>`;
           } else {
-            tthtml += '<td></td>';
+            // 2+ events - use expandable summary for better readability
+            // Mark cells below as occupied by this rowspan
+            for (let i = 1; i < maxDuration && t + i < timeSlotLabels.length; i++) {
+              skipCells.add(`${t + i}-${d}`);
+            }
+            
+            tthtml += `<td rowspan="${maxDuration}" style="vertical-align: top; padding: 1px;">`;
+            
+            uniqueEvents.forEach((event, index) => {
+              const subj = event.subject_name || event.subject_code || '';
+              const range = computeEventTimeRange(event);
+              const eventBg = getSubjectColor(event.subject_code, event.type);
+              const eventFg = getTextColorForBackground(eventBg);
+              
+              tthtml += `<div style="background:${eventBg}; color:${eventFg}; padding:3px 5px; border-radius:3px; margin:2px 0; font-size:9px; line-height:1.2; border-left: 3px solid ${eventBg};">
+                <b>${subj}</b><br>
+                <small style="opacity:.85;">(${range})</small><br>
+                <small>${event.section_id} • ${event.teacher_name}</small><br>
+                <small>${getRoomName(event.room_id)}</small>
+              </div>`;
+            });
+            
+            tthtml += `</td>`;
           }
         } else {
           tthtml += '<td></td>';
         }
+      } else {
+        tthtml += '<td></td>';
       }
-      tthtml += '</tr>';
     }
+    tthtml += '</tr>';
   }
   tthtml += '</tbody></table></div>';
   const timetableDiv = document.getElementById('timetable');
@@ -1676,24 +1701,19 @@ function createNotificationItem(notification) {
           <p class="mb-1 text-muted small">${notification.message}</p>
           <small class="text-muted">${timeAgo}</small>
         </div>
-        <div class="d-flex align-items-center">
-          ${!notification.is_read ? '<span class="badge bg-primary rounded-pill me-2">New</span>' : ''}
-          <button class="btn btn-sm btn-outline-danger p-1" type="button" title="Delete notification">
-            <i class="bi bi-x"></i>
+        <div class="d-flex align-items-center gap-2">
+          ${!notification.is_read ? '<span class="badge bg-primary rounded-pill">New</span>' : ''}
+          <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteNotification(${notification.id})" title="Delete notification">
+            <i class="bi bi-trash"></i>
           </button>
         </div>
       </div>
     </div>
   `;
   
-  // Add click handler to mark as read (but not when clicking the delete button)
+  // Add click handler to mark as read (only for the main content area, not buttons)
   li.addEventListener('click', async (e) => {
-    // Don't mark as read if clicking the delete button
-    if (e.target.closest('button')) {
-      return;
-    }
-    
-    if (!notification.is_read) {
+    if (!e.target.closest('button') && !notification.is_read) {
       await markNotificationAsRead(notification.id);
       notification.is_read = true;
       li.querySelector('.dropdown-item').classList.remove('bg-light');
@@ -1701,13 +1721,6 @@ function createNotificationItem(notification) {
       if (badge) badge.remove();
       updateNotificationBadge(await loadUnreadNotifications());
     }
-  });
-  
-  // Add click handler for delete button
-  const deleteBtn = li.querySelector('button');
-  deleteBtn.addEventListener('click', async (e) => {
-    e.stopPropagation(); // Prevent the li click handler from firing
-    await deleteNotification(notification.id);
   });
   
   return li;
@@ -1800,6 +1813,49 @@ async function deleteNotification(notificationId) {
     showNotification('Error deleting notification. Please check your connection.', 'danger');
   } finally {
     hideLoadingState('deleteBtn');
+  }
+}
+
+async function clearAllNotifications() {
+  if (!confirm('Are you sure you want to delete all notifications? This action cannot be undone.')) {
+    return;
+  }
+  
+  try {
+    // Get all notifications first
+    const response = await fetch('/api/notifications', {
+      headers: getAuthHeaders()
+    });
+    
+    if (!response.ok) {
+      showNotification('Failed to load notifications.', 'danger');
+      return;
+    }
+    
+    const notifications = await response.json();
+    
+    if (notifications.length === 0) {
+      showNotification('No notifications to delete.', 'info');
+      return;
+    }
+    
+    // Delete all notifications
+    const deletePromises = notifications.map(notification => 
+      fetch(`/api/notifications/${notification.id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      })
+    );
+    
+    await Promise.all(deletePromises);
+    showNotification(`Successfully deleted ${notifications.length} notifications.`, 'success');
+    
+    // Reload notifications
+    await loadNotifications();
+    
+  } catch (error) {
+    console.error('Error clearing all notifications:', error);
+    showNotification('Error clearing notifications. Please try again.', 'danger');
   }
 }
 

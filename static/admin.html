@@ -21,14 +21,18 @@
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar mb-4">
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="#">
-                <i class="bi bi-shield-check-fill me-2" aria-hidden="true"></i>
+                <i class="bi bi-calendar3-fill me-2" aria-hidden="true"></i>
                 <span class="fs-5">IntelliSched Admin</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="d-flex align-items-center ms-auto">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+                </ul>
+                <div class="d-flex align-items-center">
                     <div class="dropdown me-3">
                         <button class="btn btn-outline-light btn-sm rounded-pill position-relative" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-bell"></i>
@@ -37,7 +41,14 @@
                             </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" id="notificationDropdownMenu" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
-                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            <li>
+                                <div class="dropdown-header d-flex justify-content-between align-items-center">
+                                    <span>Notifications</span>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="clearAllNotifications()" title="Clear all notifications">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li id="noNotifications" class="dropdown-item-text text-muted text-center py-3">No notifications</li>
                         </ul>
@@ -678,29 +689,36 @@
             }
         }
         
-        function showAlert(message, type) {
-            const alertContainer = document.createElement('div');
-            alertContainer.className = `alert alert-${type} alert-dismissible fade show border-0 rounded-4`;
-            alertContainer.style.cssText = `
-                background: ${type === 'success' ? 'rgba(40, 167, 69, 0.1)' : 'rgba(220, 53, 69, 0.1)'};
-                border-left: 4px solid ${type === 'success' ? '#28a745' : '#dc3545'} !important;
-            `;
-            alertContainer.innerHTML = `
-                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+        function showNotification(message, type = 'info', duration = 5000) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; max-width: 500px;';
+            
+            notification.innerHTML = `
+                <i class="bi bi-${getIconForType(type)} me-2"></i>
                 ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             
-            // Insert at the top of the user management section
-            const userSection = document.getElementById('userManagementSection');
-            userSection.insertBefore(alertContainer, userSection.firstChild);
+            document.body.appendChild(notification);
             
-            // Auto-remove after 5 seconds
+            // Auto-remove after duration
             setTimeout(() => {
-                if (alertContainer.parentNode) {
-                    alertContainer.remove();
+                if (notification.parentNode) {
+                    notification.remove();
                 }
-            }, 5000);
+            }, duration);
+        }
+
+        function getIconForType(type) {
+            const icons = {
+                'success': 'check-circle',
+                'danger': 'exclamation-triangle',
+                'warning': 'exclamation-triangle',
+                'info': 'info-circle'
+            };
+            return icons[type] || 'info-circle';
         }
 
         // Notification functions
@@ -777,18 +795,24 @@
                             <p class="mb-1 text-muted small">${notification.message}</p>
                             <small class="text-muted">${timeAgo}</small>
                         </div>
-                        ${!notification.is_read ? '<span class="badge bg-primary rounded-pill ms-2">New</span>' : ''}
+                        <div class="d-flex align-items-center gap-2">
+                            ${!notification.is_read ? '<span class="badge bg-primary rounded-pill">New</span>' : ''}
+                            <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteNotification(${notification.id})" title="Delete notification">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
             
-            // Add click handler to mark as read
-            li.addEventListener('click', async () => {
-                if (!notification.is_read) {
+            // Add click handler to mark as read (only for the main content area, not buttons)
+            li.addEventListener('click', async (e) => {
+                if (!e.target.closest('button') && !notification.is_read) {
                     await markNotificationAsRead(notification.id);
                     notification.is_read = true;
                     li.querySelector('.dropdown-item').classList.remove('bg-light');
-                    li.querySelector('.badge').remove();
+                    const badge = li.querySelector('.badge');
+                    if (badge) badge.remove();
                     updateNotificationBadge(await loadUnreadNotifications());
                 }
             });
@@ -854,6 +878,74 @@
                 }
             } catch (error) {
                 console.error('Error marking notification as read:', error);
+            }
+        }
+
+        async function deleteNotification(notificationId) {
+            try {
+                const response = await fetch(`/api/notifications/${notificationId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeaders()
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showNotification('Notification not found or already deleted.', 'warning');
+                    } else {
+                        showNotification('Failed to delete notification. Please try again.', 'danger');
+                    }
+                    console.error('Failed to delete notification:', response.status, response.statusText);
+                } else {
+                    showNotification('Notification deleted successfully.', 'success');
+                    // Reload notifications after deletion
+                    await loadNotifications();
+                }
+            } catch (error) {
+                console.error('Error deleting notification:', error);
+                showNotification('Error deleting notification. Please check your connection.', 'danger');
+            }
+        }
+
+        async function clearAllNotifications() {
+            if (!confirm('Are you sure you want to delete all notifications? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                // Get all notifications first
+                const response = await fetch('/api/notifications', {
+                    headers: getAuthHeaders()
+                });
+                
+                if (!response.ok) {
+                    showNotification('Failed to load notifications.', 'danger');
+                    return;
+                }
+                
+                const notifications = await response.json();
+                
+                if (notifications.length === 0) {
+                    showNotification('No notifications to delete.', 'info');
+                    return;
+                }
+                
+                // Delete all notifications
+                const deletePromises = notifications.map(notification => 
+                    fetch(`/api/notifications/${notification.id}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                    })
+                );
+                
+                await Promise.all(deletePromises);
+                showNotification(`Successfully deleted ${notifications.length} notifications.`, 'success');
+                
+                // Reload notifications
+                await loadNotifications();
+                
+            } catch (error) {
+                console.error('Error clearing all notifications:', error);
+                showNotification('Error clearing notifications. Please try again.', 'danger');
             }
         }
 
