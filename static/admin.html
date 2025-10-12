@@ -59,7 +59,7 @@
                             <p class="text-muted fs-5">Manage users, system settings, and administrative tasks</p>
                         </div>
                         
-                        <div class="alert alert-info border-0 rounded-4 mb-4" style="background: rgba(184, 58, 63, 0.1); border-left: 4px solid #b83a3f !important;">
+                        <div class="alert alert-info border-0 rounded-4 mb-4" style="background: rgba(184, 58, 63, 0.1);">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Admin Access:</strong> You can approve or reject pending user accounts, manage system settings, and view analytics.
                         </div>
@@ -84,8 +84,8 @@
                                         <i class="bi bi-gear-fill mb-3" style="font-size: 2.5rem; color: #b83a3f;"></i>
                                         <h5 class="card-title">System Settings</h5>
                                         <p class="card-text small text-muted">Configure system preferences and options</p>
-                                        <button class="btn btn-outline-primary btn-sm rounded-pill" disabled>
-                                            <i class="bi bi-tools me-1"></i>Coming Soon
+                                        <button class="btn btn-primary btn-sm rounded-pill" id="systemSettingsBtn">
+                                            <i class="bi bi-gear me-1"></i>System Settings
                                         </button>
                                     </div>
                                 </div>
@@ -96,8 +96,8 @@
                                         <i class="bi bi-graph-up mb-3" style="font-size: 2.5rem; color: #b83a3f;"></i>
                                         <h5 class="card-title">Analytics</h5>
                                         <p class="card-text small text-muted">View system usage and performance metrics</p>
-                                        <button class="btn btn-outline-primary btn-sm rounded-pill" disabled>
-                                            <i class="bi bi-tools me-1"></i>Coming Soon
+                                        <button class="btn btn-primary btn-sm rounded-pill" id="analyticsBtn">
+                                            <i class="bi bi-graph-up me-1"></i>Analytics
                                         </button>
                                     </div>
                                 </div>
@@ -156,6 +156,108 @@
                                                     <p class="mt-2 text-muted">Loading all users...</p>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Analytics Section -->
+                        <div id="analyticsSection" class="mt-4" style="display: none;">
+                            <div class="card border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
+                                <div class="card-header border-0 bg-transparent pb-0">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="bi bi-graph-up me-2" style="color: #b83a3f;"></i>
+                                            System Analytics
+                                        </h5>
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="refreshAnalytics()">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Analytics Tabs -->
+                                    <ul class="nav nav-tabs nav-fill" id="analyticsTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active rounded-pill me-1" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                                                <i class="bi bi-speedometer2 me-1"></i>Overview
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link rounded-pill" id="user-activity-tab" data-bs-toggle="tab" data-bs-target="#user-activity" type="button" role="tab">
+                                                <i class="bi bi-people me-1"></i>User Activity
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link rounded-pill" id="system-metrics-tab" data-bs-toggle="tab" data-bs-target="#system-metrics" type="button" role="tab">
+                                                <i class="bi bi-cpu me-1"></i>System Metrics
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="analyticsTabsContent">
+                                        <!-- Overview Tab -->
+                                        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                                            <div id="analyticsOverviewContainer">
+                                                <div class="text-center py-4">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p class="mt-2 text-muted">Loading analytics overview...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- User Activity Tab -->
+                                        <div class="tab-pane fade" id="user-activity" role="tabpanel">
+                                            <div id="userActivityContainer">
+                                                <div class="text-center py-4">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p class="mt-2 text-muted">Loading user activity data...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- System Metrics Tab -->
+                                        <div class="tab-pane fade" id="system-metrics" role="tabpanel">
+                                            <div id="systemMetricsContainer">
+                                                <div class="text-center py-4">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                    <p class="mt-2 text-muted">Loading system metrics...</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- System Settings Section -->
+                        <div id="systemSettingsSection" class="mt-4" style="display: none;">
+                            <div class="card border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
+                                <div class="card-header border-0 bg-transparent pb-0">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="mb-0">
+                                            <i class="bi bi-gear-fill me-2" style="color: #b83a3f;"></i>
+                                            System Settings
+                                        </h5>
+                                        <button class="btn btn-sm btn-outline-primary rounded-pill" onclick="refreshSettings()">
+                                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="systemSettingsContainer">
+                                        <div class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <p class="mt-2 text-muted">Loading system settings...</p>
                                         </div>
                                     </div>
                                 </div>
@@ -236,6 +338,9 @@
             
             // Initialize user management
             initializeUserManagement();
+            
+            // Initialize analytics and settings
+            initializeAnalyticsAndSettings();
         });
         
         // Logout functionality
@@ -256,13 +361,7 @@
         // User Management Functions
         function initializeUserManagement() {
             document.getElementById('manageUsersBtn').addEventListener('click', function() {
-                const section = document.getElementById('userManagementSection');
-                if (section.style.display === 'none') {
-                    section.style.display = 'block';
-                    loadPendingUsers();
-                } else {
-                    section.style.display = 'none';
-                }
+                toggleSection('userManagementSection', 'users', loadPendingUsers);
             });
             
             // Handle tab switching
@@ -389,6 +488,7 @@
                 }
                 
                 showAlert('User approved successfully!', 'success');
+                recordActivity('user_approval', `Approved user ID: ${userId}`);
                 loadPendingUsers(); // Refresh the list
             } catch (error) {
                 console.error('Error approving user:', error);
@@ -420,6 +520,7 @@
                 }
                 
                 showAlert('User rejected successfully!', 'success');
+                recordActivity('user_rejection', `Rejected user ID: ${userId} - Reason: ${reason || 'No reason provided'}`);
                 loadPendingUsers(); // Refresh the list
             } catch (error) {
                 console.error('Error rejecting user:', error);
@@ -759,6 +860,504 @@
         
         // Auto-refresh notifications every 30 seconds
         setInterval(loadNotifications, 30000);
+        
+        // Helper function for auth headers
+        function getAuthHeaders() {
+            const token = localStorage.getItem('authToken');
+            return {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            };
+        }
+        
+        // Function to record user activity
+        async function recordActivity(activityType, description) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`/api/analytics/record-activity?activity_type=${encodeURIComponent(activityType)}&description=${encodeURIComponent(description)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.warn('Failed to record activity:', activityType);
+                }
+            } catch (error) {
+                console.warn('Error recording activity:', error);
+            }
+        }
+        
+        // Section toggle function with mutual exclusivity
+        function toggleSection(sectionId, sectionType, loadFunction) {
+            const targetSection = document.getElementById(sectionId);
+            const isCurrentlyVisible = targetSection.style.display !== 'none';
+            
+            // Close all other sections first
+            const allSections = [
+                'userManagementSection',
+                'analyticsSection', 
+                'systemSettingsSection'
+            ];
+            
+            allSections.forEach(id => {
+                if (id !== sectionId) {
+                    const section = document.getElementById(id);
+                    if (section) {
+                        section.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Toggle the target section
+            if (isCurrentlyVisible) {
+                // If it's currently visible, hide it
+                targetSection.style.display = 'none';
+            } else {
+                // If it's hidden, show it and load data
+                targetSection.style.display = 'block';
+                
+                // Record activity for opening sections
+                if (sectionId === 'userManagementSection') {
+                    recordActivity('admin_user_management', 'Opened user management section');
+                } else if (sectionId === 'analyticsSection') {
+                    recordActivity('admin_analytics', 'Opened analytics section');
+                } else if (sectionId === 'systemSettingsSection') {
+                    recordActivity('admin_settings', 'Opened system settings section');
+                }
+                
+                if (typeof loadFunction === 'function') {
+                    loadFunction();
+                }
+            }
+        }
+        
+        // Analytics and Settings Functions
+        function initializeAnalyticsAndSettings() {
+            // Analytics button
+            document.getElementById('analyticsBtn').addEventListener('click', function() {
+                toggleSection('analyticsSection', 'analytics', loadAnalyticsOverview);
+            });
+            
+            // System Settings button
+            document.getElementById('systemSettingsBtn').addEventListener('click', function() {
+                toggleSection('systemSettingsSection', 'settings', loadSystemSettings);
+            });
+            
+            // Analytics tab switching
+            document.getElementById('overview-tab').addEventListener('click', function() {
+                loadAnalyticsOverview();
+            });
+            
+            document.getElementById('user-activity-tab').addEventListener('click', function() {
+                loadUserActivity();
+            });
+            
+            document.getElementById('system-metrics-tab').addEventListener('click', function() {
+                loadSystemMetrics();
+            });
+        }
+        
+        async function loadAnalyticsOverview() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch('/api/analytics/overview', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load analytics overview');
+                }
+                
+                const data = await response.json();
+                displayAnalyticsOverview(data);
+            } catch (error) {
+                console.error('Error loading analytics overview:', error);
+                document.getElementById('analyticsOverviewContainer').innerHTML = `
+                    <div class="alert alert-danger border-0 rounded-4" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Failed to load analytics overview. Please try again.
+                    </div>
+                `;
+            }
+        }
+        
+        function displayAnalyticsOverview(data) {
+            const container = document.getElementById('analyticsOverviewContainer');
+            
+            let html = `
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(40, 167, 69, 0.1);">
+                            <div class="card-body">
+                                <i class="bi bi-people-fill text-success mb-2" style="font-size: 2rem;"></i>
+                                <h5 class="card-title text-success">Total Users</h5>
+                                <h3 class="text-success">${data.user_statistics.reduce((sum, stat) => sum + parseInt(stat.count), 0)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(0, 123, 255, 0.1);">
+                            <div class="card-body">
+                                <i class="bi bi-calendar-check-fill text-primary mb-2" style="font-size: 2rem;"></i>
+                                <h5 class="card-title text-primary">Total Schedules</h5>
+                                <h3 class="text-primary">${data.schedule_statistics.reduce((sum, stat) => sum + parseInt(stat.count), 0)}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(255, 193, 7, 0.1);">
+                            <div class="card-body">
+                                <i class="bi bi-book-fill text-warning mb-2" style="font-size: 2rem;"></i>
+                                <h5 class="card-title text-warning">Total Subjects</h5>
+                                <h3 class="text-warning">${data.data_counts.find(d => d.type === 'subjects')?.count || 0}</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm rounded-4 text-center" style="background: rgba(220, 53, 69, 0.1);">
+                            <div class="card-body">
+                                <i class="bi bi-person-badge-fill text-danger mb-2" style="font-size: 2rem;"></i>
+                                <h5 class="card-title text-danger">Total Teachers</h5>
+                                <h3 class="text-danger">${data.data_counts.find(d => d.type === 'teachers')?.count || 0}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h6 class="mb-0"><i class="bi bi-people me-2"></i>User Statistics</h6>
+                            </div>
+                            <div class="card-body">
+                                ${data.user_statistics.map(stat => `
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-${getRoleColor(stat.role)} me-2">${stat.role}</span>
+                                        <span class="badge bg-${getStatusColor(stat.status)} me-2">${stat.status}</span>
+                                        <strong>${stat.count}</strong>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h6 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Schedule Statistics</h6>
+                            </div>
+                            <div class="card-body">
+                                ${data.schedule_statistics.map(stat => `
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-${getScheduleStatusColor(stat.status)} me-2">${stat.status}</span>
+                                        <strong>${stat.count}</strong>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        async function loadUserActivity() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch('/api/analytics/user-activity?days=30', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load user activity');
+                }
+                
+                const data = await response.json();
+                displayUserActivity(data);
+            } catch (error) {
+                console.error('Error loading user activity:', error);
+                document.getElementById('userActivityContainer').innerHTML = `
+                    <div class="alert alert-danger border-0 rounded-4" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Failed to load user activity data. Please try again.
+                    </div>
+                `;
+            }
+        }
+        
+        function displayUserActivity(data) {
+            const container = document.getElementById('userActivityContainer');
+            
+            let html = `
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Activity by Type</h6>
+                            </div>
+                            <div class="card-body">
+                                ${data.activities_by_type.map(activity => `
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span>${activity.activity_type}</span>
+                                        <span class="badge bg-primary">${activity.count}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h6 class="mb-0"><i class="bi bi-person-check me-2"></i>Top Active Users</h6>
+                            </div>
+                            <div class="card-body">
+                                ${data.top_active_users.map(user => `
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <strong>${user.full_name || user.username}</strong>
+                                            <br><small class="text-muted">${user.role}</small>
+                                        </div>
+                                        <span class="badge bg-info">${user.activity_count || 0}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        async function loadSystemMetrics() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch('/api/analytics/overview', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load system metrics');
+                }
+                
+                const data = await response.json();
+                displaySystemMetrics(data);
+            } catch (error) {
+                console.error('Error loading system metrics:', error);
+                document.getElementById('systemMetricsContainer').innerHTML = `
+                    <div class="alert alert-danger border-0 rounded-4" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Failed to load system metrics. Please try again.
+                    </div>
+                `;
+            }
+        }
+        
+        function displaySystemMetrics(data) {
+            const container = document.getElementById('systemMetricsContainer');
+            
+            let html = `
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm rounded-4">
+                            <div class="card-header bg-transparent border-0">
+                                <h6 class="mb-0"><i class="bi bi-database me-2"></i>System Data Overview</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    ${data.data_counts.map(item => `
+                                        <div class="col-md-3 mb-3">
+                                            <div class="text-center p-3 border rounded-3">
+                                                <i class="bi bi-${getDataTypeIcon(item.type)} text-primary mb-2" style="font-size: 2rem;"></i>
+                                                <h6 class="text-capitalize">${item.type}</h6>
+                                                <h4 class="text-primary">${item.count}</h4>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        async function loadSystemSettings() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch('/api/system/settings', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load system settings');
+                }
+                
+                const settings = await response.json();
+                displaySystemSettings(settings);
+            } catch (error) {
+                console.error('Error loading system settings:', error);
+                document.getElementById('systemSettingsContainer').innerHTML = `
+                    <div class="alert alert-danger border-0 rounded-4" role="alert">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Failed to load system settings. Please try again.
+                    </div>
+                `;
+            }
+        }
+        
+        function displaySystemSettings(settings) {
+            const container = document.getElementById('systemSettingsContainer');
+            
+            let html = `
+                <div class="row g-4">
+                    ${settings.map(setting => `
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="card-title mb-0">${setting.setting_key}</h6>
+                                        <span class="badge bg-secondary">${setting.setting_type}</span>
+                                    </div>
+                                    <p class="card-text small text-muted">${setting.description || 'No description available'}</p>
+                                    <div class="input-group">
+                                        <input type="${getInputType(setting.setting_type)}" 
+                                               class="form-control" 
+                                               id="setting-${setting.setting_key}" 
+                                               value="${setting.setting_value}">
+                                        <button class="btn btn-outline-primary" onclick="updateSetting('${setting.setting_key}', '${setting.setting_type}')">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    </div>
+                                    <small class="text-muted">Last updated: ${new Date(setting.updated_at).toLocaleString()}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="mt-4">
+                    <button class="btn btn-primary" onclick="showAddSettingModal()">
+                        <i class="bi bi-plus-circle me-1"></i>Add New Setting
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        async function updateSetting(key, type) {
+            const input = document.getElementById(`setting-${key}`);
+            const value = input.value;
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`/api/system/settings/${key}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        value: value,
+                        type: type
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to update setting');
+                }
+                
+                showAlert('Setting updated successfully!', 'success');
+                recordActivity('settings_update', `Updated setting: ${key} = ${value}`);
+                loadSystemSettings(); // Refresh the settings
+            } catch (error) {
+                console.error('Error updating setting:', error);
+                showAlert('Failed to update setting. Please try again.', 'danger');
+            }
+        }
+        
+        function refreshAnalytics() {
+            const activeTab = document.querySelector('#analyticsTabsContent .tab-pane.active');
+            if (activeTab && activeTab.id === 'overview') {
+                loadAnalyticsOverview();
+            } else if (activeTab && activeTab.id === 'user-activity') {
+                loadUserActivity();
+            } else if (activeTab && activeTab.id === 'system-metrics') {
+                loadSystemMetrics();
+            }
+        }
+        
+        function refreshSettings() {
+            loadSystemSettings();
+        }
+        
+        // Helper functions
+        function getRoleColor(role) {
+            const colors = {
+                'admin': 'danger',
+                'dean': 'primary',
+                'chair': 'info',
+                'secretary': 'warning'
+            };
+            return colors[role] || 'secondary';
+        }
+        
+        function getStatusColor(status) {
+            const colors = {
+                'active': 'success',
+                'pending': 'warning',
+                'inactive': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+        
+        function getScheduleStatusColor(status) {
+            const colors = {
+                'pending': 'warning',
+                'approved': 'success',
+                'rejected': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+        
+        function getDataTypeIcon(type) {
+            const icons = {
+                'subjects': 'book',
+                'teachers': 'person-badge',
+                'rooms': 'building',
+                'sections': 'collection'
+            };
+            return icons[type] || 'file';
+        }
+        
+        function getInputType(settingType) {
+            const types = {
+                'boolean': 'checkbox',
+                'integer': 'number',
+                'string': 'text'
+            };
+            return types[settingType] || 'text';
+        }
+        
+        function showAddSettingModal() {
+            // This would open a modal to add new settings
+            // For now, we'll show an alert
+            alert('Add new setting functionality would be implemented here with a modal form.');
+        }
     </script>
 </body>
 </html>

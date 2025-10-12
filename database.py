@@ -124,6 +124,34 @@ class ScheduleDatabase:
             is_read BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+        
+        CREATE TABLE IF NOT EXISTS system_settings (
+            id SERIAL PRIMARY KEY,
+            setting_key VARCHAR(100) UNIQUE NOT NULL,
+            setting_value TEXT,
+            setting_type VARCHAR(50) DEFAULT 'string',
+            description TEXT,
+            updated_by VARCHAR(50),
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS system_analytics (
+            id SERIAL PRIMARY KEY,
+            metric_name VARCHAR(100) NOT NULL,
+            metric_value NUMERIC,
+            metric_data JSONB,
+            recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        
+        CREATE TABLE IF NOT EXISTS user_activity_log (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            activity_type VARCHAR(100) NOT NULL,
+            activity_description TEXT,
+            ip_address INET,
+            user_agent TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
         """
         
         # Split and execute each statement
@@ -1076,3 +1104,246 @@ def delete_user(user_id: int, admin_username: str) -> bool:
     except Exception as e:
         print(f"Error deleting user: {e}")
         return False
+
+# Analytics Functions
+def record_user_activity(user_id: int, activity_type: str, description: str, ip_address: str = None, user_agent: str = None) -> bool:
+    """Record user activity for analytics"""
+    try:
+        query = """
+        INSERT INTO user_activity_log (user_id, activity_type, activity_description, ip_address, user_agent)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        db.db.execute_single(query, (user_id, activity_type, description, ip_address, user_agent))
+        return True
+    except Exception as e:
+        logger.error(f"Error recording user activity: {e}")
+        return False
+
+def get_user_activity_stats(days: int = 30) -> Dict[str, Any]:
+    """Get user activity statistics"""
+    try:
+        # Activity by type
+        activity_query = """
+        SELECT activity_type, COUNT(*) as count
+        FROM user_activity_log 
+        WHERE created_at >= NOW() - INTERVAL '%s days'
+        GROUP BY activity_type
+        ORDER BY count DESC
+        """
+        activities = db.db.execute_query(activity_query, (days,))
+        
+        # Daily activity
+        daily_query = """
+        SELECT DATE(created_at) as date, COUNT(*) as count
+        FROM user_activity_log 
+        WHERE created_at >= NOW() - INTERVAL '%s days'
+        GROUP BY DATE(created_at)
+        ORDER BY date DESC
+        """
+        daily_activities = db.db.execute_query(daily_query, (days,))
+        
+        # Top active users
+        users_query = """
+        SELECT u.username, u.full_name, u.role, COUNT(a.id) as activity_count
+        FROM users u
+        LEFT JOIN user_activity_log a ON u.id = a.user_id AND a.created_at >= NOW() - INTERVAL '%s days'
+        GROUP BY u.id, u.username, u.full_name, u.role
+        ORDER BY activity_count DESC
+        LIMIT 10
+        """
+        top_users = db.db.execute_query(users_query, (days,))
+        
+        # Convert date objects to ISO format strings for JSON serialization
+        for daily in daily_activities:
+            if 'date' in daily and daily['date']:
+                daily['date'] = daily['date'].isoformat()
+        
+        return {
+            'activities_by_type': activities,
+            'daily_activities': daily_activities,
+            'top_active_users': top_users
+        }
+    except Exception as e:
+        logger.error(f"Error getting user activity stats: {e}")
+        return {'activities_by_type': [], 'daily_activities': [], 'top_active_users': []}
+
+def get_system_analytics() -> Dict[str, Any]:
+    """Get comprehensive system analytics"""
+    try:
+        # User statistics
+        user_stats_query = """
+        SELECT 
+            role,
+            status,
+            COUNT(*) as count
+        FROM users 
+        GROUP BY role, status
+        ORDER BY role, status
+        """
+        user_stats = db.db.execute_query(user_stats_query)
+        
+        # Schedule statistics
+        schedule_stats_query = """
+        SELECT 
+            status,
+            COUNT(*) as count
+        FROM schedule_approvals 
+        GROUP BY status
+        """
+        schedule_stats = db.db.execute_query(schedule_stats_query)
+        
+        # Recent registrations
+        recent_registrations_query = """
+        SELECT DATE(created_at) as date, COUNT(*) as count
+        FROM users 
+        WHERE created_at >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE(created_at)
+        ORDER BY date DESC
+        """
+        recent_registrations = db.db.execute_query(recent_registrations_query)
+        
+        # System data counts
+        data_counts_query = """
+        SELECT 
+            'subjects' as type, COUNT(*) as count FROM cs_curriculum
+            UNION ALL
+            SELECT 'teachers', COUNT(*) FROM teachers
+            UNION ALL
+            SELECT 'rooms', COUNT(*) FROM rooms
+            UNION ALL
+            SELECT 'sections', COUNT(*) FROM sections
+        """
+        data_counts = db.db.execute_query(data_counts_query)
+        
+        # Convert date objects to ISO format strings for JSON serialization
+        for reg in recent_registrations:
+            if 'date' in reg and reg['date']:
+                reg['date'] = reg['date'].isoformat()
+        
+        return {
+            'user_statistics': user_stats,
+            'schedule_statistics': schedule_stats,
+            'recent_registrations': recent_registrations,
+            'data_counts': data_counts
+        }
+    except Exception as e:
+        logger.error(f"Error getting system analytics: {e}")
+        return {
+            'user_statistics': [],
+            'schedule_statistics': [],
+            'recent_registrations': [],
+            'data_counts': []
+        }
+
+def record_metric(metric_name: str, metric_value: float, metric_data: Dict = None) -> bool:
+    """Record a system metric"""
+    try:
+        query = """
+        INSERT INTO system_analytics (metric_name, metric_value, metric_data)
+        VALUES (%s, %s, %s)
+        """
+        import json
+        data_json = json.dumps(metric_data) if metric_data else None
+        db.db.execute_single(query, (metric_name, metric_value, data_json))
+        return True
+    except Exception as e:
+        logger.error(f"Error recording metric: {e}")
+        return False
+
+def get_metrics_history(metric_name: str, days: int = 30) -> List[Dict[str, Any]]:
+    """Get historical metrics data"""
+    try:
+        query = """
+        SELECT metric_value, metric_data, recorded_at
+        FROM system_analytics 
+        WHERE metric_name = %s AND recorded_at >= NOW() - INTERVAL '%s days'
+        ORDER BY recorded_at DESC
+        """
+        return db.db.execute_query(query, (metric_name, days))
+    except Exception as e:
+        logger.error(f"Error getting metrics history: {e}")
+        return []
+
+# System Settings Functions
+def get_system_setting(key: str, default_value: str = None) -> str:
+    """Get a system setting value"""
+    try:
+        query = "SELECT setting_value FROM system_settings WHERE setting_key = %s"
+        results = db.db.execute_query(query, (key,))
+        return results[0]['setting_value'] if results else default_value
+    except Exception as e:
+        logger.error(f"Error getting system setting {key}: {e}")
+        return default_value
+
+def set_system_setting(key: str, value: str, setting_type: str = 'string', description: str = None, updated_by: str = None) -> bool:
+    """Set a system setting value"""
+    try:
+        query = """
+        INSERT INTO system_settings (setting_key, setting_value, setting_type, description, updated_by)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (setting_key) 
+        DO UPDATE SET 
+            setting_value = EXCLUDED.setting_value,
+            setting_type = EXCLUDED.setting_type,
+            description = EXCLUDED.description,
+            updated_by = EXCLUDED.updated_by,
+            updated_at = CURRENT_TIMESTAMP
+        """
+        db.db.execute_single(query, (key, value, setting_type, description, updated_by))
+        return True
+    except Exception as e:
+        logger.error(f"Error setting system setting {key}: {e}")
+        return False
+
+def get_all_system_settings() -> List[Dict[str, Any]]:
+    """Get all system settings"""
+    try:
+        query = """
+        SELECT setting_key, setting_value, setting_type, description, updated_by, updated_at
+        FROM system_settings 
+        ORDER BY setting_key
+        """
+        results = db.db.execute_query(query)
+        # Convert datetime objects to ISO format strings for JSON serialization
+        for result in results:
+            if 'updated_at' in result and result['updated_at']:
+                result['updated_at'] = result['updated_at'].isoformat()
+        return results
+    except Exception as e:
+        logger.error(f"Error getting all system settings: {e}")
+        return []
+
+def delete_system_setting(key: str) -> bool:
+    """Delete a system setting"""
+    try:
+        query = "DELETE FROM system_settings WHERE setting_key = %s"
+        db.db.execute_single(query, (key,))
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting system setting {key}: {e}")
+        return False
+
+def initialize_default_settings():
+    """Initialize default system settings"""
+    default_settings = [
+        ('system_name', 'IntelliSched', 'string', 'Name of the scheduling system'),
+        ('max_schedule_generations_per_day', '10', 'integer', 'Maximum number of schedule generations per user per day'),
+        ('session_timeout_minutes', '30', 'integer', 'User session timeout in minutes'),
+        ('enable_notifications', 'true', 'boolean', 'Enable system notifications'),
+        ('maintenance_mode', 'false', 'boolean', 'Enable maintenance mode'),
+        ('backup_frequency_hours', '24', 'integer', 'Backup frequency in hours'),
+        ('email_notifications', 'true', 'boolean', 'Enable email notifications'),
+        ('default_semester', '1', 'integer', 'Default semester for schedule generation'),
+        ('max_file_upload_size_mb', '10', 'integer', 'Maximum file upload size in MB'),
+        ('auto_approve_schedules', 'false', 'boolean', 'Automatically approve schedules without dean review')
+    ]
+    
+    for key, value, setting_type, description in default_settings:
+        # Only insert if setting doesn't exist
+        existing = get_system_setting(key)
+        if not existing:
+            set_system_setting(key, value, setting_type, description, 'system')
+            logger.info(f"Initialized default setting: {key} = {value}")
+
+# Initialize default settings when module is imported
+initialize_default_settings()
