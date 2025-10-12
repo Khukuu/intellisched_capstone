@@ -7720,3 +7720,1346 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-12 14:43:13,026 - app - INFO - Retrieving notifications for user_id: 9
 2025-10-12 14:43:13,092 - app - INFO - Found 9 notifications for user_id: 9
 2025-10-12 14:43:13,153 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:43:23,070 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:43:33,077 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:43:42,940 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:43:43,108 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:43:43,167 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:43:43,230 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:43:53,239 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:44:03,079 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:44:12,932 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:44:13,044 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:44:13,143 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:44:13,470 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:44:23,083 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:44:33,083 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:44:42,953 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:44:43,020 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:44:43,083 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:44:43,153 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:44:53,108 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:45:03,063 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:45:12,927 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:45:13,000 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:45:13,069 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:45:13,400 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:45:23,168 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:45:33,227 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:45:42,926 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:45:43,102 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:45:43,175 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:45:43,448 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:45:53,095 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:46:03,104 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:46:12,932 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:46:13,004 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:46:13,079 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:46:13,329 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:46:23,180 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:46:33,077 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:46:42,928 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:46:42,997 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:46:43,056 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:46:43,251 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:46:53,196 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:47:03,081 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:47:12,929 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:47:13,001 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:47:13,078 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:47:13,339 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:47:23,093 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:47:33,088 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:47:42,928 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:47:43,001 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:47:43,068 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:47:43,420 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:47:53,086 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:48:01,260 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:48:01,528 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:48:01,641 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:48:01,985 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:48:11,632 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:48:21,457 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:48:31,258 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:48:31,326 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:48:31,394 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:48:31,714 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:48:41,456 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:48:51,539 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:49:01,275 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:49:01,354 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:49:01,527 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:49:01,876 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:49:11,566 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:49:21,533 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:49:31,259 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:49:31,332 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:49:31,417 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:49:31,760 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:49:41,461 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:49:51,682 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:50:01,276 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:50:01,349 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:50:01,421 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:50:01,683 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:50:11,655 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:50:21,458 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:50:31,257 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:50:31,330 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:50:31,497 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:50:31,753 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:50:41,449 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:50:51,561 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:01,260 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:51:01,437 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:51:01,520 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:51:01,676 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:05,990 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:51:06,127 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:51:06,237 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:51:06,516 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:16,225 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:26,313 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:36,002 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:51:36,077 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:51:36,140 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:51:36,474 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:46,256 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:51:56,130 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:52:05,996 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:52:06,212 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:52:06,310 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:52:06,382 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:52:16,234 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:52:26,243 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:52:35,996 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:52:36,066 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:52:36,132 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:52:36,277 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:52:46,131 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:52:56,168 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:53:05,999 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:53:06,125 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:53:06,221 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:53:06,340 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:53:16,179 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:53:26,264 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:53:36,001 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:53:36,083 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:53:36,156 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:53:36,254 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:53:46,344 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:53:56,136 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:54:06,002 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:54:06,070 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:54:06,235 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:54:06,319 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:54:16,120 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:54:26,133 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:54:35,994 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:54:36,059 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:54:36,121 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:54:36,334 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:54:46,189 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:54:56,122 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:55:06,002 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:55:06,075 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:55:06,140 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:55:06,210 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:55:16,149 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:55:26,338 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:55:35,998 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:55:36,082 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:55:36,160 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:55:36,232 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:55:46,138 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:55:56,213 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:06,001 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:56:06,171 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:56:06,241 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:56:06,430 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:16,321 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:26,325 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:36,007 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:56:36,190 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:56:36,265 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:56:36,487 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:37,712 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:56:38,058 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:56:38,199 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:56:38,563 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:48,060 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:56:57,981 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:57:07,710 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:57:07,816 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:57:07,893 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:57:08,287 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:57:17,975 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:57:28,068 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:57:37,718 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:57:37,786 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:57:37,854 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:57:38,106 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:57:47,879 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:57:57,877 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:58:07,708 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:58:07,786 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:58:07,958 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:58:08,302 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:58:17,890 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:58:27,893 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:58:37,709 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:58:37,883 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:58:37,952 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:58:38,114 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:58:48,002 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:58:57,909 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:59:07,712 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:59:07,788 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:59:07,855 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:59:08,009 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:59:09,951 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:59:10,121 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:59:10,251 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:59:10,446 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:59:20,220 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:59:30,110 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:59:39,952 - app - INFO - Getting notifications for username: dean
+2025-10-12 14:59:40,025 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 14:59:40,091 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 14:59:40,359 - database - INFO - Found 0 pending schedules in database
+2025-10-12 14:59:50,106 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:00:00,282 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:00:10,017 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:00:10,092 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:00:10,164 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:00:10,385 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:00:20,171 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:00:30,393 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:00:40,017 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:00:40,207 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:00:40,278 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:00:40,450 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:00:50,244 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:00,437 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:10,015 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:01:10,090 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:01:10,162 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:01:14,189 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:14,334 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:14,881 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:01:15,011 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:01:15,180 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:01:15,484 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:25,041 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:34,850 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:35,199 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:35,932 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:44,883 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:01:44,976 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:01:45,148 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:01:45,228 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:01:55,039 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:02:05,126 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:02:14,883 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:02:14,956 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:02:15,019 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:02:15,342 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:02:25,080 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:02:35,294 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:02:44,884 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:02:44,957 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:02:45,024 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:02:45,199 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:02:55,106 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:03:05,027 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:03:14,891 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:03:14,973 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:03:15,042 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:03:15,116 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:03:25,153 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:03:35,190 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:03:44,886 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:03:44,952 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:03:45,019 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:03:45,161 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:03:49,908 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:03:50,173 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:03:50,272 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:03:50,506 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:04:00,184 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:04:10,150 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:04:20,017 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:04:20,185 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:04:20,352 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:04:20,493 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:04:30,325 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:04:40,163 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:04:50,027 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:04:50,097 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:04:50,162 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:04:50,370 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:05:00,246 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:05:10,142 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:05:20,016 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:05:20,083 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:05:20,146 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:05:28,232 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:05:50,027 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:05:50,095 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:05:50,161 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:06:20,023 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:06:20,197 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:06:20,262 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:06:25,337 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:06:25,440 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:06:26,122 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:06:26,241 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:06:26,353 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:06:26,603 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:06:36,335 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:06:47,170 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:06:57,019 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:06:57,110 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:06:57,182 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:06:57,258 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:07:07,415 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:07:17,275 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:07:27,025 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:07:27,089 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:07:27,156 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:07:27,298 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:07:37,163 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:07:57,014 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:07:57,081 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:07:57,141 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:08:27,088 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:08:27,381 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:08:27,486 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:08:27,595 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:08:27,703 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:08:28,105 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:08:28,323 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:08:28,429 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:08:28,653 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:08:38,271 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:08:48,146 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:08:58,005 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:08:58,115 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:08:58,287 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:08:58,629 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:09:08,235 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:09:18,148 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:09:28,010 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:09:28,090 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:09:28,153 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:09:28,263 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:09:38,234 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:09:48,165 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:09:58,019 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:09:58,106 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:09:58,293 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:09:58,449 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:10:08,241 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:10:18,172 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:10:21,883 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:10:22,165 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:10:22,256 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:10:22,469 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:10:32,007 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:10:42,001 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:10:51,862 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:10:51,932 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:10:51,995 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:10:52,070 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:11:02,170 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:11:12,000 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:11:21,856 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:11:21,956 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:11:22,062 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:11:22,445 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:11:32,204 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:11:42,167 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:12:09,445 - app - INFO - Login attempt for user: dean
+2025-10-12 15:12:09,720 - app - INFO - Login successful for user dean
+2025-10-12 15:12:10,110 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:12:10,377 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:12:10,752 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:12:11,263 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:12:20,515 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:12:30,464 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:12:40,084 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:12:40,310 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:12:40,465 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:12:40,713 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:12:50,359 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:00,407 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:10,080 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:13:10,152 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:13:10,223 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:13:10,462 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:18,550 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:13:18,665 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:13:18,776 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:13:19,062 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:28,801 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:38,703 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:48,557 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:13:48,644 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:13:48,711 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:13:48,792 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:13:58,801 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:14:08,816 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:14:18,562 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:14:18,701 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:14:18,808 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:14:18,910 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:14:28,715 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:14:38,776 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:14:48,552 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:14:48,649 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:14:48,754 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:14:48,848 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:14:58,705 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:15:08,860 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:15:18,554 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:15:18,715 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:15:18,838 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:15:19,060 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:15:28,840 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:15:38,751 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:15:48,557 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:15:48,648 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:15:48,728 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:15:48,831 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:15:51,723 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:15:51,940 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:15:52,156 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:15:52,431 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:16:02,034 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:16:11,913 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:16:21,712 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:16:21,788 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:16:21,863 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:16:22,141 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:16:31,927 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:16:41,916 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:16:51,712 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:16:51,922 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:16:52,034 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:16:52,381 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:17:02,048 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:17:11,940 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:17:21,722 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:17:21,809 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:17:21,893 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:17:22,325 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:17:32,104 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:17:41,970 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:17:51,712 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:17:51,925 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:17:52,004 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:17:52,225 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:18:02,180 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:18:12,081 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:18:21,717 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:18:21,824 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:18:21,911 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:18:22,195 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:18:32,066 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:18:41,958 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:18:51,362 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:18:51,833 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:18:52,091 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:18:52,479 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:01,604 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:09,586 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:19:09,813 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:19:09,945 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:19:10,235 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:10,332 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:19:10,419 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:19:10,615 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:19:10,895 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:11,294 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:19:11,459 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:19:11,621 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:19:11,747 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:19:11,917 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:19:12,017 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:19:12,131 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:12,645 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:22,096 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:32,001 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:41,751 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:19:41,927 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:19:42,003 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:19:42,176 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:19:52,183 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:20:02,023 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:20:11,750 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:20:11,821 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:20:11,901 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:20:12,077 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:20:22,141 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:20:32,028 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:20:41,760 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:20:41,935 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:20:42,006 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:20:42,237 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:20:52,165 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:02,160 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:11,756 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:21:11,955 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:21:12,034 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:21:12,369 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:18,716 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:21:18,921 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:21:19,053 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:21:19,169 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:19,612 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:21:19,885 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:21:20,006 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:21:20,163 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:30,039 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:39,998 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:49,455 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:21:49,541 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:21:49,719 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:21:49,846 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:21:59,710 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:22:09,783 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:22:19,438 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:22:19,515 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:22:19,592 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:22:19,879 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:22:29,655 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:22:39,761 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:22:49,459 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:22:49,685 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:22:49,789 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:22:50,104 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:22:59,638 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:23:09,691 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:23:19,454 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:23:19,542 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:23:19,724 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:23:19,930 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:23:27,666 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:23:27,985 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:23:28,202 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:23:28,544 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:23:38,184 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:23:47,841 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:23:57,672 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:23:57,752 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:23:57,827 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:23:58,090 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:24:07,856 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:24:17,859 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:24:27,660 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:24:27,742 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:24:27,934 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:24:28,397 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:24:37,862 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:24:47,906 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:24:57,658 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:24:57,751 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:24:57,837 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:24:58,220 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:25:07,989 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:25:13,442 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:25:13,657 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:25:13,924 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:25:14,285 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:25:23,816 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:25:33,585 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:25:43,418 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:25:43,499 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:25:43,575 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:25:43,923 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:25:53,620 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:26:03,708 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:26:13,441 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:26:13,530 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:26:13,607 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:26:13,781 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:26:23,756 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:26:33,721 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:26:43,433 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:26:43,518 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:26:43,611 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:26:43,822 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:26:53,945 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:27:03,672 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:27:13,439 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:27:13,551 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:27:13,657 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:27:13,807 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:27:23,607 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:27:33,637 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:27:43,430 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:27:43,518 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:27:43,596 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:27:43,692 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:27:53,682 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:28:03,653 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:28:13,421 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:28:13,496 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:28:13,680 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:28:13,970 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:28:23,352 - app - INFO - Login attempt for user: chair
+2025-10-12 15:28:23,556 - app - INFO - Login successful for user chair
+2025-10-12 15:28:23,965 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:28:24,097 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:28:24,229 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:28:41,154 - app - INFO - Received request for /schedule
+2025-10-12 15:28:41,154 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-12 15:28:41,664 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-12 15:28:41,665 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 15:28:41,666 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-12 15:28:41,666 - app - INFO - Filtered program sections: {'CS': {1: 1, 3: 1}, 'IT': {1: 1, 2: 2, 3: 1}}
+2025-10-12 15:28:53,951 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:28:54,036 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:28:54,111 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:30:15,529 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:30:15,673 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:30:15,822 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:34:00,442 - app - INFO - Login attempt for user: dean
+2025-10-12 15:34:00,632 - app - INFO - Login successful for user dean
+2025-10-12 15:34:01,155 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:34:01,369 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:34:01,503 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:34:01,727 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:34:12,487 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:34:21,492 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:34:31,157 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:34:31,302 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:34:31,437 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:34:31,818 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:34:45,069 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:34:51,366 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:35:01,152 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:35:01,235 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:35:01,322 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:35:01,512 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:35:15,998 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:35:21,359 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:35:31,152 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:35:31,253 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:35:31,351 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:35:31,640 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:35:41,375 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:35:51,461 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:36:01,162 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:36:01,252 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:36:01,333 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:36:01,806 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:36:11,546 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:36:26,945 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:36:31,156 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:36:31,246 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:36:31,437 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:36:31,790 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:36:41,384 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:36:51,370 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:01,170 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:37:01,255 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:37:01,339 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:37:01,581 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:11,438 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:12,347 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:37:12,484 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:37:12,586 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:37:12,799 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:22,521 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:32,683 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:42,346 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:37:42,450 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:37:42,552 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:37:42,844 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:37:52,588 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:38:02,575 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:38:12,345 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:38:12,431 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:38:12,514 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:38:12,825 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:38:22,694 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:38:32,608 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:38:42,374 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:38:42,478 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:38:42,566 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:38:42,957 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:38:52,741 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:39:08,715 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:39:12,361 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:39:12,460 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:39:12,571 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:39:12,821 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:39:22,596 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:39:32,513 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:39:42,364 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:39:42,458 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:39:42,544 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:39:42,626 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:39:52,536 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:40:02,537 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:40:12,344 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:40:12,423 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:40:12,493 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:40:12,712 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:40:22,593 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:40:26,974 - app - INFO - Login attempt for user: chair
+2025-10-12 15:40:27,124 - app - INFO - Login successful for user chair
+2025-10-12 15:40:27,526 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:40:27,658 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:40:27,758 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:46:55,087 - app - INFO - Login attempt for user: chair
+2025-10-12 15:46:55,277 - app - INFO - Login successful for user chair
+2025-10-12 15:46:55,745 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:46:56,108 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:46:56,263 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:51:53,855 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:51:54,076 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:51:54,185 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:51:59,844 - app - INFO - Received request for /schedule
+2025-10-12 15:51:59,844 - app - INFO - Scheduling for programs: ['CS']
+2025-10-12 15:52:00,202 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 15:52:00,203 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 15:52:00,203 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 15:52:00,204 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-12 15:52:08,543 - app - INFO - Login attempt for user: dean
+2025-10-12 15:52:08,672 - app - INFO - Login successful for user dean
+2025-10-12 15:52:08,932 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:52:09,035 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:52:09,125 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:52:09,328 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:52:19,184 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:52:26,525 - app - INFO - Login attempt for user: chair
+2025-10-12 15:52:26,788 - app - INFO - Login successful for user chair
+2025-10-12 15:52:27,149 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:52:27,255 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:52:27,448 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:54:34,704 - app - INFO - Login attempt for user: dean
+2025-10-12 15:54:34,786 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 15:54:35,778 - app - INFO - Login attempt for user: dean
+2025-10-12 15:54:35,918 - app - INFO - Login successful for user dean
+2025-10-12 15:54:36,329 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:54:36,489 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:54:36,585 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:54:36,910 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:54:46,473 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:54:56,598 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:06,328 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:55:06,435 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:55:06,547 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:55:06,976 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:16,633 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:26,515 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:36,349 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:55:36,479 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:55:36,594 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:55:37,018 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:46,515 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:49,115 - app - INFO - Getting notifications for username: dean
+2025-10-12 15:55:49,330 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 15:55:49,450 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 15:55:49,730 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:55:59,263 - database - INFO - Found 0 pending schedules in database
+2025-10-12 15:56:11,415 - app - INFO - Login attempt for user: chair
+2025-10-12 15:56:11,550 - app - INFO - Login successful for user chair
+2025-10-12 15:56:12,136 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:56:12,386 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:56:12,593 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:57:21,365 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:57:21,733 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:57:21,858 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:57:25,047 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:57:25,176 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:57:25,361 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:57:28,418 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:57:28,642 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:57:28,750 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 15:59:23,363 - app - INFO - Getting notifications for username: chair
+2025-10-12 15:59:23,612 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 15:59:23,795 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:01:52,145 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:01:52,259 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:01:52,435 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:04:34,407 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:04:34,585 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:04:34,766 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:04:39,843 - app - INFO - Received request for /schedule
+2025-10-12 16:04:39,843 - app - INFO - Scheduling for programs: ['CS']
+2025-10-12 16:04:40,175 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:04:40,175 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 16:04:40,176 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:04:40,176 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-12 16:05:04,402 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:05:04,579 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:05:04,645 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:05:34,409 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:05:34,498 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:05:34,705 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:06:18,660 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:06:18,839 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:06:18,963 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:06:36,915 - app - INFO - Login attempt for user: chair
+2025-10-12 16:06:37,071 - app - INFO - Login successful for user chair
+2025-10-12 16:06:37,530 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:06:37,675 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:06:37,789 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:09:44,921 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:09:45,044 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:09:45,147 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:11:01,893 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:11:02,032 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:11:02,190 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:15:29,019 - app - INFO - Login attempt for user: dean
+2025-10-12 16:15:29,148 - app - INFO - Login successful for user dean
+2025-10-12 16:15:29,521 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:15:29,718 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:15:29,902 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:15:30,053 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:15:39,713 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:15:49,696 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:15:59,514 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:15:59,637 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:15:59,734 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:16:00,099 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:16:09,898 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:16:19,795 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:16:29,512 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:16:29,588 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:16:29,748 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:16:29,970 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:16:39,703 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:16:50,173 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:17:00,027 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:17:00,113 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:17:00,192 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:17:00,288 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:17:02,717 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:17:03,574 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:17:03,782 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:17:03,864 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:17:04,156 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:17:09,069 - app - INFO - Login attempt for user: chair
+2025-10-12 16:17:09,211 - app - INFO - Login successful for user chair
+2025-10-12 16:17:09,540 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:17:09,650 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:17:09,738 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:17:28,969 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:17:29,114 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:17:29,234 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:17:50,712 - app - INFO - Login attempt for user: dean
+2025-10-12 16:17:50,781 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 16:17:53,627 - app - INFO - Login attempt for user: dean
+2025-10-12 16:17:53,768 - app - INFO - Login successful for user dean
+2025-10-12 16:17:54,187 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:17:54,301 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:17:54,477 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:17:54,623 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:18:04,339 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:18:14,451 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:18:24,202 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:18:24,388 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:18:24,462 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:18:24,535 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:18:34,355 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:18:44,439 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:18:54,204 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:18:54,294 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:18:54,373 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:18:54,628 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:19:04,389 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:19:14,587 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:19:24,204 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:19:24,303 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:19:24,373 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:19:24,446 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:19:34,365 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:19:44,523 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:19:54,200 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:19:54,272 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:19:54,343 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:19:54,588 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:04,331 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:04,692 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:20:04,977 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:20:05,097 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 16:20:05,474 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:13,770 - database - INFO - Deleting notification 27
+2025-10-12 16:20:13,860 - database - INFO - Successfully deleted notification 27
+2025-10-12 16:20:14,753 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:20:14,836 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:20:14,907 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:20:15,146 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:24,857 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:34,696 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:20:34,768 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:20:34,830 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:20:34,978 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:44,862 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:20:54,990 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:21:04,702 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:21:04,774 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:21:04,849 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:21:05,089 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:21:14,865 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:21:25,063 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:21:34,698 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:21:34,778 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:21:34,855 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:21:35,083 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:21:45,036 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:21:55,063 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:22:04,693 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:22:04,783 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:22:04,854 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:22:05,288 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:22:14,954 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:22:24,944 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:22:34,694 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:22:34,766 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:22:34,928 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:22:35,152 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:22:44,974 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:22:54,962 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:23:04,692 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:23:04,760 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:23:04,829 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:23:05,084 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:23:14,876 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:23:24,873 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:23:34,694 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:23:34,770 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:23:34,943 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:23:35,332 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:23:44,860 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:23:54,971 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:24:04,697 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:24:04,763 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:24:04,832 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:24:04,980 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:24:14,866 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:24:24,868 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:24:34,712 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:24:34,785 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:24:34,856 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:24:35,078 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:24:44,857 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:24:55,482 - app - INFO - Login attempt for user: chair
+2025-10-12 16:24:55,732 - app - INFO - Login successful for user chair
+2025-10-12 16:24:56,229 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:24:56,394 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:24:56,608 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:25:26,157 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:25:26,330 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:25:26,403 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:25:46,136 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:25:46,225 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:25:46,338 - app - INFO - Found 30 notifications for user_id: 8
+2025-10-12 16:25:54,548 - database - INFO - Deleting notification 48
+2025-10-12 16:25:54,626 - database - INFO - Successfully deleted notification 48
+2025-10-12 16:25:54,640 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:25:54,715 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:25:54,890 - app - INFO - Found 29 notifications for user_id: 8
+2025-10-12 16:25:57,971 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:25:58,049 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:25:58,228 - app - INFO - Found 29 notifications for user_id: 8
+2025-10-12 16:25:58,240 - database - INFO - Deleting notification 46
+2025-10-12 16:25:58,311 - database - INFO - Successfully deleted notification 46
+2025-10-12 16:25:58,322 - database - INFO - Deleting notification 42
+2025-10-12 16:25:58,488 - database - INFO - Successfully deleted notification 42
+2025-10-12 16:25:58,489 - database - INFO - Deleting notification 39
+2025-10-12 16:25:58,553 - database - INFO - Successfully deleted notification 39
+2025-10-12 16:25:58,555 - database - INFO - Deleting notification 34
+2025-10-12 16:25:58,615 - database - INFO - Successfully deleted notification 34
+2025-10-12 16:25:58,616 - database - INFO - Deleting notification 38
+2025-10-12 16:25:58,682 - database - INFO - Successfully deleted notification 38
+2025-10-12 16:25:58,683 - database - INFO - Deleting notification 32
+2025-10-12 16:25:58,750 - database - INFO - Successfully deleted notification 32
+2025-10-12 16:25:58,752 - database - INFO - Deleting notification 40
+2025-10-12 16:25:58,818 - database - INFO - Successfully deleted notification 40
+2025-10-12 16:25:58,826 - database - INFO - Deleting notification 30
+2025-10-12 16:25:58,892 - database - INFO - Successfully deleted notification 30
+2025-10-12 16:25:58,893 - database - INFO - Deleting notification 25
+2025-10-12 16:25:58,956 - database - INFO - Successfully deleted notification 25
+2025-10-12 16:25:58,958 - database - INFO - Deleting notification 26
+2025-10-12 16:25:59,025 - database - INFO - Successfully deleted notification 26
+2025-10-12 16:25:59,027 - database - INFO - Deleting notification 29
+2025-10-12 16:25:59,091 - database - INFO - Successfully deleted notification 29
+2025-10-12 16:25:59,093 - database - INFO - Deleting notification 24
+2025-10-12 16:25:59,265 - database - INFO - Successfully deleted notification 24
+2025-10-12 16:25:59,266 - database - INFO - Deleting notification 28
+2025-10-12 16:25:59,334 - database - INFO - Successfully deleted notification 28
+2025-10-12 16:25:59,341 - database - INFO - Deleting notification 19
+2025-10-12 16:25:59,408 - database - INFO - Successfully deleted notification 19
+2025-10-12 16:25:59,410 - database - INFO - Deleting notification 23
+2025-10-12 16:25:59,475 - database - INFO - Successfully deleted notification 23
+2025-10-12 16:25:59,477 - database - INFO - Deleting notification 21
+2025-10-12 16:25:59,537 - database - INFO - Successfully deleted notification 21
+2025-10-12 16:25:59,538 - database - INFO - Deleting notification 22
+2025-10-12 16:25:59,601 - database - INFO - Successfully deleted notification 22
+2025-10-12 16:25:59,604 - database - INFO - Deleting notification 20
+2025-10-12 16:25:59,667 - database - INFO - Successfully deleted notification 20
+2025-10-12 16:25:59,670 - database - INFO - Deleting notification 18
+2025-10-12 16:25:59,727 - database - INFO - Successfully deleted notification 18
+2025-10-12 16:25:59,735 - database - INFO - Deleting notification 13
+2025-10-12 16:25:59,810 - database - INFO - Successfully deleted notification 13
+2025-10-12 16:25:59,812 - database - INFO - Deleting notification 17
+2025-10-12 16:25:59,877 - database - INFO - Successfully deleted notification 17
+2025-10-12 16:25:59,880 - database - INFO - Deleting notification 14
+2025-10-12 16:25:59,944 - database - INFO - Successfully deleted notification 14
+2025-10-12 16:25:59,945 - database - INFO - Deleting notification 16
+2025-10-12 16:26:00,012 - database - INFO - Successfully deleted notification 16
+2025-10-12 16:26:00,014 - database - INFO - Deleting notification 12
+2025-10-12 16:26:00,085 - database - INFO - Successfully deleted notification 12
+2025-10-12 16:26:00,086 - database - INFO - Deleting notification 15
+2025-10-12 16:26:00,150 - database - INFO - Successfully deleted notification 15
+2025-10-12 16:26:00,157 - database - INFO - Deleting notification 8
+2025-10-12 16:26:00,222 - database - INFO - Successfully deleted notification 8
+2025-10-12 16:26:00,223 - database - INFO - Deleting notification 10
+2025-10-12 16:26:00,291 - database - INFO - Successfully deleted notification 10
+2025-10-12 16:26:00,292 - database - INFO - Deleting notification 7
+2025-10-12 16:26:00,363 - database - INFO - Successfully deleted notification 7
+2025-10-12 16:26:00,364 - database - INFO - Deleting notification 11
+2025-10-12 16:26:00,432 - database - INFO - Successfully deleted notification 11
+2025-10-12 16:26:00,439 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:26:00,509 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:26:00,674 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:26:07,790 - app - INFO - Login attempt for user: dean
+2025-10-12 16:26:07,929 - app - INFO - Login successful for user dean
+2025-10-12 16:26:08,333 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:26:08,506 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:26:08,607 - app - INFO - Found 8 notifications for user_id: 9
+2025-10-12 16:26:08,949 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:26:11,594 - database - INFO - Deleting notification 47
+2025-10-12 16:26:11,676 - database - INFO - Successfully deleted notification 47
+2025-10-12 16:26:13,142 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:26:13,216 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:26:13,286 - app - INFO - Found 7 notifications for user_id: 9
+2025-10-12 16:26:18,477 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:26:20,645 - database - INFO - Deleting notification 45
+2025-10-12 16:26:20,723 - database - INFO - Successfully deleted notification 45
+2025-10-12 16:26:30,638 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:26:30,747 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:26:30,845 - app - INFO - Found 6 notifications for user_id: 9
+2025-10-12 16:26:31,019 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:26:38,962 - app - INFO - Login attempt for user: chair
+2025-10-12 16:26:39,097 - app - INFO - Login successful for user chair
+2025-10-12 16:26:39,621 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:26:39,749 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:26:39,931 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:26:43,913 - app - INFO - Received request for /schedule
+2025-10-12 16:26:43,914 - app - INFO - Scheduling for programs: ['CS']
+2025-10-12 16:26:44,127 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:26:44,127 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 16:26:44,128 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:26:44,128 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-12 16:26:46,291 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-12 16:26:46,364 - database - INFO - Successfully created notification for user_id: 9
+2025-10-12 16:26:46,364 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-12 16:26:54,544 - app - INFO - Login attempt for user: dean
+2025-10-12 16:26:54,678 - app - INFO - Login successful for user dean
+2025-10-12 16:26:54,959 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:26:55,141 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:26:55,206 - app - INFO - Found 7 notifications for user_id: 9
+2025-10-12 16:26:55,382 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:27:02,996 - database - INFO - Creating notification for user_id: 8, title: Schedule Rejected, type: warning
+2025-10-12 16:27:03,175 - database - INFO - Successfully created notification for user_id: 8
+2025-10-12 16:27:04,287 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:27:05,341 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:27:08,385 - app - INFO - Login attempt for user: chair
+2025-10-12 16:27:08,514 - app - INFO - Login successful for user chair
+2025-10-12 16:27:08,862 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:27:08,980 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:27:09,074 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-12 16:27:11,746 - database - INFO - Deleting notification 50
+2025-10-12 16:27:11,823 - database - INFO - Successfully deleted notification 50
+2025-10-12 16:27:11,832 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:27:11,905 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:27:12,072 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:27:38,837 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:27:38,905 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:27:39,074 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:28:08,838 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:28:08,900 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:28:09,062 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:28:38,849 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:28:39,081 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:28:39,195 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:29:08,840 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:29:08,928 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:29:09,026 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:29:38,722 - app - INFO - Login attempt for user: dean
+2025-10-12 16:29:38,906 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 16:29:40,662 - app - INFO - Login attempt for user: dean
+2025-10-12 16:29:40,737 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 16:29:43,494 - app - INFO - Login attempt for user: dean
+2025-10-12 16:29:43,755 - app - INFO - Login successful for user dean
+2025-10-12 16:29:44,101 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:29:44,232 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:29:44,335 - app - INFO - Found 7 notifications for user_id: 9
+2025-10-12 16:29:44,754 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:29:49,363 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:29:49,463 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:29:49,560 - app - INFO - Found 7 notifications for user_id: 9
+2025-10-12 16:29:49,580 - database - INFO - Deleting notification 49
+2025-10-12 16:29:49,677 - database - INFO - Successfully deleted notification 49
+2025-10-12 16:29:49,679 - database - INFO - Deleting notification 43
+2025-10-12 16:29:49,771 - database - INFO - Successfully deleted notification 43
+2025-10-12 16:29:49,781 - database - INFO - Deleting notification 37
+2025-10-12 16:29:49,886 - database - INFO - Successfully deleted notification 37
+2025-10-12 16:29:49,889 - database - INFO - Deleting notification 35
+2025-10-12 16:29:50,002 - database - INFO - Successfully deleted notification 35
+2025-10-12 16:29:50,004 - database - INFO - Deleting notification 36
+2025-10-12 16:29:50,105 - database - INFO - Successfully deleted notification 36
+2025-10-12 16:29:50,107 - database - INFO - Deleting notification 41
+2025-10-12 16:29:50,176 - database - INFO - Successfully deleted notification 41
+2025-10-12 16:29:50,179 - database - INFO - Deleting notification 33
+2025-10-12 16:29:50,257 - database - INFO - Successfully deleted notification 33
+2025-10-12 16:29:50,265 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:29:50,345 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:29:50,416 - app - INFO - Found 0 notifications for user_id: 9
+2025-10-12 16:29:54,483 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:29:58,835 - app - INFO - Login attempt for user: chair
+2025-10-12 16:29:59,080 - app - INFO - Login successful for user chair
+2025-10-12 16:29:59,457 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:29:59,585 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:29:59,721 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:30:04,630 - app - INFO - Received request for /schedule
+2025-10-12 16:30:04,630 - app - INFO - Scheduling for programs: ['CS']
+2025-10-12 16:30:05,066 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:30:05,067 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 16:30:05,067 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:30:05,068 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-12 16:30:08,060 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-12 16:30:08,149 - database - INFO - Successfully created notification for user_id: 9
+2025-10-12 16:30:08,150 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-12 16:30:13,650 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-12 16:30:13,833 - database - INFO - Successfully created notification for user_id: 9
+2025-10-12 16:30:13,833 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-12 16:30:19,371 - app - INFO - Login attempt for user: chair
+2025-10-12 16:30:19,608 - app - INFO - Login successful for user chair
+2025-10-12 16:30:20,097 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:30:20,231 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:30:20,345 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:30:28,394 - app - INFO - Login attempt for user: dean
+2025-10-12 16:30:28,561 - app - INFO - Login successful for user dean
+2025-10-12 16:30:28,850 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:30:28,951 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:30:29,033 - app - INFO - Found 2 notifications for user_id: 9
+2025-10-12 16:30:29,332 - database - INFO - Found 2 pending schedules in database
+2025-10-12 16:30:37,554 - database - INFO - Deleting notification 51
+2025-10-12 16:30:37,660 - database - INFO - Successfully deleted notification 51
+2025-10-12 16:30:37,670 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:30:37,761 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:30:37,953 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-12 16:30:39,002 - database - INFO - Found 2 pending schedules in database
+2025-10-12 16:30:41,667 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:30:41,748 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:30:41,820 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-12 16:30:41,830 - database - INFO - Deleting notification 52
+2025-10-12 16:30:41,914 - database - INFO - Successfully deleted notification 52
+2025-10-12 16:30:41,922 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:30:42,100 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:30:42,172 - app - INFO - Found 0 notifications for user_id: 9
+2025-10-12 16:30:46,901 - database - INFO - Creating notification for user_id: 8, title: Schedule Rejected, type: warning
+2025-10-12 16:30:46,978 - database - INFO - Successfully created notification for user_id: 8
+2025-10-12 16:30:48,096 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:30:49,041 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:30:56,311 - database - INFO - Creating notification for user_id: 8, title: Schedule Rejected, type: warning
+2025-10-12 16:30:56,385 - database - INFO - Successfully created notification for user_id: 8
+2025-10-12 16:30:57,326 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:31:01,292 - app - INFO - Login attempt for user: chair
+2025-10-12 16:31:01,361 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-12 16:31:05,179 - app - INFO - Login attempt for user: chair
+2025-10-12 16:31:05,324 - app - INFO - Login successful for user chair
+2025-10-12 16:31:05,882 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:31:06,003 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:31:06,184 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-12 16:31:08,952 - database - INFO - Deleting notification 53
+2025-10-12 16:31:09,022 - database - INFO - Successfully deleted notification 53
+2025-10-12 16:31:09,033 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:31:09,102 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:31:09,165 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-12 16:31:11,830 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:31:12,021 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:31:12,087 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-12 16:31:12,095 - database - INFO - Deleting notification 54
+2025-10-12 16:31:12,175 - database - INFO - Successfully deleted notification 54
+2025-10-12 16:31:12,184 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:31:12,255 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:31:12,323 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:31:26,400 - app - INFO - Deleted schedule file: .\saved_schedules\20251012083013_sa.json
+2025-10-12 16:31:26,401 - app - INFO - Attempting to delete schedule approval record for 20251012083013
+2025-10-12 16:31:26,634 - app - INFO - Successfully deleted schedule approval record for 20251012083013
+2025-10-12 16:31:29,645 - app - INFO - Deleted schedule file: .\saved_schedules\20251012083007_as.json
+2025-10-12 16:31:29,646 - app - INFO - Attempting to delete schedule approval record for 20251012083007
+2025-10-12 16:31:29,862 - app - INFO - Successfully deleted schedule approval record for 20251012083007
+2025-10-12 16:31:33,704 - app - INFO - Deleted schedule file: .\saved_schedules\20251012082646_GeneratedSchedule.json
+2025-10-12 16:31:33,704 - app - INFO - Attempting to delete schedule approval record for 20251012082646
+2025-10-12 16:31:34,093 - app - INFO - Successfully deleted schedule approval record for 20251012082646
+2025-10-12 16:34:22,436 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:34:22,570 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:34:22,702 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:34:44,315 - app - INFO - Login attempt for user: dean
+2025-10-12 16:34:44,381 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 16:34:46,618 - app - INFO - Login attempt for user: dean
+2025-10-12 16:34:46,748 - app - INFO - Login successful for user dean
+2025-10-12 16:34:47,017 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:34:47,112 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:34:47,289 - app - INFO - Found 0 notifications for user_id: 9
+2025-10-12 16:34:47,641 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:34:57,325 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:35:00,196 - app - INFO - Login attempt for user: admin
+2025-10-12 16:35:00,433 - app - INFO - Login successful for user admin
+2025-10-12 16:35:00,706 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:35:00,807 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:35:00,990 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:35:16,358 - app - INFO - Login attempt for user: sec
+2025-10-12 16:35:16,488 - app - INFO - Login successful for user sec
+2025-10-12 16:35:16,898 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:35:17,132 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:35:17,201 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:35:46,899 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:35:46,962 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:35:47,127 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:36:16,900 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:36:16,970 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:36:17,041 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:36:46,902 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:36:47,077 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:36:47,152 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:37:17,020 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:37:17,275 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:37:17,443 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:37:46,910 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:37:47,017 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:37:47,092 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:38:16,893 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:38:16,963 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:38:17,032 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:38:46,898 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:38:46,956 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:38:47,015 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:38:53,585 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:38:53,667 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:38:53,739 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:39:01,118 - app - INFO - Login attempt for user: chair
+2025-10-12 16:39:01,245 - app - INFO - Login successful for user chair
+2025-10-12 16:39:01,594 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:39:01,692 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:39:01,803 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:39:19,269 - app - INFO - Login attempt for user: dean
+2025-10-12 16:39:19,335 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 16:39:22,554 - app - INFO - Login attempt for user: dean
+2025-10-12 16:39:22,697 - app - INFO - Login successful for user dean
+2025-10-12 16:39:22,954 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:39:23,043 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:39:23,116 - app - INFO - Found 0 notifications for user_id: 9
+2025-10-12 16:39:23,394 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:39:33,284 - database - INFO - Found 0 pending schedules in database
+2025-10-12 16:39:38,455 - app - INFO - Login attempt for user: admin
+2025-10-12 16:39:38,525 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-12 16:39:41,645 - app - INFO - Login attempt for user: admin
+2025-10-12 16:39:41,789 - app - INFO - Login successful for user admin
+2025-10-12 16:39:42,039 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:39:42,140 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:39:42,213 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:40:12,566 - app - INFO - Login attempt for user: chair
+2025-10-12 16:40:12,825 - app - INFO - Login successful for user chair
+2025-10-12 16:40:13,142 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:40:13,333 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:40:13,500 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:40:22,567 - app - INFO - Deleted schedule file: .\saved_schedules\20251012035609_2ndSemesterAY2025-2026.json
+2025-10-12 16:40:22,568 - app - INFO - Attempting to delete schedule approval record for 20251012035609
+2025-10-12 16:40:22,875 - app - INFO - Successfully deleted schedule approval record for 20251012035609
+2025-10-12 16:40:28,793 - app - INFO - Login attempt for user: admin
+2025-10-12 16:40:28,928 - app - INFO - Login successful for user admin
+2025-10-12 16:40:29,211 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:40:29,303 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:40:29,388 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:40:42,743 - app - INFO - Login attempt for user: chair
+2025-10-12 16:40:42,867 - app - INFO - Login successful for user chair
+2025-10-12 16:40:43,165 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:40:43,362 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:40:43,430 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:40:48,931 - app - INFO - Received request for /schedule
+2025-10-12 16:40:48,932 - app - INFO - Scheduling for programs: ['CS']
+2025-10-12 16:40:49,145 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:40:49,146 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 16:40:49,146 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 16:40:49,146 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-12 16:40:55,784 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-12 16:40:55,962 - database - INFO - Successfully created notification for user_id: 9
+2025-10-12 16:40:55,962 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-12 16:41:01,873 - app - INFO - Login attempt for user: admin
+2025-10-12 16:41:02,112 - app - INFO - Login successful for user admin
+2025-10-12 16:41:02,406 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:41:02,507 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:41:02,693 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:41:32,401 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:41:32,469 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:41:32,538 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:44:59,764 - app - INFO - Login attempt for user: admin
+2025-10-12 16:44:59,892 - app - INFO - Login successful for user admin
+2025-10-12 16:45:00,375 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:45:00,457 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:45:00,532 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:45:30,377 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:45:30,444 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:45:30,512 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:45:31,503 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:45:31,635 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:45:31,754 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:45:36,522 - app - INFO - Login attempt for user: dean
+2025-10-12 16:45:36,638 - app - INFO - Login successful for user dean
+2025-10-12 16:45:36,888 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:45:36,977 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:45:37,046 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-12 16:45:37,277 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:45:47,117 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:45:57,110 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:46:02,825 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:46:02,942 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:46:03,075 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-12 16:46:03,279 - database - INFO - Found 1 pending schedules in database
+2025-10-12 16:46:09,172 - database - INFO - Deleting notification 55
+2025-10-12 16:46:09,248 - database - INFO - Successfully deleted notification 55
+2025-10-12 16:46:09,258 - app - INFO - Getting notifications for username: dean
+2025-10-12 16:46:09,324 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 16:46:09,395 - app - INFO - Found 0 notifications for user_id: 9
+2025-10-12 16:46:15,210 - app - INFO - Login attempt for user: chair
+2025-10-12 16:46:15,343 - app - INFO - Login successful for user chair
+2025-10-12 16:46:15,642 - app - INFO - Getting notifications for username: chair
+2025-10-12 16:46:15,726 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 16:46:15,904 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-12 16:46:21,728 - app - INFO - Login attempt for user: sec
+2025-10-12 16:46:21,855 - app - INFO - Login successful for user sec
+2025-10-12 16:46:22,112 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:46:22,211 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:46:22,287 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:46:35,253 - app - INFO - Getting notifications for username: sec
+2025-10-12 16:46:35,363 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-12 16:46:35,561 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-12 16:46:39,863 - app - INFO - Login attempt for user: admin
+2025-10-12 16:46:40,106 - app - INFO - Login successful for user admin
+2025-10-12 16:46:40,344 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:46:40,442 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:46:40,612 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:47:11,013 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:47:11,084 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:47:11,151 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:47:41,013 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:47:41,179 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:47:41,237 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:48:11,022 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:48:11,099 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:48:11,162 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 16:48:41,014 - app - INFO - Getting notifications for username: admin
+2025-10-12 16:48:41,084 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 16:48:41,153 - app - INFO - Found 0 notifications for user_id: 1

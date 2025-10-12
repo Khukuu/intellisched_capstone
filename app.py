@@ -797,7 +797,7 @@ async def get_schedule_for_dean(schedule_id: str, username: str = Depends(requir
     return JSONResponse(content=data)
 
 @app.get('/download_schedule')
-async def download_schedule(id: str | None = None, semester: str | None = None, username: str = Depends(require_chair_role)):
+async def download_schedule(id: str | None = None, semester: str | None = None, username: str = Depends(require_role(['chair', 'dean']))):
     # Determine which schedule to download
     schedule_data = None
     if id:
@@ -824,6 +824,9 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
         if not start_time_slot or not duration_slots:
             return start_time_slot or ''
         
+        # Ensure duration_slots is an integer
+        duration_slots = int(duration_slots) if duration_slots else 0
+        
         # Parse start time (e.g., "07:00-07:30")
         start_time = start_time_slot.split('-')[0]  # Get "07:00"
         start_hour, start_minute = map(int, start_time.split(':'))
@@ -839,9 +842,10 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
         end_hour = end_total_minutes // 60
         end_minute = end_total_minutes % 60
         
-        # Format end time
+        # Format end time with proper zero padding
         end_time = f"{end_hour:02d}:{end_minute:02d}"
         
+        # Ensure both start and end times have proper formatting
         return f"{start_time}-{end_time}"
     
     fieldnames = ['section_id', 'subject_code', 'subject_name', 'type', 'teacher_name', 'room_id', 'day', 'time_range', 'duration_hours']
@@ -850,8 +854,9 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
     writer.writeheader()
     for row in schedule_data:
         # Calculate proper time range and duration in hours
-        time_range = calculate_time_range(row.get('start_time_slot'), row.get('duration_slots'))
-        duration_hours = (row.get('duration_slots', 0) * 30) / 60 if row.get('duration_slots') else 0
+        duration_slots = int(row.get('duration_slots', 0)) if row.get('duration_slots') else 0
+        time_range = calculate_time_range(row.get('start_time_slot'), duration_slots)
+        duration_hours = (duration_slots * 30) / 60
         
         # Create the CSV row with proper formatting
         csv_row = {
