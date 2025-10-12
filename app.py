@@ -23,6 +23,16 @@ from database import (
     reject_schedule,
     get_schedule_approval_status,
     delete_schedule_approval,
+    record_user_activity,
+    get_user_activity_stats,
+    get_system_analytics,
+    record_metric,
+    get_metrics_history,
+    get_system_setting,
+    set_system_setting,
+    get_all_system_settings,
+    delete_system_setting,
+    get_user_id_by_username,
 )
 import os
 import io
@@ -1372,6 +1382,166 @@ async def delete_user_endpoint(user_id: int, username: str = Depends(require_adm
     except HTTPException:
         raise
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Analytics endpoints (Admin only)
+@app.get('/api/analytics/overview')
+async def get_analytics_overview(username: str = Depends(require_admin_role)):
+    """Get comprehensive system analytics overview"""
+    try:
+        analytics_data = get_system_analytics()
+        return JSONResponse(content=analytics_data)
+    except Exception as e:
+        logger.error(f"Error getting analytics overview: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/analytics/user-activity')
+async def get_user_activity_analytics(days: int = 30, username: str = Depends(require_admin_role)):
+    """Get user activity analytics"""
+    try:
+        activity_data = get_user_activity_stats(days)
+        return JSONResponse(content=activity_data)
+    except Exception as e:
+        logger.error(f"Error getting user activity analytics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/analytics/metrics/{metric_name}')
+async def get_metric_history(metric_name: str, days: int = 30, username: str = Depends(require_admin_role)):
+    """Get historical data for a specific metric"""
+    try:
+        metric_data = get_metrics_history(metric_name, days)
+        return JSONResponse(content=metric_data)
+    except Exception as e:
+        logger.error(f"Error getting metric history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/analytics/record-activity')
+async def record_user_activity_endpoint(
+    activity_type: str, 
+    description: str, 
+    request: Request,
+    username: str = Depends(verify_token)
+):
+    """Record user activity (for all authenticated users)"""
+    try:
+        user_id = get_user_id_by_username(username)
+        if not user_id:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Get client IP and user agent
+        client_ip = request.client.host if request.client else None
+        user_agent = request.headers.get('user-agent')
+        
+        success = record_user_activity(user_id, activity_type, description, client_ip, user_agent)
+        if success:
+            return JSONResponse(content={'message': 'Activity recorded successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to record activity")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error recording user activity: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# System Settings endpoints (Admin only)
+@app.get('/api/system/settings')
+async def get_all_settings(username: str = Depends(require_admin_role)):
+    """Get all system settings"""
+    try:
+        settings = get_all_system_settings()
+        return JSONResponse(content=settings)
+    except Exception as e:
+        logger.error(f"Error getting system settings: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/system/settings/{setting_key}')
+async def get_setting(setting_key: str, username: str = Depends(require_admin_role)):
+    """Get a specific system setting"""
+    try:
+        value = get_system_setting(setting_key)
+        return JSONResponse(content={'key': setting_key, 'value': value})
+    except Exception as e:
+        logger.error(f"Error getting system setting: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put('/api/system/settings/{setting_key}')
+async def update_setting(
+    setting_key: str, 
+    payload: dict, 
+    username: str = Depends(require_admin_role)
+):
+    """Update a system setting"""
+    try:
+        value = payload.get('value')
+        setting_type = payload.get('type', 'string')
+        description = payload.get('description')
+        
+        if value is None:
+            raise HTTPException(status_code=400, detail="Value is required")
+        
+        success = set_system_setting(setting_key, value, setting_type, description, username)
+        if success:
+            return JSONResponse(content={'message': 'Setting updated successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to update setting")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating system setting: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/system/settings')
+async def create_setting(payload: dict, username: str = Depends(require_admin_role)):
+    """Create a new system setting"""
+    try:
+        setting_key = payload.get('key')
+        value = payload.get('value')
+        setting_type = payload.get('type', 'string')
+        description = payload.get('description')
+        
+        if not setting_key or value is None:
+            raise HTTPException(status_code=400, detail="Key and value are required")
+        
+        success = set_system_setting(setting_key, value, setting_type, description, username)
+        if success:
+            return JSONResponse(content={'message': 'Setting created successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create setting")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating system setting: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/system/settings/{setting_key}')
+async def delete_setting(setting_key: str, username: str = Depends(require_admin_role)):
+    """Delete a system setting"""
+    try:
+        success = delete_system_setting(setting_key)
+        if success:
+            return JSONResponse(content={'message': 'Setting deleted successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to delete setting")
+    except Exception as e:
+        logger.error(f"Error deleting system setting: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/api/system/record-metric')
+async def record_system_metric(
+    metric_name: str, 
+    metric_value: float, 
+    metric_data: dict = None,
+    username: str = Depends(require_admin_role)
+):
+    """Record a system metric"""
+    try:
+        success = record_metric(metric_name, metric_value, metric_data)
+        if success:
+            return JSONResponse(content={'message': 'Metric recorded successfully'})
+        else:
+            raise HTTPException(status_code=500, detail="Failed to record metric")
+    except Exception as e:
+        logger.error(f"Error recording metric: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == '__main__':

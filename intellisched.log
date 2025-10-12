@@ -6941,3 +6941,142 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-12 11:46:37,658 - database - INFO - Found 0 pending schedules in database
 2025-10-12 11:46:47,487 - database - INFO - Found 0 pending schedules in database
 2025-10-12 11:46:57,543 - database - INFO - Found 0 pending schedules in database
+2025-10-12 11:55:32,081 - app - INFO - Login attempt for user: chair
+2025-10-12 11:55:32,368 - app - INFO - Login successful for user chair
+2025-10-12 11:55:32,663 - app - INFO - Getting notifications for username: chair
+2025-10-12 11:55:32,776 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 11:55:32,967 - app - INFO - Found 34 notifications for user_id: 8
+2025-10-12 11:55:56,330 - app - INFO - Received request for /schedule
+2025-10-12 11:55:56,330 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-12 11:55:56,668 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-12 11:55:56,668 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 11:55:56,668 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-12 11:55:56,669 - app - INFO - Filtered program sections: {'CS': {1: 1, 3: 1}, 'IT': {1: 1, 2: 2, 3: 1}}
+2025-10-12 11:56:05,279 - app - INFO - Getting notifications for username: chair
+2025-10-12 11:56:05,360 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 11:56:05,452 - app - INFO - Found 34 notifications for user_id: 8
+2025-10-12 11:56:10,304 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-12 11:56:10,400 - database - INFO - Successfully created notification for user_id: 9
+2025-10-12 11:56:10,400 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-12 11:56:19,830 - app - INFO - Login attempt for user: dean
+2025-10-12 11:56:19,920 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-12 11:56:22,684 - app - INFO - Login attempt for user: dean
+2025-10-12 11:56:22,855 - app - INFO - Login successful for user dean
+2025-10-12 11:56:22,946 - app - INFO - Getting notifications for username: dean
+2025-10-12 11:56:23,036 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-12 11:56:23,126 - app - INFO - Found 9 notifications for user_id: 9
+2025-10-12 11:56:23,405 - database - INFO - Found 1 pending schedules in database
+2025-10-12 11:56:33,162 - database - INFO - Found 1 pending schedules in database
+2025-10-12 11:56:34,393 - database - INFO - Creating notification for user_id: 8, title: Schedule Approved, type: success
+2025-10-12 11:56:34,494 - database - INFO - Successfully created notification for user_id: 8
+2025-10-12 11:56:35,694 - database - INFO - Found 0 pending schedules in database
+2025-10-12 11:56:42,729 - app - INFO - Login attempt for user: chair
+2025-10-12 11:56:42,899 - app - INFO - Login successful for user chair
+2025-10-12 11:56:43,033 - app - INFO - Getting notifications for username: chair
+2025-10-12 11:56:43,142 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 11:56:43,232 - app - INFO - Found 35 notifications for user_id: 8
+2025-10-12 11:56:56,702 - app - INFO - Getting notifications for username: chair
+2025-10-12 11:56:56,809 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 11:56:56,911 - app - INFO - Found 35 notifications for user_id: 8
+2025-10-12 12:11:40,686 - app - INFO - Login attempt for user: admin
+2025-10-12 12:11:40,851 - app - INFO - Login successful for user admin
+2025-10-12 12:11:43,202 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:11:43,306 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:11:43,482 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:11:44,383 - app - ERROR - Error getting system settings: Object of type datetime is not JSON serializable
+2025-10-12 12:11:46,193 - app - ERROR - Error getting analytics overview: Object of type date is not JSON serializable
+2025-10-12 12:11:52,463 - app - ERROR - Error getting analytics overview: Object of type date is not JSON serializable
+2025-10-12 12:11:56,939 - app - ERROR - Error getting analytics overview: Object of type date is not JSON serializable
+2025-10-12 12:12:00,444 - app - ERROR - Error getting system settings: Object of type datetime is not JSON serializable
+2025-10-12 12:12:04,003 - app - ERROR - Error getting analytics overview: Object of type date is not JSON serializable
+2025-10-12 12:12:06,056 - app - ERROR - Error getting analytics overview: Object of type date is not JSON serializable
+2025-10-12 12:12:13,208 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:12:13,303 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:12:13,389 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:12:20,778 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:12:20,876 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:12:20,970 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:12:22,351 - app - ERROR - Error getting system settings: Object of type datetime is not JSON serializable
+2025-10-12 12:12:24,126 - app - ERROR - Error getting analytics overview: Object of type date is not JSON serializable
+2025-10-12 12:12:50,777 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:12:50,969 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:12:51,154 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:13:20,776 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:13:20,869 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:13:20,950 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:13:50,785 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:13:50,883 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:13:50,975 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:14:20,777 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:14:20,876 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:14:20,965 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:14:50,779 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:14:50,878 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:14:50,976 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:15:20,804 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:15:20,895 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:15:20,976 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:15:50,793 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:15:50,889 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:15:50,975 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:16:20,787 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:16:20,879 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:16:21,061 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:16:50,782 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:16:50,870 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:16:50,961 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:17:06,076 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:17:06,290 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:17:06,476 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:17:36,077 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:17:36,160 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:17:36,245 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:18:06,285 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:18:06,411 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:18:06,494 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:18:27,645 - app - INFO - Login attempt for user: chair
+2025-10-12 12:18:27,819 - app - INFO - Login successful for user chair
+2025-10-12 12:18:28,155 - app - INFO - Getting notifications for username: chair
+2025-10-12 12:18:28,248 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 12:18:28,337 - app - INFO - Found 35 notifications for user_id: 8
+2025-10-12 12:18:30,650 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:18:30,776 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:18:30,869 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:18:43,074 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:18:43,193 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:18:43,298 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:19:02,839 - app - INFO - Login attempt for user: chair
+2025-10-12 12:19:03,008 - app - INFO - Login successful for user chair
+2025-10-12 12:19:03,216 - app - INFO - Getting notifications for username: chair
+2025-10-12 12:19:03,413 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 12:19:03,493 - app - INFO - Found 35 notifications for user_id: 8
+2025-10-12 12:19:11,083 - app - INFO - Received request for /schedule
+2025-10-12 12:19:11,083 - app - INFO - Scheduling for programs: ['CS']
+2025-10-12 12:19:11,373 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 12:19:11,373 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 12:19:11,374 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 12:19:11,374 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-12 12:19:13,060 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:19:13,160 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:19:13,278 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:19:13,578 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:19:13,766 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:19:13,844 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:19:33,218 - app - INFO - Getting notifications for username: chair
+2025-10-12 12:19:33,308 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-12 12:19:33,397 - app - INFO - Found 35 notifications for user_id: 8
+2025-10-12 12:19:36,631 - app - INFO - Received request for /schedule
+2025-10-12 12:19:36,631 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-12 12:19:37,052 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}, 'IT': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 12:19:37,053 - app - INFO - Available years: {1, 2, 3}
+2025-10-12 12:19:37,053 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}, 'IT': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-12 12:19:37,054 - app - INFO - Filtered program sections: {'CS': {1: 1}, 'IT': {1: 1}}
+2025-10-12 12:19:43,580 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:19:43,667 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:19:43,749 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:20:02,168 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:20:02,305 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:20:02,394 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-12 12:20:32,172 - app - INFO - Getting notifications for username: admin
+2025-10-12 12:20:32,260 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-12 12:20:32,336 - app - INFO - Found 0 notifications for user_id: 1
