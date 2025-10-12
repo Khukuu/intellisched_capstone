@@ -627,19 +627,40 @@ def update_subject(subject_code: str, subject_data: Dict[str, Any]) -> None:
 
 def update_teacher(teacher_id: str, teacher_data: Dict[str, Any]) -> None:
     """Update an existing teacher in the database"""
-    query = """
+    logger.info(f"Updating teacher {teacher_id} with data: {teacher_data}")
+    
+    # Build dynamic UPDATE query based on provided fields
+    update_fields = []
+    params = []
+    
+    if 'teacher_name' in teacher_data:
+        update_fields.append("teacher_name = %s")
+        params.append(teacher_data['teacher_name'])
+    
+    if 'can_teach' in teacher_data:
+        update_fields.append("can_teach = %s")
+        params.append(teacher_data['can_teach'])
+    
+    if 'availability_days' in teacher_data:
+        update_fields.append("availability_days = %s")
+        # Handle both string and array formats
+        availability_days = teacher_data['availability_days']
+        if isinstance(availability_days, str):
+            # Split comma-separated string into array
+            availability_days = [day.strip() for day in availability_days.split(',') if day.strip()]
+        params.append(availability_days)
+    
+    if not update_fields:
+        raise ValueError("No valid fields provided for update")
+    
+    query = f"""
     UPDATE teachers 
-    SET teacher_name = %s, can_teach = %s, availability_days = %s
+    SET {', '.join(update_fields)}
     WHERE teacher_id = %s
     """
-    # Default to all days available if not specified
-    availability_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
-    params = (
-        teacher_data['teacher_name'],
-        teacher_data.get('can_teach', ''),
-        availability_days,
-        teacher_id
-    )
+    params.append(teacher_id)
+    
+    logger.info(f"Executing query: {query} with params: {params}")
     db.db.execute_single(query, params)
 
 def update_room(room_id: str, room_data: Dict[str, Any]) -> None:
@@ -937,6 +958,18 @@ def mark_notification_read(notification_id: int) -> bool:
         return True
     except Exception as e:
         logger.error(f"Error marking notification {notification_id} as read: {e}")
+        return False
+
+def delete_notification(notification_id: int) -> bool:
+    """Delete a notification"""
+    try:
+        query = "DELETE FROM notifications WHERE id = %s"
+        logger.info(f"Deleting notification {notification_id}")
+        db.db.execute_single(query, (notification_id,))
+        logger.info(f"Successfully deleted notification {notification_id}")
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting notification {notification_id}: {e}")
         return False
 
 def get_user_id_by_username(username: str) -> int:

@@ -53,13 +53,15 @@
             <div class="col-12">
                 <div class="card p-4 shadow-sm mb-4 rounded-4 card-mac-style" style="width:90vw;max-width:100vw;left:50%;transform:translateX(-50%);position:relative;">
                     <div class="card-body">
-                        <div class="text-center mb-4">
-                            <i class="bi bi-shield-check-fill mb-3" style="font-size: 4rem; color: #b83a3f; filter: drop-shadow(0 4px 8px rgba(184, 58, 63, 0.3));"></i>
-                            <h1 class="card-title mb-3">Administrative Control Center</h1>
-                            <p class="text-muted fs-5">Manage users, system settings, and administrative tasks</p>
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="bi bi-shield-check-fill me-3" style="font-size: 2rem; color: #b83a3f;"></i>
+                            <div>
+                                <h1 class="card-title mb-1 fw-bold">Administrative Control Center</h1>
+                                <p class="text-muted mb-0">Manage users, system settings, and administrative tasks</p>
+                            </div>
                         </div>
                         
-                        <div class="alert alert-info border-0 rounded-4 mb-4" style="background: rgba(184, 58, 63, 0.1);">
+                        <div class="alert alert-info border-0 rounded-3 mb-4">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Admin Access:</strong> You can approve or reject pending user accounts, manage system settings, and view analytics.
                         </div>
@@ -67,36 +69,36 @@
                         <!-- Admin Quick Actions -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <div class="card h-100 border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
-                                    <div class="card-body text-center">
+                                <div class="card h-100 border-0 shadow-sm rounded-3" style="background: rgba(255,255,255,0.9);">
+                                    <div class="card-body text-center p-4">
                                         <i class="bi bi-people-fill mb-3" style="font-size: 2.5rem; color: #b83a3f;"></i>
-                                        <h5 class="card-title">User Management</h5>
+                                        <h5 class="card-title fw-semibold">User Management</h5>
                                         <p class="card-text small text-muted">Approve or reject pending user accounts</p>
-                                        <button class="btn btn-primary btn-sm rounded-pill" id="manageUsersBtn">
+                                        <button class="btn btn-primary btn-sm" id="manageUsersBtn">
                                             <i class="bi bi-people me-1"></i>Manage Users
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card h-100 border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
-                                    <div class="card-body text-center">
+                                <div class="card h-100 border-0 shadow-sm rounded-3" style="background: rgba(255,255,255,0.9);">
+                                    <div class="card-body text-center p-4">
                                         <i class="bi bi-gear-fill mb-3" style="font-size: 2.5rem; color: #b83a3f;"></i>
-                                        <h5 class="card-title">System Settings</h5>
+                                        <h5 class="card-title fw-semibold">System Settings</h5>
                                         <p class="card-text small text-muted">Configure system preferences and options</p>
-                                        <button class="btn btn-primary btn-sm rounded-pill" id="systemSettingsBtn">
+                                        <button class="btn btn-primary btn-sm" id="systemSettingsBtn">
                                             <i class="bi bi-gear me-1"></i>System Settings
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card h-100 border-0 shadow-sm rounded-4" style="background: rgba(255,255,255,0.7);">
-                                    <div class="card-body text-center">
+                                <div class="card h-100 border-0 shadow-sm rounded-3" style="background: rgba(255,255,255,0.9);">
+                                    <div class="card-body text-center p-4">
                                         <i class="bi bi-graph-up mb-3" style="font-size: 2.5rem; color: #b83a3f;"></i>
-                                        <h5 class="card-title">Analytics</h5>
+                                        <h5 class="card-title fw-semibold">Analytics</h5>
                                         <p class="card-text small text-muted">View system usage and performance metrics</p>
-                                        <button class="btn btn-primary btn-sm rounded-pill" id="analyticsBtn">
+                                        <button class="btn btn-primary btn-sm" id="analyticsBtn">
                                             <i class="bi bi-graph-up me-1"></i>Analytics
                                         </button>
                                     </div>
