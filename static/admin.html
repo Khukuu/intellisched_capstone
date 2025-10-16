@@ -711,6 +711,101 @@
             }, duration);
         }
 
+        // Alias function for compatibility with existing code
+        function showAlert(message, type = 'info') {
+            showNotification(message, type);
+        }
+
+        // Fix notification dropdown responsive positioning
+        function fixNotificationDropdownResponsive() {
+            const dropdown = document.getElementById('notificationDropdownMenu');
+            const dropdownToggle = document.getElementById('notificationDropdown');
+            
+            if (dropdown && dropdownToggle) {
+                // Handle dropdown show event
+                dropdown.addEventListener('show.bs.dropdown', function() {
+                    const width = window.innerWidth;
+                    
+                    if (width <= 575.98) {
+                        // Extra small devices (phones)
+                        this.style.position = 'fixed';
+                        this.style.top = '70px';
+                        this.style.right = '10px';
+                        this.style.left = '10px';
+                        this.style.minWidth = 'auto';
+                        this.style.maxWidth = 'none';
+                        this.style.width = 'auto';
+                        this.style.zIndex = '1050';
+                        this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                        this.style.maxHeight = '70vh';
+                        this.style.overflowY = 'auto';
+                        this.style.fontSize = '0.9rem';
+                    } else if (width <= 767.98) {
+                        // Small devices (landscape phones)
+                        this.style.position = 'fixed';
+                        this.style.top = '80px';
+                        this.style.right = '15px';
+                        this.style.left = '15px';
+                        this.style.minWidth = 'auto';
+                        this.style.maxWidth = 'none';
+                        this.style.width = 'auto';
+                        this.style.zIndex = '1050';
+                        this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+                        this.style.maxHeight = '65vh';
+                        this.style.overflowY = 'auto';
+                        this.style.fontSize = '';
+                    } else if (width <= 991.98) {
+                        // Medium devices (tablets)
+                        this.style.position = '';
+                        this.style.top = '';
+                        this.style.right = '';
+                        this.style.left = '';
+                        this.style.minWidth = '350px';
+                        this.style.maxWidth = '450px';
+                        this.style.width = '';
+                        this.style.zIndex = '';
+                        this.style.boxShadow = '';
+                        this.style.maxHeight = '50vh';
+                        this.style.overflowY = 'auto';
+                        this.style.fontSize = '';
+                    } else if (width < 1200) {
+                        // Large devices (desktops)
+                        this.style.position = '';
+                        this.style.top = '';
+                        this.style.right = '';
+                        this.style.left = '';
+                        this.style.minWidth = '450px';
+                        this.style.maxWidth = '600px';
+                        this.style.width = '';
+                        this.style.zIndex = '';
+                        this.style.boxShadow = '';
+                        this.style.maxHeight = '500px';
+                        this.style.overflowY = 'auto';
+                        this.style.fontSize = '';
+                    } else {
+                        // Extra large devices (large desktops)
+                        this.style.position = '';
+                        this.style.top = '';
+                        this.style.right = '';
+                        this.style.left = '';
+                        this.style.minWidth = '500px';
+                        this.style.maxWidth = '700px';
+                        this.style.width = '';
+                        this.style.zIndex = '';
+                        this.style.boxShadow = '';
+                        this.style.maxHeight = '600px';
+                        this.style.overflowY = 'auto';
+                        this.style.fontSize = '';
+                    }
+                });
+            }
+        }
+
+        // Initialize responsive dropdown fix
+        document.addEventListener('DOMContentLoaded', function() {
+            fixNotificationDropdownResponsive();
+        });
+
         function getIconForType(type) {
             const icons = {
                 'success': 'check-circle',
@@ -1268,8 +1363,8 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    ${data.data_counts.map(item => `
-                                        <div class="col-md-3 mb-3">
+                                    ${data.data_counts.filter(item => item.type !== 'sections').map(item => `
+                                        <div class="col-md-4 mb-3">
                                             <div class="text-center p-3 border rounded-3">
                                                 <i class="bi bi-${getDataTypeIcon(item.type)} text-primary mb-2" style="font-size: 2rem;"></i>
                                                 <h6 class="text-capitalize">${item.type}</h6>
@@ -1327,15 +1422,32 @@
                                         <span class="badge bg-secondary">${setting.setting_type}</span>
                                     </div>
                                     <p class="card-text small text-muted">${setting.description || 'No description available'}</p>
-                                    <div class="input-group">
-                                        <input type="${getInputType(setting.setting_type)}" 
-                                               class="form-control" 
-                                               id="setting-${setting.setting_key}" 
-                                               value="${setting.setting_value}">
-                                        <button class="btn btn-outline-primary" onclick="updateSetting('${setting.setting_key}', '${setting.setting_type}')">
-                                            <i class="bi bi-check"></i>
-                                        </button>
-                                    </div>
+                                    ${setting.setting_type === 'boolean' ? `
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" 
+                                                       class="form-check-input" 
+                                                       id="setting-${setting.setting_key}" 
+                                                       ${setting.setting_value === 'true' ? 'checked' : ''}>
+                                                <label class="form-check-label" for="setting-${setting.setting_key}">
+                                                    ${setting.setting_value === 'true' ? 'Enabled' : 'Disabled'}
+                                                </label>
+                                            </div>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="updateSetting('${setting.setting_key}', '${setting.setting_type}')">
+                                                <i class="bi bi-check"></i> Update
+                                            </button>
+                                        </div>
+                                    ` : `
+                                        <div class="input-group">
+                                            <input type="${getInputType(setting.setting_type)}" 
+                                                   class="form-control" 
+                                                   id="setting-${setting.setting_key}" 
+                                                   value="${setting.setting_value}">
+                                            <button class="btn btn-outline-primary" onclick="updateSetting('${setting.setting_key}', '${setting.setting_type}')">
+                                                <i class="bi bi-check"></i>
+                                            </button>
+                                        </div>
+                                    `}
                                     <small class="text-muted">Last updated: ${new Date(setting.updated_at).toLocaleString()}</small>
                                 </div>
                             </div>
@@ -1355,7 +1467,14 @@
         
         async function updateSetting(key, type) {
             const input = document.getElementById(`setting-${key}`);
-            const value = input.value;
+            let value;
+            
+            // Handle different input types
+            if (type === 'boolean') {
+                value = input.checked ? 'true' : 'false';
+            } else {
+                value = input.value;
+            }
             
             try {
                 const token = localStorage.getItem('authToken');
@@ -1377,6 +1496,15 @@
                 
                 showAlert('Setting updated successfully!', 'success');
                 recordActivity('settings_update', `Updated setting: ${key} = ${value}`);
+                
+                // For boolean settings, update the label immediately
+                if (type === 'boolean') {
+                    const label = input.nextElementSibling;
+                    if (label) {
+                        label.textContent = value === 'true' ? 'Enabled' : 'Disabled';
+                    }
+                }
+                
                 loadSystemSettings(); // Refresh the settings
             } catch (error) {
                 console.error('Error updating setting:', error);

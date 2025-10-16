@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, status, R
 from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from starlette.middleware.base import BaseHTTPMiddleware
 import logging
 from scheduler import generate_schedule
 from database import (
@@ -54,6 +55,96 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+# Maintenance Mode Middleware
+class MaintenanceMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # Check if maintenance mode is enabled
+        try:
+            maintenance_mode = get_system_setting('maintenance_mode', 'false')
+            if maintenance_mode.lower() == 'true':
+                # Allow access to maintenance page, login, auth endpoints, admin pages, and static files
+                # CRITICAL: Always allow login and auth endpoints so admin can login to disable maintenance
+                # BLOCK: All other user dashboards (chair, dean, secretary) should be blocked
+                if (request.url.path in ['/maintenance', '/login', '/register', '/admin', '/static/maintenance.html'] or
+                    request.url.path.startswith('/api/maintenance/') or
+                    request.url.path.startswith('/api/auth/') or
+                    request.url.path.startswith('/auth/') or  # Allow /auth/login endpoint
+                    request.url.path.startswith('/api/system/') or
+                    request.url.path.startswith('/api/admin/') or
+                    request.url.path.startswith('/static/')):
+                    response = await call_next(request)
+                    return response
+                
+                # Block access to user-specific dashboards and APIs during maintenance
+                blocked_paths = ['/chair', '/dean', '/secretary', '/saved-schedules']
+                blocked_api_prefixes = ['/api/schedules', '/api/data', '/api/notifications', '/api/pending_schedules', 
+                                      '/api/saved_schedules']
+                
+                # Check if accessing blocked dashboard
+                if request.url.path in blocked_paths:
+                    return RedirectResponse(url="/maintenance", status_code=302)
+                
+                # Check if accessing blocked API endpoints
+                for prefix in blocked_api_prefixes:
+                    if request.url.path.startswith(prefix):
+                        return JSONResponse(
+                            status_code=503,
+                            content={"detail": "System is under maintenance", "maintenance_mode": True}
+                        )
+                
+                # Check if user is admin (bypass maintenance mode)
+                # Check both Authorization header and cookies for admin token
+                admin_bypass = False
+                
+                # Check Authorization header
+                try:
+                    auth_header = request.headers.get('authorization')
+                    if auth_header and auth_header.startswith('Bearer '):
+                        token = auth_header.split(' ')[1]
+                        payload = jwt.decode(token, "your-secret-key", algorithms=["HS256"])
+                        username = payload.get("sub")
+                        if username:
+                            user = db.get_user_by_username(username)
+                            if user and user.get('role') == 'admin':
+                                admin_bypass = True
+                except:
+                    pass
+                
+                # Check cookies for admin token (for frontend requests)
+                try:
+                    auth_cookie = request.cookies.get('authToken')
+                    if auth_cookie:
+                        payload = jwt.decode(auth_cookie, "your-secret-key", algorithms=["HS256"])
+                        username = payload.get("sub")
+                        if username:
+                            user = db.get_user_by_username(username)
+                            if user and user.get('role') == 'admin':
+                                admin_bypass = True
+                except:
+                    pass
+                
+                # If admin user detected, allow access
+                if admin_bypass:
+                    response = await call_next(request)
+                    return response
+                
+                # Redirect to maintenance page
+                if request.url.path.startswith('/api/'):
+                    return JSONResponse(
+                        status_code=503,
+                        content={"detail": "System is under maintenance", "maintenance_mode": True}
+                    )
+                else:
+                    return RedirectResponse(url="/maintenance", status_code=302)
+        except Exception as e:
+            logger.error(f"Error in maintenance middleware: {e}")
+        
+        response = await call_next(request)
+        return response
+
+# Add maintenance middleware
+app.add_middleware(MaintenanceMiddleware)
 
 # Mount static files with no-cache headers
 from fastapi.staticfiles import StaticFiles
@@ -314,6 +405,15 @@ async def index():
     """Main route - redirect users to appropriate dashboard"""
     return RedirectResponse(url='/login')
 
+@app.get('/maintenance')
+async def maintenance_page():
+    """Serve maintenance page when system is under maintenance"""
+    maintenance_path = os.path.join('static', 'maintenance.html')
+    if os.path.exists(maintenance_path):
+        return FileResponse(maintenance_path)
+    else:
+        raise HTTPException(status_code=404, detail="Maintenance page not found")
+
 # Chair-specific route for scheduling functionality
 @app.get('/chair')
 async def chair_dashboard():
@@ -531,14 +631,20 @@ def _list_saved_summaries():
         try:
             with open(fpath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
+            # Get approval details
+            approval_data = get_schedule_approval_status(data.get('id') or '')
+            
             items.append({
                 'id': data.get('id') or fname[:-5],
                 'name': data.get('name') or fname[:-5],
                 'semester': data.get('semester'),
                 'created_at': data.get('created_at'),
                 'count': len(data.get('schedule') or []),
-                # include approval status if exists
-                'status': (lambda sid: (get_schedule_approval_status(sid) or {}).get('status'))(data.get('id') or ''),
+                # include full approval details if exists
+                'status': approval_data.get('status') if approval_data else None,
+                'approved_at': approval_data.get('approved_at') if approval_data else None,
+                'approved_by': approval_data.get('approved_by') if approval_data else None,
+                'comments': approval_data.get('comments') if approval_data else None,
             })
         except Exception:
             # Skip unreadable files
@@ -617,10 +723,6 @@ async def list_pending_schedules(username: str = Depends(require_role(['dean']))
     items = get_pending_schedules()
     return JSONResponse(content=items)
 
-@app.get('/api/pending_schedules')
-async def list_pending_schedules_alias(username: str = Depends(require_role(['dean']))):
-    items = get_pending_schedules()
-    return JSONResponse(content=items)
 
 @app.post('/schedules/{schedule_id}/approve')
 async def approve_schedule_endpoint(schedule_id: str, payload: dict = None, username: str = Depends(require_role(['dean']))):
@@ -647,10 +749,6 @@ async def approve_schedule_endpoint_alias(schedule_id: str, payload: dict, usern
 async def reject_schedule_endpoint_alias(schedule_id: str, payload: dict, username: str = Depends(require_role(['dean']))):
     return await deny_schedule_endpoint(schedule_id, payload, username)  # type: ignore
 
-@app.get('/api/approved_schedules')
-async def list_approved_schedules_alias(username: str = Depends(require_role(['dean']))):
-    items = get_approved_schedules()
-    return JSONResponse(content=items)
 
 @app.get('/saved_schedules')
 async def saved_schedules(username: str = Depends(require_chair_role)):
@@ -779,8 +877,8 @@ async def load_schedule(id: str, username: str = Depends(require_chair_role)):
 
 # Dean view: fetch schedule details by id
 @app.get('/api/schedule/{schedule_id}')
-async def get_schedule_for_dean(schedule_id: str, username: str = Depends(require_role(['dean']))):
-    """Allow Dean to view a saved schedule by id. Only if the schedule approval record still exists."""
+async def get_schedule_for_dean(schedule_id: str, username: str = Depends(require_dean_or_secretary_role)):
+    """Allow Dean and Secretary to view a saved schedule by id. Only if the schedule approval record still exists."""
     # First check if the schedule approval record still exists
     approval_status = get_schedule_approval_status(schedule_id)
     if not approval_status:
@@ -1212,8 +1310,8 @@ async def get_pending_schedules_endpoint(username: str = Depends(require_dean_ro
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/api/approved_schedules')
-async def get_approved_schedules_endpoint(username: str = Depends(require_dean_or_secretary_role)):
-    """Get all approved schedules for dean and secretary"""
+async def get_approved_schedules_endpoint(username: str = Depends(require_role(['dean', 'secretary', 'chair']))):
+    """Get all approved schedules for dean, secretary, and chair"""
     try:
         from database import get_approved_schedules
         schedules = get_approved_schedules()
@@ -1550,6 +1648,59 @@ async def get_setting(setting_key: str, username: str = Depends(require_admin_ro
     except Exception as e:
         logger.error(f"Error getting system setting: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/system/public-settings/{setting_key}')
+async def get_public_setting(setting_key: str):
+    """Get a specific system setting (public access for non-sensitive settings)"""
+    try:
+        # Only allow access to specific public settings
+        public_settings = ['default_semester', 'default_sections', 'enable_notifications']
+        if setting_key not in public_settings:
+            raise HTTPException(status_code=403, detail="Setting not accessible publicly")
+        
+        value = get_system_setting(setting_key)
+        return JSONResponse(content={'key': setting_key, 'value': value})
+    except Exception as e:
+        logger.error(f"Error getting public system setting {setting_key}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/api/maintenance/status')
+async def get_maintenance_status():
+    """Get current maintenance mode status (public endpoint)"""
+    try:
+        maintenance_mode = get_system_setting('maintenance_mode', 'false')
+        return JSONResponse(content={
+            'maintenance_mode': maintenance_mode.lower() == 'true',
+            'message': 'System is under maintenance' if maintenance_mode.lower() == 'true' else 'System is operational'
+        })
+    except Exception as e:
+        logger.error(f"Error getting maintenance status: {e}")
+        return JSONResponse(content={'maintenance_mode': False, 'message': 'System is operational'})
+
+@app.get('/api/maintenance/admin-bypass')
+async def check_admin_bypass(username: str = Depends(verify_token)):
+    """Check if current user is admin and can bypass maintenance mode"""
+    try:
+        user = db.get_user_by_username(username)
+        if user and user.get('role') == 'admin':
+            return JSONResponse(content={
+                'is_admin': True,
+                'can_bypass': True,
+                'message': 'Admin access granted'
+            })
+        else:
+            return JSONResponse(content={
+                'is_admin': False,
+                'can_bypass': False,
+                'message': 'Admin access required'
+            })
+    except Exception as e:
+        logger.error(f"Error checking admin bypass: {e}")
+        return JSONResponse(content={
+            'is_admin': False,
+            'can_bypass': False,
+            'message': 'Error checking admin status'
+        })
 
 @app.put('/api/system/settings/{setting_key}')
 async def update_setting(

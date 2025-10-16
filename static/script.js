@@ -109,6 +109,96 @@ function getIconForType(type) {
   return icons[type] || 'info-circle';
 }
 
+// Fix notification dropdown responsive positioning
+function fixNotificationDropdownResponsive() {
+  const dropdown = document.getElementById('notificationDropdownMenu');
+  const dropdownToggle = document.getElementById('notificationDropdown');
+  
+  if (dropdown && dropdownToggle) {
+    // Handle dropdown show event
+    dropdown.addEventListener('show.bs.dropdown', function() {
+      const width = window.innerWidth;
+      
+      if (width <= 575.98) {
+        // Extra small devices (phones)
+        this.style.position = 'fixed';
+        this.style.top = '70px';
+        this.style.right = '10px';
+        this.style.left = '10px';
+        this.style.minWidth = 'auto';
+        this.style.maxWidth = 'none';
+        this.style.width = 'auto';
+        this.style.zIndex = '1050';
+        this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        this.style.maxHeight = '70vh';
+        this.style.overflowY = 'auto';
+        this.style.fontSize = '0.9rem';
+      } else if (width <= 767.98) {
+        // Small devices (landscape phones)
+        this.style.position = 'fixed';
+        this.style.top = '80px';
+        this.style.right = '15px';
+        this.style.left = '15px';
+        this.style.minWidth = 'auto';
+        this.style.maxWidth = 'none';
+        this.style.width = 'auto';
+        this.style.zIndex = '1050';
+        this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        this.style.maxHeight = '65vh';
+        this.style.overflowY = 'auto';
+        this.style.fontSize = '';
+      } else if (width <= 991.98) {
+        // Medium devices (tablets)
+        this.style.position = '';
+        this.style.top = '';
+        this.style.right = '';
+        this.style.left = '';
+        this.style.minWidth = '350px';
+        this.style.maxWidth = '450px';
+        this.style.width = '';
+        this.style.zIndex = '';
+        this.style.boxShadow = '';
+        this.style.maxHeight = '50vh';
+        this.style.overflowY = 'auto';
+        this.style.fontSize = '';
+      } else if (width < 1200) {
+        // Large devices (desktops)
+        this.style.position = '';
+        this.style.top = '';
+        this.style.right = '';
+        this.style.left = '';
+        this.style.minWidth = '450px';
+        this.style.maxWidth = '600px';
+        this.style.width = '';
+        this.style.zIndex = '';
+        this.style.boxShadow = '';
+        this.style.maxHeight = '500px';
+        this.style.overflowY = 'auto';
+        this.style.fontSize = '';
+      } else {
+        // Extra large devices (large desktops)
+        this.style.position = '';
+        this.style.top = '';
+        this.style.right = '';
+        this.style.left = '';
+        this.style.minWidth = '500px';
+        this.style.maxWidth = '700px';
+        this.style.width = '';
+        this.style.zIndex = '';
+        this.style.boxShadow = '';
+        this.style.maxHeight = '600px';
+        this.style.overflowY = 'auto';
+        this.style.fontSize = '';
+      }
+    });
+  }
+}
+
+// Initialize responsive dropdown fix
+document.addEventListener('DOMContentLoaded', function() {
+  fixNotificationDropdownResponsive();
+});
+
 function addTooltip(elementId, text) {
   const element = document.getElementById(elementId);
   if (element) {
