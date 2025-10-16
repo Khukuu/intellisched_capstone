@@ -150,7 +150,7 @@
                     <i class="bi bi-question-circle text-muted ms-1" data-bs-toggle="tooltip" title="Select the semester for which you want to generate the schedule. This determines which subjects will be included from the curriculum."></i>
                   </label>
                   <select class="form-select form-select-lg" id="semesterSelect">
-                    <option value="1" selected>📚 1st Semester</option>
+                    <option value="1">📚 1st Semester</option>
                     <option value="2">📖 2nd Semester</option>
                     <option value="3">☀️ Summer Semester</option>
                   </select>
@@ -455,7 +455,7 @@
                 <i class="bi bi-building me-1"></i>Room
               </label>
               <div class="position-relative">
-                <input type="text" id="roomFilter" class="form-select" placeholder="Search rooms..." disabled>
+                <input type="text" id="roomFilter" class="form-control" placeholder="Search rooms..." disabled>
                 <div id="roomDropdown" class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto; display: none;">
                   <div class="dropdown-item" data-value="all">All Rooms</div>
                 </div>
@@ -593,6 +593,12 @@
         return;
       } else if (userRole === 'chair') {
         // Chair users stay on this page (scheduling functionality)
+        // Load default semester setting
+        loadDefaultSemester();
+        
+        // Load default sections setting
+        loadDefaultSections();
+        
         // Update navbar with user info
         const username = localStorage.getItem('username');
         if (username) {
@@ -623,6 +629,76 @@
       localStorage.removeItem('username');
       window.location.href = '/login';
     });
+
+    // Load default semester setting
+    async function loadDefaultSemester() {
+      try {
+        const response = await fetch('/api/system/public-settings/default_semester');
+        if (response.ok) {
+          const data = await response.json();
+          const defaultSemester = data.value;
+          
+          // Set the default semester as selected
+          const semesterSelect = document.getElementById('semesterSelect');
+          if (semesterSelect && defaultSemester) {
+            // Remove selected from all options
+            semesterSelect.querySelectorAll('option').forEach(option => {
+              option.removeAttribute('selected');
+            });
+            
+            // Set the default semester as selected
+            const targetOption = semesterSelect.querySelector(`option[value="${defaultSemester}"]`);
+            if (targetOption) {
+              targetOption.setAttribute('selected', 'selected');
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading default semester:', error);
+        // Fallback to semester 1 if there's an error
+      }
+    }
+
+    // Load default sections setting
+    async function loadDefaultSections() {
+      try {
+        const response = await fetch('/api/system/public-settings/default_sections');
+        if (response.ok) {
+          const data = await response.json();
+          const defaultSections = parseInt(data.value);
+          
+          // Only apply if we got a valid number (including 0)
+          if (!isNaN(defaultSections)) {
+            // Apply default sections to all year level inputs
+            const sectionInputs = [
+              'csSectionsYear1', 'csSectionsYear2', 'csSectionsYear3', 'csSectionsYear4',
+              'itSectionsYear1', 'itSectionsYear2', 'itSectionsYear3', 'itSectionsYear4'
+            ];
+            
+            sectionInputs.forEach(inputId => {
+              const input = document.getElementById(inputId);
+              if (input) {
+                input.value = defaultSections;
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error loading default sections:', error);
+        // Fallback to 3 sections if there's an error
+        const sectionInputs = [
+          'csSectionsYear1', 'csSectionsYear2', 'csSectionsYear3', 'csSectionsYear4',
+          'itSectionsYear1', 'itSectionsYear2', 'itSectionsYear3', 'itSectionsYear4'
+        ];
+        
+        sectionInputs.forEach(inputId => {
+          const input = document.getElementById(inputId);
+          if (input) {
+            input.value = 3;
+          }
+        });
+      }
+    }
   </script>
 </body>
 </html> 

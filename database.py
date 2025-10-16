@@ -901,6 +901,12 @@ def delete_schedule_approval(schedule_id: str) -> None:
 def create_notification(user_id: int, title: str, message: str, notification_type: str = 'info') -> bool:
     """Create a new notification for a user"""
     try:
+        # Check if notifications are enabled system-wide
+        notifications_enabled = get_system_setting('enable_notifications', 'true')
+        if notifications_enabled.lower() == 'false':
+            logger.info(f"Notifications are disabled system-wide. Skipping notification for user_id: {user_id}, title: {title}")
+            return True  # Return True to indicate "success" (no error, just skipped)
+        
         query = """
         INSERT INTO notifications (user_id, title, message, type)
         VALUES (%s, %s, %s, %s)
@@ -1367,6 +1373,7 @@ def initialize_default_settings():
         ('backup_frequency_hours', '24', 'integer', 'Backup frequency in hours'),
         ('email_notifications', 'true', 'boolean', 'Enable email notifications'),
         ('default_semester', '1', 'integer', 'Default semester for schedule generation'),
+        ('default_sections', '3', 'integer', 'Default number of sections for schedule generation'),
         ('max_file_upload_size_mb', '10', 'integer', 'Maximum file upload size in MB'),
         ('auto_approve_schedules', 'false', 'boolean', 'Automatically approve schedules without dean review')
     ]

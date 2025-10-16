@@ -9236,3 +9236,2278 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-14 11:58:56,599 - app - INFO - Getting notifications for username: admin
 2025-10-14 11:58:56,763 - app - INFO - Retrieving notifications for user_id: 1
 2025-10-14 11:58:56,807 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 11:59:27,283 - app - INFO - Getting notifications for username: admin
+2025-10-14 11:59:27,334 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 11:59:27,387 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 11:59:57,287 - app - INFO - Getting notifications for username: admin
+2025-10-14 11:59:57,337 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 11:59:57,385 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:00:27,908 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:00:27,961 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:00:28,133 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:00:56,584 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:00:56,635 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:00:56,690 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:01:26,597 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:01:26,646 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:01:26,696 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:01:56,599 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:01:56,651 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:01:56,701 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:02:28,001 - app - INFO - Login attempt for user: admin
+2025-10-14 12:02:28,213 - app - INFO - Login successful for user admin
+2025-10-14 12:02:28,581 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:02:28,758 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:02:28,908 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:02:58,572 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:02:58,625 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:02:58,671 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:03:29,279 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:03:29,331 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:03:29,482 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:03:59,288 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:03:59,338 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:03:59,498 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:04:29,280 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:04:29,340 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:04:29,397 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:04:54,309 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:04:54,468 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:04:54,530 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:05:15,978 - app - INFO - Login attempt for user: chair
+2025-10-14 12:05:16,077 - app - INFO - Login successful for user chair
+2025-10-14 12:05:16,434 - app - INFO - Getting notifications for username: chair
+2025-10-14 12:05:16,611 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 12:05:16,776 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 12:05:27,491 - app - INFO - Login attempt for user: admin
+2025-10-14 12:05:27,591 - app - INFO - Login successful for user admin
+2025-10-14 12:05:27,934 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:05:28,048 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:05:28,121 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:05:58,288 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:05:58,340 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:05:58,391 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:06:28,277 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:06:28,324 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:06:28,475 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:06:58,282 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:06:58,333 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:06:58,385 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:07:27,945 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:07:27,994 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:07:28,042 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:07:49,691 - app - INFO - Login attempt for user: chair
+2025-10-14 12:07:49,790 - app - INFO - Login successful for user chair
+2025-10-14 12:07:50,272 - app - INFO - Getting notifications for username: chair
+2025-10-14 12:07:50,347 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 12:07:50,503 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 12:07:57,206 - app - INFO - Received request for /schedule
+2025-10-14 12:07:57,207 - app - INFO - Scheduling for programs: ['CS']
+2025-10-14 12:07:57,381 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-14 12:07:57,382 - app - INFO - Available years: {1, 2, 3}
+2025-10-14 12:07:57,382 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-14 12:07:57,382 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-14 12:08:01,184 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-14 12:08:01,251 - database - INFO - Successfully created notification for user_id: 9
+2025-10-14 12:08:01,252 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-14 12:08:07,034 - app - INFO - Login attempt for user: dean
+2025-10-14 12:08:07,129 - app - INFO - Login successful for user dean
+2025-10-14 12:08:07,464 - app - INFO - Getting notifications for username: dean
+2025-10-14 12:08:07,548 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 12:08:07,616 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 12:08:07,846 - database - INFO - Found 2 pending schedules in database
+2025-10-14 12:19:55,894 - app - INFO - Login attempt for user: admin
+2025-10-14 12:19:55,994 - app - INFO - Login successful for user admin
+2025-10-14 12:19:56,328 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:19:56,399 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:19:56,560 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:20:26,344 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:20:26,396 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:20:26,440 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:20:56,333 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:20:56,380 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:20:56,536 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:21:26,341 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:21:26,388 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:21:26,433 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:21:56,337 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:21:56,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:21:56,429 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:22:26,340 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:22:26,395 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:22:26,441 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:22:56,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:22:56,386 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:22:56,541 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:23:26,343 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:23:26,394 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:23:26,442 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:23:56,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:23:56,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:23:56,550 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:24:26,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:24:26,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:24:26,541 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:24:56,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:24:56,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:24:56,434 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:25:26,344 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:25:26,502 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:25:26,553 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:25:56,344 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:25:56,393 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:25:56,440 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:26:26,333 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:26:26,390 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:26:26,441 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:26:56,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:26:56,387 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:26:56,538 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:27:26,331 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:27:26,489 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:27:26,537 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:27:56,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:27:56,387 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:27:56,438 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:28:27,278 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:28:27,326 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:28:27,375 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:28:56,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:28:56,397 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:28:56,452 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:29:26,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:29:26,494 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:29:26,539 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:29:56,331 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:29:56,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:29:56,433 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:30:26,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:30:26,386 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:30:26,540 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:30:56,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:30:56,390 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:30:56,441 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:31:26,334 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:31:26,386 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:31:26,434 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:31:56,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:31:56,384 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:31:56,434 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:32:26,337 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:32:26,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:32:26,434 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:32:56,329 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:32:56,381 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:32:56,429 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:33:26,340 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:33:26,392 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:33:26,442 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:33:56,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:33:56,384 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:33:56,534 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:34:26,331 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:34:26,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:34:26,432 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:34:56,333 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:34:56,387 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:34:56,435 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:35:26,334 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:35:26,388 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:35:26,437 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:35:56,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:35:56,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:35:56,429 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:36:26,336 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:36:26,387 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:36:26,540 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:36:56,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:36:56,388 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:36:56,437 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:37:26,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:37:26,379 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:37:26,427 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:37:56,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:37:56,379 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:37:56,531 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:38:26,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:38:26,483 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:38:26,529 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:38:57,283 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:38:57,331 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:38:57,376 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:39:26,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:39:26,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:39:26,431 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:39:56,336 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:39:56,384 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:39:56,431 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:40:26,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:40:26,380 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:40:26,425 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:40:56,337 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:40:56,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:40:56,528 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:41:26,340 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:41:26,389 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:41:26,435 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:41:56,337 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:41:56,384 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:41:56,427 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:42:26,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:42:26,491 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:42:26,535 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:42:56,334 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:42:56,382 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:42:56,427 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:43:26,344 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:43:26,395 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:43:26,439 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:43:56,336 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:43:56,493 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:43:56,541 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:44:26,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:44:26,378 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:44:26,424 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:44:56,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:44:56,489 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:44:56,535 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:45:26,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:45:26,383 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:45:26,428 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:45:56,337 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:45:56,388 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:45:56,432 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:46:26,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:46:26,489 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:46:26,537 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:46:56,333 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:46:56,382 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:46:56,429 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:47:26,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:47:26,387 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:47:26,431 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:47:56,336 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:47:56,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:47:56,543 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:48:26,344 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:48:26,396 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:48:26,444 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:48:56,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:48:56,393 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:48:56,440 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 12:49:26,330 - app - INFO - Getting notifications for username: admin
+2025-10-14 12:49:26,386 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 12:49:26,534 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:46:10,432 - app - INFO - Login attempt for user: admin
+2025-10-14 13:46:10,650 - app - INFO - Login successful for user admin
+2025-10-14 13:46:10,905 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:46:11,075 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:46:11,242 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:46:19,669 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:46:19,832 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:46:19,980 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:46:20,029 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:46:20,177 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:46:20,337 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:46:20,469 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:46:20,637 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:46:20,694 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:46:53,810 - app - INFO - Login attempt for user: admin
+2025-10-14 13:46:53,911 - app - INFO - Login successful for user admin
+2025-10-14 13:46:54,187 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:46:54,256 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:46:54,411 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:47:00,921 - app - INFO - Login attempt for user: dean
+2025-10-14 13:47:00,970 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-14 13:47:02,796 - app - INFO - Login attempt for user: dean
+2025-10-14 13:47:03,001 - app - INFO - Login successful for user dean
+2025-10-14 13:47:03,223 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:47:03,287 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:47:03,347 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:47:03,587 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:47:13,536 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:47:23,479 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:47:33,295 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:47:33,345 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:47:33,392 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:47:33,487 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:47:43,397 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:47:53,522 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:48:03,283 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:48:03,440 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:48:03,485 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:48:03,585 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:48:06,195 - app - INFO - Login attempt for user: chair
+2025-10-14 13:48:06,289 - app - INFO - Login successful for user chair
+2025-10-14 13:48:06,569 - app - INFO - Getting notifications for username: chair
+2025-10-14 13:48:06,637 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 13:48:06,792 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 13:48:13,512 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:48:33,284 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:48:33,348 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:48:33,397 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:48:36,581 - app - INFO - Getting notifications for username: chair
+2025-10-14 13:48:36,628 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 13:48:36,786 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 13:48:46,604 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:00,576 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:00,773 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:03,217 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:49:03,273 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:49:03,324 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:49:03,589 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:13,414 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:23,329 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:25,046 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:49:25,114 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:49:25,166 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:49:25,442 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:29,396 - app - INFO - Login attempt for user: admin
+2025-10-14 13:49:29,494 - app - INFO - Login successful for user admin
+2025-10-14 13:49:29,798 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:49:29,962 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:49:30,012 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:49:35,256 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:39,694 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:49:39,849 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:49:39,900 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:49:40,114 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:40,384 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:49:40,438 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:49:40,490 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:49:40,606 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:51,488 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:49:59,804 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:49:59,851 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:49:59,896 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:50:01,432 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:50:11,289 - app - INFO - Getting notifications for username: dean
+2025-10-14 13:50:11,338 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 13:50:11,386 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 13:50:11,545 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:50:17,566 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:50:20,534 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:50:29,803 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:50:29,852 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:50:29,897 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:50:30,530 - database - INFO - Found 2 pending schedules in database
+2025-10-14 13:50:59,806 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:50:59,853 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:51:00,009 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:51:29,798 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:51:29,849 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:51:29,999 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:51:59,799 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:51:59,952 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:51:59,999 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:52:29,800 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:52:29,947 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:52:29,992 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:52:59,801 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:52:59,850 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:52:59,896 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:53:29,802 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:53:29,851 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:53:29,898 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:53:59,810 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:53:59,860 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:54:00,012 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:54:29,805 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:54:29,855 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:54:29,901 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:54:59,804 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:54:59,854 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:54:59,899 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:55:29,797 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:55:29,848 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:55:29,894 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:55:59,799 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:55:59,953 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:56:00,099 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:56:29,801 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:56:29,851 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:56:30,001 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:56:59,800 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:56:59,850 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:56:59,897 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:57:29,803 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:57:29,851 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:57:30,013 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:57:59,804 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:57:59,853 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:58:00,014 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:58:29,806 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:58:29,854 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:58:29,898 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:58:59,807 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:58:59,857 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:58:59,906 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:59:29,799 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:59:29,950 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:59:30,104 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 13:59:59,805 - app - INFO - Getting notifications for username: admin
+2025-10-14 13:59:59,854 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 13:59:59,901 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:00:29,811 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:00:29,859 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:00:30,008 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:00:59,807 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:00:59,858 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:01:00,004 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:01:29,804 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:01:29,854 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:01:29,899 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:01:59,810 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:01:59,857 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:02:00,010 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:02:29,806 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:02:29,952 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:02:29,999 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:02:59,807 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:02:59,858 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:02:59,907 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:03:29,798 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:03:29,847 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:03:29,996 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:03:59,799 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:03:59,845 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:03:59,892 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:04:29,800 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:04:29,961 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:04:30,009 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:04:59,796 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:04:59,943 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:05:00,092 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:05:29,804 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:05:29,860 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:05:29,909 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:05:59,811 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:05:59,861 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:05:59,909 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:06:29,815 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:06:29,976 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:06:30,024 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:06:48,419 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:06:48,574 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:06:48,620 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:07:12,010 - app - INFO - Login attempt for user: dean
+2025-10-14 14:07:12,341 - app - INFO - Login successful for user dean
+2025-10-14 14:07:12,573 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:07:12,634 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:07:12,791 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:07:12,897 - database - INFO - Found 2 pending schedules in database
+2025-10-14 14:07:18,429 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:07:18,487 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:07:18,552 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:07:19,809 - database - INFO - Creating notification for user_id: 8, title: Schedule Rejected, type: warning
+2025-10-14 14:07:19,962 - database - INFO - Successfully created notification for user_id: 8
+2025-10-14 14:07:21,000 - database - INFO - Found 1 pending schedules in database
+2025-10-14 14:07:26,548 - app - INFO - Login attempt for user: chair
+2025-10-14 14:07:26,752 - app - INFO - Login successful for user chair
+2025-10-14 14:07:26,965 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:07:27,127 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:07:27,294 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-14 14:07:48,435 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:07:48,485 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:07:48,532 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:07:57,282 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:07:57,434 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:07:57,484 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-14 14:08:18,423 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:08:18,478 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:08:18,527 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:08:27,297 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:08:27,349 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:08:27,520 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-14 14:08:48,425 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:08:48,481 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:08:48,532 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:08:56,981 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:08:57,030 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:08:57,079 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-14 14:09:07,533 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:09:07,608 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:09:07,764 - app - INFO - Found 1 notifications for user_id: 8
+2025-10-14 14:09:10,374 - database - INFO - Deleting notification 57
+2025-10-14 14:09:10,431 - database - INFO - Successfully deleted notification 57
+2025-10-14 14:09:10,442 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:09:10,497 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:09:10,549 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:09:15,067 - app - INFO - Login attempt for user: dean
+2025-10-14 14:09:15,115 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-14 14:09:18,248 - app - INFO - Login attempt for user: dean
+2025-10-14 14:09:18,466 - app - INFO - Login successful for user dean
+2025-10-14 14:09:18,563 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:09:18,713 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:09:18,760 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:09:18,793 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:09:18,951 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:09:19,002 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:09:19,117 - database - INFO - Found 1 pending schedules in database
+2025-10-14 14:09:22,687 - database - INFO - Notifications are disabled system-wide. Skipping notification for user_id: 8, title: Schedule Rejected
+2025-10-14 14:09:23,832 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:09:27,621 - app - INFO - Login attempt for user: chair
+2025-10-14 14:09:27,716 - app - INFO - Login successful for user chair
+2025-10-14 14:09:27,937 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:09:28,102 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:09:28,162 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:09:48,427 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:09:48,489 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:09:48,648 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:09:58,279 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:09:58,329 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:09:58,477 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:10:19,280 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:10:19,444 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:10:19,603 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:10:28,281 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:10:28,340 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:10:28,504 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:10:48,467 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:10:48,557 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:10:48,628 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:10:49,582 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:10:49,641 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:10:49,691 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:10:58,280 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:10:58,328 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:10:58,371 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:11:19,584 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:11:19,738 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:11:19,789 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:11:28,285 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:11:28,470 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:11:28,542 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:11:40,231 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:11:40,392 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:11:40,441 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:11:58,280 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:11:58,440 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:11:58,489 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:12:10,233 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:12:10,283 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:12:10,432 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:12:28,286 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:12:28,350 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:12:28,528 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:12:35,565 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:12:35,632 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:12:35,779 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:13:05,571 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:13:05,618 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:13:05,669 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:13:35,579 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:13:35,628 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:13:35,674 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:13:46,285 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:13:46,439 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:13:46,484 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:14:05,565 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:14:05,725 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:14:05,770 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:14:35,567 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:14:35,619 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:14:35,663 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:14:46,371 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:14:46,426 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:14:46,477 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:15:05,566 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:15:05,620 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:15:05,669 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:15:35,564 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:15:35,615 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:15:35,661 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:15:46,290 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:15:46,445 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:15:46,498 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:16:05,569 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:16:05,620 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:16:05,672 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:16:35,567 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:16:35,614 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:16:35,661 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:16:46,290 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:16:46,352 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:16:46,516 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:17:05,564 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:17:05,614 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:17:05,771 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:17:35,563 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:17:35,613 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:17:35,663 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:17:46,285 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:17:46,358 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:17:46,422 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:18:05,569 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:18:05,621 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:18:05,778 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:18:35,566 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:18:35,620 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:18:35,774 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:18:46,281 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:18:46,333 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:18:46,501 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:22:43,024 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:22:43,074 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:22:43,123 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:23:18,481 - app - INFO - Login attempt for user: admin
+2025-10-14 14:23:18,583 - app - INFO - Login successful for user admin
+2025-10-14 14:23:19,296 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:23:19,459 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:23:19,616 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:25:09,093 - app - INFO - Login attempt for user: admin
+2025-10-14 14:25:09,309 - app - INFO - Login successful for user admin
+2025-10-14 14:25:09,921 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:25:09,984 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:25:10,040 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:25:18,972 - app - INFO - Login attempt for user: chair
+2025-10-14 14:25:19,068 - app - INFO - Login successful for user chair
+2025-10-14 14:25:19,863 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:25:20,020 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:25:20,084 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:25:28,566 - app - INFO - Login attempt for user: admin
+2025-10-14 14:25:28,790 - app - INFO - Login successful for user admin
+2025-10-14 14:25:29,299 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:25:29,449 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:25:29,596 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:33:38,421 - app - INFO - Login attempt for user: admin
+2025-10-14 14:33:38,744 - app - INFO - Login successful for user admin
+2025-10-14 14:33:50,747 - app - INFO - Login attempt for user: dean
+2025-10-14 14:33:50,844 - app - INFO - Login successful for user dean
+2025-10-14 14:34:00,646 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:34:00,799 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:34:00,850 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:34:01,209 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:34:09,572 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:34:09,624 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:34:09,671 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:34:10,464 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:34:20,460 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:34:30,607 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:34:30,657 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:34:30,704 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:34:30,960 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:34:39,465 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:34:39,513 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:34:39,561 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:34:40,678 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:34:50,559 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:35:00,637 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:35:00,786 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:35:00,832 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:35:01,031 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:35:09,475 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:35:09,527 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:35:09,676 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:35:10,572 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:35:20,627 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:36:25,110 - app - INFO - Login attempt for user: dean
+2025-10-14 14:36:25,208 - app - INFO - Login successful for user dean
+2025-10-14 14:36:42,073 - app - INFO - Login attempt for user: dean
+2025-10-14 14:36:42,168 - app - INFO - Login successful for user dean
+2025-10-14 14:37:11,573 - app - INFO - Login attempt for user: dean
+2025-10-14 14:37:11,668 - app - INFO - Login successful for user dean
+2025-10-14 14:37:52,225 - app - INFO - Login attempt for user: dean
+2025-10-14 14:37:52,426 - app - INFO - Login successful for user dean
+2025-10-14 14:37:53,152 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:37:53,201 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:37:53,251 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:37:53,544 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:38:13,154 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:38:13,202 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:38:13,356 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:38:43,157 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:38:43,207 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:38:43,254 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:39:13,044 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:39:13,092 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:39:13,138 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:39:43,156 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:39:43,204 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:39:43,248 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:40:13,147 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:40:13,201 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:40:13,248 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:40:43,038 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:40:43,087 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:40:43,238 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:41:13,044 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:41:13,091 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:41:13,137 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:41:43,049 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:41:43,197 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:41:43,252 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:42:13,044 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:42:13,090 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:42:13,138 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:42:43,043 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:42:43,091 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:42:43,137 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:43:13,044 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:43:13,095 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:43:13,141 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:43:38,051 - app - INFO - Login attempt for user: chair
+2025-10-14 14:43:38,160 - app - INFO - Login successful for user chair
+2025-10-14 14:43:39,109 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:43:39,173 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:43:39,220 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:43:43,154 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:43:43,202 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:43:43,249 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:44:08,883 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:44:08,937 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:44:08,988 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:44:13,038 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:44:13,087 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:44:13,135 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:44:43,040 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:44:43,087 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:44:43,136 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:45:13,056 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:45:13,114 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:45:13,277 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:45:43,037 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:45:43,087 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:45:43,133 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:46:13,044 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:46:13,208 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:46:13,254 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:46:43,046 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:46:43,199 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:46:43,361 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:47:13,052 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:47:13,210 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:47:13,365 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:47:38,664 - app - INFO - Login attempt for user: chair
+2025-10-14 14:47:38,773 - app - INFO - Login successful for user chair
+2025-10-14 14:47:39,599 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:47:39,652 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:47:39,701 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:47:43,036 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:47:43,083 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:47:43,132 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:49:32,444 - app - INFO - Login attempt for user: chair
+2025-10-14 14:49:32,655 - app - INFO - Login successful for user chair
+2025-10-14 14:49:33,187 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:49:33,338 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:49:33,387 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:49:43,158 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:49:43,207 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:49:43,265 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:50:13,038 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:50:13,084 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:50:13,244 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:50:43,032 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:50:43,081 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:50:43,126 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:51:13,159 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:51:13,207 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:51:13,358 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:51:43,164 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:51:43,212 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:51:43,259 - app - INFO - Found 1 notifications for user_id: 1
+2025-10-14 14:51:46,103 - database - INFO - Deleting notification 58
+2025-10-14 14:51:46,165 - database - INFO - Successfully deleted notification 58
+2025-10-14 14:51:46,326 - app - INFO - Getting notifications for username: admin
+2025-10-14 14:51:46,499 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 14:51:46,649 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 14:51:54,625 - app - INFO - Login attempt for user: chair
+2025-10-14 14:51:54,721 - app - INFO - Login successful for user chair
+2025-10-14 14:51:55,782 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:51:55,933 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:51:56,085 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:52:03,984 - app - INFO - Login attempt for user: dean
+2025-10-14 14:52:04,200 - app - INFO - Login successful for user dean
+2025-10-14 14:52:05,024 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:52:05,098 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:52:05,157 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:52:05,421 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:52:15,047 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:52:25,288 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:52:34,768 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:52:34,931 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:52:34,979 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:52:35,394 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:52:45,027 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:52:54,930 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:04,974 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:53:05,156 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:53:05,319 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:53:05,383 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:15,091 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:24,937 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:34,905 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:53:34,963 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:53:35,019 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:53:35,338 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:44,922 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:50,473 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:53:50,560 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:53:50,647 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:53:51,138 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:53:58,917 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:53:59,011 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:53:59,090 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:53:59,271 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:54:08,172 - app - INFO - Login attempt for user: dean
+2025-10-14 14:54:08,226 - app - WARNING - Login failed for user dean: Invalid credentials
+2025-10-14 14:54:10,252 - app - INFO - Login attempt for user: dean
+2025-10-14 14:54:10,459 - app - INFO - Login successful for user dean
+2025-10-14 14:54:11,210 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:54:11,270 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:54:11,329 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:54:11,575 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:54:21,295 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:54:31,194 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:54:41,031 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:54:41,078 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:54:41,237 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:54:41,437 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:54:51,079 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:01,293 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:11,239 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:55:11,393 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:55:11,446 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:55:11,568 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:21,289 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:31,336 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:41,132 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:55:41,189 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:55:41,340 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:55:41,571 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:51,289 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:55:59,408 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:00,195 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:56:00,262 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:56:00,417 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:56:00,699 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:10,239 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:20,064 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:30,120 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:56:30,175 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:56:30,222 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:56:30,268 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:40,116 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:50,292 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:56:53,478 - app - INFO - Login attempt for user: chair
+2025-10-14 14:56:53,581 - app - INFO - Login successful for user chair
+2025-10-14 14:56:54,557 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:56:54,619 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:56:54,674 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:57:00,115 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:57:00,170 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:57:00,326 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:57:00,667 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:57:10,269 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:57:20,242 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:57:24,348 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:57:24,502 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:57:24,556 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:57:30,118 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:57:30,172 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:57:30,223 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:57:30,431 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:57:40,281 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:57:50,374 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:57:54,358 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:57:54,530 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:57:54,693 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:58:00,121 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:58:00,204 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:58:00,261 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:58:00,481 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:58:10,311 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:58:15,932 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:58:15,990 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:58:16,044 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:58:16,236 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:58:24,357 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:58:24,412 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:58:24,465 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:58:25,866 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:58:36,092 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:58:45,853 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:58:45,901 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:58:45,948 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:58:46,055 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:58:54,345 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:58:54,389 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:58:54,436 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:58:55,781 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:59:05,797 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:59:15,964 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:59:16,121 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:59:16,275 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:59:16,425 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:59:24,361 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:59:24,449 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:59:24,521 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:59:25,999 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:59:35,917 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:59:45,757 - app - INFO - Getting notifications for username: dean
+2025-10-14 14:59:45,811 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 14:59:45,979 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 14:59:46,101 - database - INFO - Found 0 pending schedules in database
+2025-10-14 14:59:54,344 - app - INFO - Getting notifications for username: chair
+2025-10-14 14:59:54,397 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 14:59:54,447 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 14:59:56,015 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:00:05,796 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:00:15,875 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:00:15,937 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:00:15,987 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:00:16,198 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:00:24,449 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:00:24,610 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:00:24,658 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:00:25,907 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:00:35,878 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:00:45,833 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:00:45,878 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:00:45,924 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:00:46,126 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:00:54,454 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:00:54,500 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:00:54,548 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:00:55,997 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:01:05,897 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:01:15,866 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:01:16,036 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:01:16,089 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:01:16,139 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:01:17,206 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:01:17,369 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:01:17,529 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:01:26,155 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:01:28,671 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:01:28,720 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:01:28,766 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:01:35,943 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:01:36,833 - app - INFO - Login attempt for user: chair
+2025-10-14 15:01:37,045 - app - INFO - Login successful for user chair
+2025-10-14 15:01:37,926 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:01:37,981 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:01:38,145 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:01:45,858 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:01:46,011 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:01:46,158 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:01:46,365 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:01:56,042 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:02:05,910 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:02:07,699 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:02:07,852 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:02:07,906 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:02:15,744 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:02:15,901 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:02:16,048 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:02:16,151 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:02:25,954 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:02:35,895 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:02:37,695 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:02:37,843 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:02:37,891 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:02:45,740 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:02:45,792 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:02:45,843 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:02:45,988 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:02:55,788 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:03:05,877 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:03:07,697 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:03:07,745 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:03:07,792 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:03:15,854 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:03:16,003 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:03:16,050 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:03:16,252 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:03:26,009 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:03:35,893 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:03:37,704 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:03:37,753 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:03:37,801 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:03:45,952 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:03:46,003 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:03:46,051 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:03:46,198 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:03:55,902 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:04:06,003 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:04:07,799 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:04:07,847 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:04:07,895 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:04:15,858 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:04:15,906 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:04:15,955 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:04:16,057 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:04:26,003 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:04:35,855 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:04:37,700 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:04:37,855 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:04:37,908 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:04:45,864 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:04:45,928 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:04:45,982 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:04:46,036 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:04:56,161 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:05:06,058 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:05:07,804 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:05:07,952 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:05:08,000 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:05:15,838 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:05:15,887 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:05:16,043 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:05:16,152 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:05:25,915 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:05:36,017 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:05:37,693 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:05:37,740 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:05:37,894 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:05:45,856 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:05:45,910 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:05:45,957 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:05:46,008 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:05:55,933 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:06:05,947 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:06:07,813 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:06:07,862 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:06:07,906 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:06:13,526 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:06:13,681 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:06:13,837 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:06:15,741 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:06:15,908 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:06:15,953 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:06:16,108 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:06:26,040 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:06:36,106 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:06:43,358 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:06:43,511 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:06:43,556 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:06:45,901 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:06:45,966 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:06:46,019 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:06:46,219 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:06:55,800 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:05,801 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:13,271 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:07:13,335 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:07:13,410 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:07:16,005 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:07:16,052 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:07:16,101 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:07:16,537 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:16,898 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:07:17,066 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:07:17,127 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:07:17,302 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:26,955 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:36,922 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:43,267 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:07:43,315 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:07:43,363 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:07:46,863 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:07:46,926 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:07:46,979 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:07:47,029 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:07:56,790 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:08:06,887 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:08:13,264 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:08:13,318 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:08:13,370 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:08:16,941 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:08:17,003 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:08:17,161 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:08:17,315 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:08:26,997 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:08:36,838 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:08:43,389 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:08:43,445 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:08:43,608 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:08:46,940 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:08:47,000 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:08:47,151 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:08:47,206 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:08:56,836 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:09:06,980 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:09:13,389 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:09:13,439 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:09:13,486 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:09:16,710 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:09:16,763 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:09:16,809 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:09:16,859 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:09:26,881 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:09:36,873 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:09:43,376 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:09:43,532 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:09:43,580 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:09:46,821 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:09:46,870 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:09:46,915 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:09:46,966 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:09:56,772 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:01,476 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:10:01,531 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:10:01,584 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:10:01,797 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:06,226 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:10:06,286 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:10:06,331 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:10:06,379 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:13,273 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:10:13,330 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:10:13,478 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:10:16,247 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:26,499 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:36,284 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:10:36,336 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:10:36,385 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:10:36,491 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:43,269 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:10:43,317 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:10:43,362 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:10:46,357 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:10:56,619 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:11:06,402 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:11:06,465 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:11:06,520 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:11:06,573 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:11:13,272 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:11:13,320 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:11:13,369 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:11:16,559 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:11:26,459 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:11:36,295 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:11:36,457 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:11:36,506 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:11:36,560 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:11:43,264 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:11:43,423 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:11:43,479 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:11:46,377 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:11:55,875 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:11:55,944 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:11:56,011 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:11:56,701 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:02,201 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:12:02,353 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:12:02,405 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:12:02,534 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:11,996 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:22,110 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:25,631 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:12:25,687 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:12:25,740 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:12:31,953 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:12:32,111 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:12:32,166 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:12:32,219 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:42,105 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:52,010 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:12:55,638 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:12:55,693 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:12:55,749 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:13:01,851 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:13:02,022 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:13:02,077 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:13:02,133 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:13:12,064 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:13:21,984 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:13:25,619 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:13:25,770 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:13:25,817 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:13:32,058 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:13:32,108 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:13:32,261 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:13:32,467 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:13:41,886 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:13:51,979 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:13:55,624 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:13:55,676 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:13:55,830 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:14:01,856 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:14:01,906 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:14:02,051 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:14:02,098 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:07,486 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:14:07,539 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:14:07,587 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:14:07,812 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:17,469 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:25,641 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:14:25,712 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:14:25,769 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:14:27,654 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:37,607 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:14:37,659 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:14:37,853 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:14:38,058 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:39,165 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:39,268 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:47,506 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:14:55,674 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:14:55,841 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:14:55,892 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:14:57,601 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:15:07,431 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:15:07,479 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:15:07,529 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:15:07,729 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:15:17,489 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:15:25,636 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:15:25,686 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:15:25,735 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:15:27,690 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:15:37,286 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:15:37,337 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:15:37,384 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:15:37,548 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:15:47,509 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:15:55,630 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:15:55,681 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:15:55,730 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:15:57,384 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:16:07,447 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:16:07,601 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:16:07,651 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:16:07,962 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:16:17,486 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:16:25,644 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:16:25,697 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:16:25,748 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:16:27,600 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:16:37,340 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:16:37,393 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:16:37,440 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:16:37,544 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:16:47,707 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:16:55,622 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:16:55,671 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:16:55,719 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:16:57,378 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:17:07,329 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:17:07,377 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:17:07,424 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:17:07,524 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:17:17,374 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:17:25,624 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:17:25,671 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:17:25,830 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:17:27,592 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:17:37,656 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:17:37,705 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:17:37,751 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:17:37,801 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:17:47,755 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:17:55,631 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:17:55,680 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:17:55,836 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:17:57,493 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:18:07,443 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:18:07,493 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:18:07,640 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:18:07,741 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:18:17,418 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:18:25,745 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:18:25,792 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:18:25,838 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:18:27,427 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:18:37,443 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:18:37,490 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:18:37,536 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:18:37,742 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:18:47,492 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:18:55,740 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:18:55,790 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:18:55,945 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:18:57,646 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:19:07,328 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:19:07,371 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:19:07,418 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:19:07,615 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:19:17,622 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:19:25,625 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:19:25,773 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:19:25,928 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:19:27,496 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:19:37,380 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:19:37,547 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:19:37,708 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:19:37,962 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:19:47,822 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:19:55,631 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:19:55,680 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:19:55,728 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:19:57,480 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:20:07,447 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:20:07,604 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:20:07,651 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:20:07,809 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:20:17,478 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:20:25,744 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:20:25,791 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:20:25,836 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:20:27,648 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:20:37,337 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:20:37,385 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:20:37,430 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:20:37,622 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:20:47,481 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:20:55,637 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:20:55,683 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:20:55,729 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:20:57,370 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:21:07,324 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:21:07,370 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:21:07,417 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:21:07,617 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:21:17,371 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:21:25,640 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:21:25,802 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:21:25,851 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:21:27,483 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:21:37,336 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:21:37,387 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:21:37,539 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:21:37,591 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:21:47,594 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:21:55,625 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:21:55,673 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:21:55,722 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:21:57,497 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:22:07,658 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:22:07,706 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:22:07,860 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:22:08,109 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:22:17,535 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:22:25,636 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:22:25,682 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:22:25,727 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:22:27,653 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:22:37,438 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:22:37,594 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:22:37,639 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:22:37,684 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:22:47,495 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:22:55,632 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:22:55,678 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:22:55,726 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:22:57,379 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:23:07,448 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:23:07,500 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:23:07,651 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:23:07,698 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:23:17,381 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:23:25,629 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:23:25,678 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:23:25,723 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:23:27,372 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:23:37,341 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:23:37,498 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:23:37,544 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:23:37,597 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:23:47,594 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:23:55,630 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:23:55,676 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:23:55,722 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:23:57,429 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:24:07,452 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:24:07,498 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:24:07,654 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:24:07,853 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:24:25,629 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:24:25,675 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:24:25,725 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:24:55,634 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:24:55,682 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:24:55,727 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:25:25,636 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:25:25,791 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:25:25,838 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:25:55,632 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:25:55,796 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:25:55,851 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:26:25,625 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:26:25,673 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:26:25,720 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:26:55,624 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:26:55,673 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:26:55,721 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:27:25,630 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:27:25,676 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:27:25,723 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:27:55,628 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:27:55,676 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:27:55,723 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:28:57,276 - app - INFO - Login attempt for user: dean
+2025-10-14 15:28:57,488 - app - INFO - Login successful for user dean
+2025-10-14 15:28:58,092 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:28:58,256 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:28:58,313 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:28:58,548 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:29:08,071 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:29:26,472 - app - INFO - Login attempt for user: chair
+2025-10-14 15:29:26,571 - app - INFO - Login successful for user chair
+2025-10-14 15:29:27,361 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:29:27,528 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:29:27,689 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:29:57,194 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:29:57,349 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:29:57,397 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:30:27,191 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:30:27,238 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:30:27,284 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:30:57,189 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:30:57,240 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:30:57,390 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:31:27,292 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:31:27,344 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:31:27,388 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:31:57,291 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:31:57,344 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:31:57,398 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:32:03,258 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:32:03,408 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:32:03,457 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:32:09,271 - app - INFO - Login attempt for user: dean
+2025-10-14 15:32:09,407 - app - INFO - Login successful for user dean
+2025-10-14 15:32:10,319 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:32:10,421 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:32:10,487 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 15:32:10,552 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:32:19,115 - database - INFO - Deleting notification 56
+2025-10-14 15:32:19,277 - database - INFO - Successfully deleted notification 56
+2025-10-14 15:32:19,431 - app - INFO - Getting notifications for username: dean
+2025-10-14 15:32:19,487 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 15:32:19,549 - app - INFO - Found 0 notifications for user_id: 9
+2025-10-14 15:32:20,108 - database - INFO - Found 0 pending schedules in database
+2025-10-14 15:32:32,674 - app - INFO - Login attempt for user: admin
+2025-10-14 15:32:32,884 - app - INFO - Login successful for user admin
+2025-10-14 15:32:33,491 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:32:33,645 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:32:33,692 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:32:52,621 - app - INFO - Login attempt for user: chair
+2025-10-14 15:32:52,716 - app - INFO - Login successful for user chair
+2025-10-14 15:32:53,469 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:32:53,628 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:32:53,699 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:33:03,336 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:33:03,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:33:03,432 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:33:23,333 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:33:23,482 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:33:23,534 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:33:33,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:33:33,492 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:33:33,552 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:33:53,442 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:33:53,496 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:33:53,650 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:34:03,346 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:34:03,396 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:34:03,551 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:34:23,428 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:34:23,579 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:34:23,628 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:34:33,443 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:34:33,601 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:34:33,747 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:34:53,335 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:34:53,491 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:34:53,539 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:35:03,341 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:35:03,396 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:35:03,446 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:35:23,462 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:35:23,537 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:35:23,606 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:35:38,568 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:35:38,626 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:35:38,683 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:35:53,333 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:35:53,381 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:35:53,430 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:36:03,441 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:36:03,491 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:36:03,640 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:36:33,342 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:36:33,394 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:36:33,555 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:36:46,436 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:36:46,598 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:36:46,646 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:37:03,447 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:37:03,631 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:37:03,826 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:37:18,086 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:37:18,140 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:37:18,297 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:37:19,481 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:37:19,560 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:37:19,645 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:37:22,180 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:37:22,239 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:37:22,400 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:37:30,550 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:37:30,622 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:37:30,700 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:37:36,044 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:37:36,094 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:37:36,145 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:37:37,736 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:37:37,786 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:37:37,832 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:38:06,030 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:38:06,195 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:38:06,349 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:38:07,433 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:38:07,491 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:38:07,540 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:38:37,343 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:38:37,398 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:38:37,455 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:39:07,349 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:39:07,399 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:39:07,450 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:39:37,335 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:39:37,484 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:39:37,529 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:40:07,435 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:40:07,485 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:40:07,540 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:40:37,335 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:40:37,381 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:40:37,426 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:40:50,073 - app - INFO - Login attempt for user: admin
+2025-10-14 15:40:50,285 - app - INFO - Login successful for user admin
+2025-10-14 15:40:50,890 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:40:50,938 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:40:51,095 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:41:07,397 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:41:07,456 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:41:07,515 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:41:16,007 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:41:16,181 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:41:16,342 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:41:20,867 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:41:21,028 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:41:21,080 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:41:21,418 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:41:21,582 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:41:21,647 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:41:23,567 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:41:23,624 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:41:23,680 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:41:34,359 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:41:34,414 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:41:34,484 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:41:38,400 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:41:38,449 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:41:38,496 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:41:40,516 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:41:40,566 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:41:40,616 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:41:51,277 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:41:51,324 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:41:51,369 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:42:10,334 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:42:10,391 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:42:10,541 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:42:21,275 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:42:21,325 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:42:21,374 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:42:40,342 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:42:40,502 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:42:40,552 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:42:51,284 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:42:51,339 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:42:51,489 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:43:10,197 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:43:10,263 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:43:10,326 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:43:21,281 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:43:21,435 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:43:21,488 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:43:40,557 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:43:40,609 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:43:40,760 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:43:40,760 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:43:40,912 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:43:40,963 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:43:49,061 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:43:49,222 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:43:49,370 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:43:55,131 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:43:55,281 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:43:55,334 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:44:04,533 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:44:04,584 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:44:04,636 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:44:10,391 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:44:10,544 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:44:10,691 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:44:27,462 - app - INFO - Received request for /schedule
+2025-10-14 15:44:27,462 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-14 15:44:27,797 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 2, '4': 0}, 'IT': {'1': 1, '2': 1, '3': 2, '4': 0}}
+2025-10-14 15:44:27,797 - app - INFO - Available years: {1, 2, 3}
+2025-10-14 15:44:27,797 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 2, '4': 0}, 'IT': {'1': 1, '2': 1, '3': 2, '4': 0}}
+2025-10-14 15:44:27,798 - app - INFO - Filtered program sections: {'CS': {1: 1, 3: 2}, 'IT': {1: 1, 2: 1, 3: 2}}
+2025-10-14 15:44:41,055 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:44:41,214 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:44:41,377 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:44:41,377 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:44:41,435 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:44:41,487 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:44:46,249 - app - INFO - Received request for /schedule
+2025-10-14 15:44:46,249 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-14 15:44:46,489 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 2, '4': 0}, 'IT': {'1': 1, '2': 1, '3': 2, '4': 0}}
+2025-10-14 15:44:46,489 - app - INFO - Available years: {1, 2, 3}
+2025-10-14 15:44:46,490 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 2, '4': 0}, 'IT': {'1': 1, '2': 1, '3': 2, '4': 0}}
+2025-10-14 15:44:46,490 - app - INFO - Filtered program sections: {'CS': {1: 1, 3: 2}, 'IT': {1: 1, 2: 1, 3: 2}}
+2025-10-14 15:45:04,002 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:45:04,060 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:45:04,106 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:45:10,477 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:45:10,527 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:45:10,683 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:45:33,990 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:45:34,037 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:45:34,084 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:45:41,337 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:45:41,489 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:45:41,540 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:46:04,004 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:46:04,151 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:46:04,309 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:46:11,348 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:46:11,408 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:46:11,457 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:46:41,442 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:46:41,491 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:46:41,644 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:46:57,231 - app - INFO - Login attempt for user: chair
+2025-10-14 15:46:57,332 - app - INFO - Login successful for user chair
+2025-10-14 15:46:58,644 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:46:58,804 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:46:58,965 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:47:27,982 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:47:28,028 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:47:28,075 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:47:46,339 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:47:46,385 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:47:46,543 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:47:58,092 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:47:58,138 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:47:58,184 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:48:27,987 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:48:28,036 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:48:28,195 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:48:46,327 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:48:46,373 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:48:46,416 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:48:57,984 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:48:58,028 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:48:58,074 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:49:27,992 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:49:28,161 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:49:28,315 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:49:46,347 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:49:46,411 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:49:46,470 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:49:58,099 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:49:58,148 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:49:58,193 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:50:11,429 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:50:11,479 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:50:11,525 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:50:28,085 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:50:28,243 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:50:28,291 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:50:41,434 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:50:41,489 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:50:41,643 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:50:58,009 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:50:58,087 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:50:58,175 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:51:46,350 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:51:46,406 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:51:46,459 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:52:46,440 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:52:46,599 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:52:46,653 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:53:11,353 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:53:11,526 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:53:11,592 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:53:41,443 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:53:41,498 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:53:41,556 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:54:34,713 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:54:34,776 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:54:34,830 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:54:40,394 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:54:40,557 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:54:40,616 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:55:10,400 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:55:10,456 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:55:10,615 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:55:39,399 - app - INFO - Login attempt for user: chair
+2025-10-14 15:55:39,715 - app - INFO - Login successful for user chair
+2025-10-14 15:55:40,410 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:55:40,560 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:55:40,611 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:55:41,203 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:55:41,255 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:55:41,304 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:56:00,702 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:56:00,866 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:56:00,921 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:56:05,026 - app - INFO - Received request for /schedule
+2025-10-14 15:56:05,026 - app - INFO - Scheduling for programs: ['CS']
+2025-10-14 15:56:05,397 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-14 15:56:05,398 - app - INFO - Available years: {1, 2, 3}
+2025-10-14 15:56:05,398 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-14 15:56:05,399 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-14 15:56:10,501 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:56:10,553 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:56:10,600 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:56:30,052 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:56:30,206 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:56:30,367 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:56:40,387 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:56:40,432 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:56:40,478 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:57:00,053 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:57:00,100 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:57:00,250 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:57:04,554 - app - INFO - Getting notifications for username: chair
+2025-10-14 15:57:04,619 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 15:57:04,766 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 15:57:10,488 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:57:10,537 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:57:10,582 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:57:40,382 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:57:40,429 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:57:40,474 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:58:11,326 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:58:11,377 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:58:11,535 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:58:24,050 - app - INFO - Login attempt for user: sec
+2025-10-14 15:58:24,250 - app - INFO - Login successful for user sec
+2025-10-14 15:58:25,026 - app - INFO - Getting notifications for username: sec
+2025-10-14 15:58:25,187 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 15:58:25,239 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 15:58:41,455 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:58:41,502 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:58:41,548 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:58:55,335 - app - INFO - Getting notifications for username: sec
+2025-10-14 15:58:55,384 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 15:58:55,537 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 15:59:26,048 - app - INFO - Getting notifications for username: sec
+2025-10-14 15:59:26,102 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 15:59:26,155 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 15:59:46,332 - app - INFO - Getting notifications for username: admin
+2025-10-14 15:59:46,483 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 15:59:46,635 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 15:59:55,866 - app - INFO - Getting notifications for username: sec
+2025-10-14 15:59:55,934 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 15:59:55,985 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:00:24,848 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:00:24,900 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:00:24,951 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:00:46,431 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:00:46,482 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:00:46,632 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:00:55,461 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:00:55,619 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:00:55,670 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:01:25,346 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:01:25,393 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:01:25,443 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:01:46,327 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:01:46,378 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:01:46,426 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:02:20,646 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:02:20,701 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:02:20,755 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:02:21,650 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:02:21,734 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:02:21,821 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:02:29,766 - app - INFO - Login attempt for user: chair
+2025-10-14 16:02:29,814 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-14 16:02:33,503 - app - INFO - Login attempt for user: chair
+2025-10-14 16:02:33,719 - app - INFO - Login successful for user chair
+2025-10-14 16:02:34,796 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:02:34,945 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:02:34,992 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 16:02:46,344 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:02:46,412 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:02:46,472 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:02:50,022 - app - INFO - Received request for /schedule
+2025-10-14 16:02:50,023 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-14 16:02:50,388 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-14 16:02:50,389 - app - INFO - Available years: {1, 2, 3}
+2025-10-14 16:02:50,389 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-14 16:02:50,389 - app - INFO - Filtered program sections: {'CS': {1: 1, 3: 1}, 'IT': {1: 1, 2: 2, 3: 1}}
+2025-10-14 16:03:04,227 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:03:04,276 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:03:04,322 - app - INFO - Found 0 notifications for user_id: 8
+2025-10-14 16:03:19,927 - database - INFO - Creating notification for user_id: 9, title: New Schedule Submitted, type: info
+2025-10-14 16:03:20,091 - database - INFO - Successfully created notification for user_id: 9
+2025-10-14 16:03:20,091 - database - INFO - Sent notifications to 1 deans about schedule submission from chair
+2025-10-14 16:03:31,773 - app - INFO - Login attempt for user: dean
+2025-10-14 16:03:31,978 - app - INFO - Login successful for user dean
+2025-10-14 16:03:32,730 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:03:32,894 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:03:32,953 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:03:33,296 - database - INFO - Found 1 pending schedules in database
+2025-10-14 16:03:33,297 - app - INFO - Dean requesting pending schedules. Found 1 schedules
+2025-10-14 16:03:40,571 - database - INFO - Creating notification for user_id: 8, title: Schedule Approved, type: success
+2025-10-14 16:03:40,729 - database - INFO - Successfully created notification for user_id: 8
+2025-10-14 16:03:41,260 - database - INFO - Creating notification for user_id: 8, title: Schedule Approved, type: success
+2025-10-14 16:03:41,429 - database - INFO - Successfully created notification for user_id: 8
+2025-10-14 16:03:42,251 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:03:42,251 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:03:43,980 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:03:43,980 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:03:44,032 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:03:44,033 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:03:46,342 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:03:46,419 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:03:46,486 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:03:50,456 - app - INFO - Login attempt for user: chair
+2025-10-14 16:03:50,670 - app - INFO - Login successful for user chair
+2025-10-14 16:03:51,960 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:03:52,006 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:03:52,053 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:04:17,331 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:04:17,386 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:04:17,442 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:04:27,113 - app - INFO - Login attempt for user: sec
+2025-10-14 16:04:27,247 - app - INFO - Login successful for user sec
+2025-10-14 16:04:28,073 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:04:28,128 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:04:28,177 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:04:46,432 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:04:46,484 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:04:46,633 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:04:58,453 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:04:58,618 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:04:58,667 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:05:29,070 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:05:29,120 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:05:29,168 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:05:44,029 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:05:44,101 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:05:44,168 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:05:46,338 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:05:46,498 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:05:46,648 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:06:14,443 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:06:14,496 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:06:14,657 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:06:44,337 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:06:44,390 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:06:44,549 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:06:46,340 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:06:46,398 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:06:46,453 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:07:14,310 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:07:14,376 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:07:14,440 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:07:15,630 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:07:15,715 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:07:15,783 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:07:45,334 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:07:45,380 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:07:45,427 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:07:46,335 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:07:46,391 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:07:46,440 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:08:15,448 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:08:15,502 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:08:15,554 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:08:45,338 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:08:45,387 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:08:45,436 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:08:46,328 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:08:46,377 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:08:46,450 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:09:15,352 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:09:15,407 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:09:15,462 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:09:45,249 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:09:45,419 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:09:45,492 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:09:46,331 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:09:46,490 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:09:46,544 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:10:15,260 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:10:15,413 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:10:15,466 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:10:45,250 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:10:45,295 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:10:45,342 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:10:46,440 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:10:46,487 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:10:46,534 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:11:15,251 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:11:15,300 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:11:15,455 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:11:22,376 - app - INFO - Login attempt for user: admin
+2025-10-14 16:11:22,475 - app - INFO - Login successful for user admin
+2025-10-14 16:11:23,052 - app - INFO - Getting notifications for username: admin
+2025-10-14 16:11:23,120 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 16:11:23,282 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 16:11:32,770 - app - INFO - Login attempt for user: chair
+2025-10-14 16:11:33,035 - app - INFO - Login successful for user chair
+2025-10-14 16:11:34,636 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:11:34,709 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:11:34,792 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:11:48,596 - app - INFO - Login attempt for user: sec
+2025-10-14 16:11:48,939 - app - INFO - Login successful for user sec
+2025-10-14 16:11:49,807 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:11:49,862 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:11:50,018 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:12:19,500 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:12:19,551 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:12:19,604 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:12:49,598 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:12:49,751 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:12:49,804 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:13:19,606 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:13:19,654 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:13:19,702 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:13:49,493 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:13:49,649 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:13:49,693 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:14:19,493 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:14:19,653 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:14:19,705 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:14:49,494 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:14:49,644 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:14:49,695 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:15:19,597 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:15:19,750 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:15:19,805 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:15:49,499 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:15:49,658 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:15:49,709 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:16:19,586 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:16:19,641 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:16:19,692 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:16:49,592 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:16:49,638 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:16:49,686 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:17:19,613 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:17:19,673 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:17:19,836 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:17:49,251 - app - INFO - Login attempt for user: sec
+2025-10-14 16:17:49,564 - app - INFO - Login successful for user sec
+2025-10-14 16:18:00,008 - app - INFO - Login attempt for user: chair
+2025-10-14 16:18:00,213 - app - INFO - Login successful for user chair
+2025-10-14 16:18:01,376 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:18:01,560 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:18:01,644 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:18:06,207 - app - INFO - Login attempt for user: sec
+2025-10-14 16:18:06,317 - app - INFO - Login successful for user sec
+2025-10-14 16:21:11,554 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:21:11,626 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:21:11,694 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:21:18,556 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:21:18,724 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:21:18,883 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:21:49,340 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:21:49,397 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:21:49,451 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:22:19,330 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:22:19,490 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:22:19,537 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:22:39,911 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:22:39,974 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:22:40,033 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:23:10,445 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:23:10,494 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:23:10,642 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:23:40,440 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:23:40,599 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:23:40,749 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:24:10,340 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:24:10,392 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:24:10,444 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:24:40,339 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:24:40,386 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:24:40,432 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:25:10,441 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:25:10,487 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:25:10,532 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:25:20,104 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:25:20,170 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:25:20,331 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:25:50,439 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:25:50,585 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:25:50,629 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:31:23,222 - app - INFO - Login attempt for user: chair
+2025-10-14 16:31:23,318 - app - INFO - Login successful for user chair
+2025-10-14 16:31:24,630 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:31:24,786 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:31:24,948 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:31:49,770 - app - INFO - Login attempt for user: dean
+2025-10-14 16:31:49,870 - app - INFO - Login successful for user dean
+2025-10-14 16:31:50,503 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:31:50,562 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:31:50,620 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:31:50,808 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:31:50,809 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:33:02,708 - app - INFO - Login attempt for user: sec
+2025-10-14 16:33:02,942 - app - INFO - Login successful for user sec
+2025-10-14 16:33:03,881 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:33:03,961 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:33:04,135 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:33:34,349 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:33:34,404 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:33:34,460 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:34:04,342 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:34:04,495 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:34:04,654 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:34:25,939 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:34:26,013 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:34:26,190 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:34:32,409 - app - INFO - Login attempt for user: chair
+2025-10-14 16:34:32,647 - app - INFO - Login successful for user chair
+2025-10-14 16:34:33,769 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:34:33,846 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:34:34,028 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:40:28,895 - app - INFO - Login attempt for user: dean
+2025-10-14 16:40:28,990 - app - INFO - Login successful for user dean
+2025-10-14 16:40:29,851 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:40:29,902 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:40:30,050 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:40:30,433 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:40:30,433 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:40:37,836 - app - INFO - Login attempt for user: chair
+2025-10-14 16:40:38,049 - app - INFO - Login successful for user chair
+2025-10-14 16:40:38,859 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:40:38,934 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:40:38,995 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:42:15,666 - app - INFO - Login attempt for user: dean
+2025-10-14 16:42:15,887 - app - INFO - Login successful for user dean
+2025-10-14 16:42:16,580 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:42:16,633 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:42:16,684 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:42:17,015 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:42:17,016 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:42:26,550 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:42:26,550 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:42:33,355 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:42:33,355 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:42:40,196 - app - INFO - Login attempt for user: chair
+2025-10-14 16:42:40,409 - app - INFO - Login successful for user chair
+2025-10-14 16:42:41,710 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:42:41,761 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:42:41,807 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:49:48,758 - app - INFO - Login attempt for user: chair
+2025-10-14 16:49:48,965 - app - INFO - Login successful for user chair
+2025-10-14 16:49:50,314 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:49:50,464 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:49:50,511 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:51:13,221 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:51:13,281 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:51:13,433 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:51:43,343 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:51:43,395 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:51:43,546 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:52:13,340 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:52:13,391 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:52:13,439 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:52:43,466 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:52:43,554 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:52:43,725 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:52:45,345 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:52:45,402 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:52:45,567 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:52:57,952 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:52:58,016 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:52:58,203 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:54:41,810 - app - INFO - Login attempt for user: dean
+2025-10-14 16:54:41,918 - app - INFO - Login successful for user dean
+2025-10-14 16:54:42,644 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:54:42,810 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:54:42,968 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:54:43,276 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:54:43,276 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:54:53,701 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:54:53,701 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:55:03,752 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:55:03,752 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:55:13,436 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:55:13,488 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:55:13,542 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:55:13,860 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:55:13,860 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:55:23,595 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:55:23,596 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:55:33,511 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:55:33,511 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:55:43,554 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:55:43,611 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:55:43,664 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:55:43,723 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:55:43,724 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:56:12,569 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:56:12,570 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:56:12,629 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:56:12,629 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:56:12,630 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:56:12,789 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:56:12,846 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:56:18,673 - app - INFO - Login attempt for user: chair
+2025-10-14 16:56:18,773 - app - INFO - Login successful for user chair
+2025-10-14 16:56:19,773 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:56:19,928 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:56:19,985 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:56:37,304 - app - INFO - Login attempt for user: dean
+2025-10-14 16:56:37,533 - app - INFO - Login successful for user dean
+2025-10-14 16:56:38,355 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:56:38,408 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:56:38,460 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:56:38,764 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:56:38,764 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:56:48,446 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:56:48,447 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:56:58,592 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:56:58,592 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:08,572 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:57:08,728 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:57:08,781 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:57:08,991 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:08,992 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:18,801 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:18,802 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:28,739 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:28,739 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:38,592 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:57:38,660 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:57:38,808 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:57:39,121 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:39,122 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:48,716 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:48,716 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:59,360 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:59,360 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:57:59,494 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:57:59,494 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:58:00,252 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:58:00,330 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:58:00,498 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:58:00,810 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:58:00,811 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:58:06,365 - app - INFO - Login attempt for user: chair
+2025-10-14 16:58:06,584 - app - INFO - Login successful for user chair
+2025-10-14 16:58:07,448 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:58:07,512 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:58:07,660 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 16:58:33,122 - app - INFO - Login attempt for user: sec
+2025-10-14 16:58:33,231 - app - INFO - Login successful for user sec
+2025-10-14 16:58:33,845 - app - INFO - Getting notifications for username: sec
+2025-10-14 16:58:33,900 - app - INFO - Retrieving notifications for user_id: 6
+2025-10-14 16:58:33,949 - app - INFO - Found 0 notifications for user_id: 6
+2025-10-14 16:58:47,067 - app - INFO - Login attempt for user: dean
+2025-10-14 16:58:47,170 - app - INFO - Login successful for user dean
+2025-10-14 16:58:47,912 - app - INFO - Getting notifications for username: dean
+2025-10-14 16:58:48,073 - app - INFO - Retrieving notifications for user_id: 9
+2025-10-14 16:58:48,129 - app - INFO - Found 1 notifications for user_id: 9
+2025-10-14 16:58:48,554 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:58:48,555 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:58:57,763 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:58:57,764 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:59:08,366 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:59:08,367 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:59:08,438 - database - INFO - Found 0 pending schedules in database
+2025-10-14 16:59:08,438 - app - INFO - Dean requesting pending schedules. Found 0 schedules
+2025-10-14 16:59:13,648 - app - INFO - Login attempt for user: chair
+2025-10-14 16:59:13,750 - app - INFO - Login successful for user chair
+2025-10-14 16:59:14,691 - app - INFO - Getting notifications for username: chair
+2025-10-14 16:59:14,741 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 16:59:14,893 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:00:24,426 - app - INFO - Login attempt for user: chair
+2025-10-14 17:00:24,644 - app - INFO - Login successful for user chair
+2025-10-14 17:00:26,024 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:00:26,083 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:00:26,139 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:06:57,206 - app - INFO - Login attempt for user: chair
+2025-10-14 17:06:57,538 - app - INFO - Login successful for user chair
+2025-10-14 17:06:58,965 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:06:59,114 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:06:59,162 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:07:28,356 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:07:28,404 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:07:28,557 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:07:58,354 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:07:58,518 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:07:58,565 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:08:28,358 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:08:28,510 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:08:28,661 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:08:58,356 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:08:58,401 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:08:58,446 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:09:28,374 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:09:28,419 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:09:28,465 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:09:58,471 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:09:58,516 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:09:58,565 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:10:28,466 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:10:28,630 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:10:28,781 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:10:58,465 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:10:58,511 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:10:58,559 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:11:28,355 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:11:28,515 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:11:28,564 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:12:18,200 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:12:18,384 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:12:18,456 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:12:34,336 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:12:34,437 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:12:34,533 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:13:03,608 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:13:03,778 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:13:03,837 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:13:33,614 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:13:33,678 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:13:33,842 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:14:03,619 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:14:03,689 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:14:03,752 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:14:33,613 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:14:33,673 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:14:33,733 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:15:03,620 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:15:03,699 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:15:03,765 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:15:33,580 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:15:33,764 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:15:33,842 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:15:44,657 - app - INFO - Getting notifications for username: chair
+2025-10-14 17:15:44,715 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-14 17:15:44,888 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-14 17:15:51,078 - app - INFO - Received request for /schedule
+2025-10-14 17:15:51,078 - app - INFO - Scheduling for programs: ['CS']
+2025-10-14 17:15:51,283 - app - INFO - Filtering for semester: 1. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-14 17:15:51,283 - app - INFO - Available years: {1, 2, 3}
+2025-10-14 17:15:51,284 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-14 17:15:51,284 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-14 17:16:11,719 - app - INFO - Login attempt for user: admin
+2025-10-14 17:16:11,844 - app - INFO - Login successful for user admin
+2025-10-14 17:16:12,537 - app - INFO - Getting notifications for username: admin
+2025-10-14 17:16:12,617 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 17:16:12,688 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 17:17:12,373 - app - INFO - Getting notifications for username: admin
+2025-10-14 17:17:12,435 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 17:17:12,491 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 17:17:42,483 - app - INFO - Getting notifications for username: admin
+2025-10-14 17:17:42,552 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 17:17:42,720 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-14 17:18:12,372 - app - INFO - Getting notifications for username: admin
+2025-10-14 17:18:12,432 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-14 17:18:12,489 - app - INFO - Found 0 notifications for user_id: 1

@@ -1,8 +1,21 @@
-fastapi==0.104.1
-uvicorn==0.24.0
-psycopg2-binary==2.9.9
-sqlalchemy==2.0.23
-ortools>=9.12.0
-python-multipart==0.0.6
-PyJWT==2.8.0
-requests==2.31.0
+# Core FastAPI and web framework dependencies
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database dependencies
+psycopg2-binary
+sqlalchemy
+
+# Authentication and security
+PyJWT
+
+# Optimization and scheduling
+ortools
+
+# HTTP requests and utilities
+requests
+
+# Additional dependencies for production deployment
+gunicorn
+python-dotenv
