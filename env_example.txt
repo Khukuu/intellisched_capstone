@@ -1,0 +1,14 @@
+# IntelliSched Environment Configuration
+# Copy this file to .env and update the values for your deployment
+
+# Database Configuration
+DATABASE_URL=postgresql://postgres:your-secure-password@localhost:5432/intellisched
+
+# JWT Configuration
+SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Server Configuration
+HOST=0.0.0.0
+PORT=8000
+RELOAD=false

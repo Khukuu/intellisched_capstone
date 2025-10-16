@@ -11511,3 +11511,83 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-14 17:18:12,372 - app - INFO - Getting notifications for username: admin
 2025-10-14 17:18:12,432 - app - INFO - Retrieving notifications for user_id: 1
 2025-10-14 17:18:12,489 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:23:49,962 - app - INFO - Login attempt for user: admin
+2025-10-16 22:23:50,096 - app - INFO - Login successful for user admin
+2025-10-16 22:23:51,007 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:23:51,072 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:23:51,143 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:24:21,017 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:24:21,073 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:24:21,238 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:25:36,616 - app - INFO - Login attempt for user: admin
+2025-10-16 22:25:36,728 - app - INFO - Login successful for user admin
+2025-10-16 22:25:37,262 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:25:37,426 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:25:37,484 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:26:07,742 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:26:07,803 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:26:07,863 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:26:37,105 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:26:37,195 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:26:37,283 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:26:55,177 - app - INFO - Login attempt for user: admin
+2025-10-16 22:26:55,227 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:27:08,910 - app - INFO - Login attempt for user: admin
+2025-10-16 22:27:08,978 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:27:09,599 - app - INFO - Login attempt for user: admin
+2025-10-16 22:27:09,762 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:27:10,032 - app - INFO - Login attempt for user: admin
+2025-10-16 22:27:10,095 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:27:10,232 - app - INFO - Login attempt for user: admin
+2025-10-16 22:27:10,297 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:30:12,285 - app - INFO - Login attempt for user: admin
+2025-10-16 22:30:12,349 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:30:20,117 - app - INFO - Login attempt for user: admin
+2025-10-16 22:30:20,255 - app - INFO - Login successful for user admin
+2025-10-16 22:30:20,834 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:30:20,906 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:30:21,071 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:41:16,520 - app - INFO - Login attempt for user: admin
+2025-10-16 22:41:16,604 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:41:23,069 - app - INFO - Login attempt for user: admin
+2025-10-16 22:41:23,241 - app - INFO - Login successful for user admin
+2025-10-16 22:41:24,145 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:41:24,227 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:41:24,410 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:43:08,415 - app - INFO - Login attempt for user: admin
+2025-10-16 22:43:08,502 - app - WARNING - Login failed for user admin: Invalid credentials
+2025-10-16 22:43:14,520 - app - INFO - Login attempt for user: admin
+2025-10-16 22:43:14,688 - app - INFO - Login successful for user admin
+2025-10-16 22:43:15,261 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:43:15,344 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:43:15,426 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:43:45,775 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:43:45,863 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:43:45,944 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:44:15,877 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:44:16,076 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:44:16,164 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:44:45,785 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:44:45,879 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:44:45,974 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:45:15,775 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:45:15,869 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:45:15,961 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:45:45,778 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:45:45,868 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:45:45,952 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:46:15,775 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:46:15,867 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:46:15,951 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:47:12,782 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:47:12,859 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:47:12,929 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:48:12,751 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:48:12,828 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:48:12,897 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:49:49,457 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:49:49,522 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:49:49,584 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-16 22:49:50,882 - app - INFO - Getting notifications for username: admin
+2025-10-16 22:49:50,951 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-16 22:49:51,011 - app - INFO - Found 0 notifications for user_id: 1

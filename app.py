@@ -43,6 +43,14 @@ from datetime import datetime, timedelta
 import jwt  # PyJWT is installed as 'jwt'
 from typing import Optional
 
+# Load environment variables from .env file if it exists
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, continue without it
+    pass
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -163,9 +171,9 @@ class NoCacheStaticFiles(StaticFiles):
 app.mount('/static', NoCacheStaticFiles(directory='static'), name='static')
 
 # JWT Configuration
-SECRET_KEY = "your-secret-key-change-in-production"  # Change this in production!
+SECRET_KEY = os.getenv('SECRET_KEY', 'your-secret-key-change-in-production')  # Use environment variable
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES', '30'))
 
 # Security
 security = HTTPBearer(auto_error=False)
@@ -1784,4 +1792,11 @@ async def record_system_metric(
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run('app:app', host='127.0.0.1', port=5000, reload=True)
+    import os
+    
+    # Get configuration from environment variables
+    host = os.getenv('HOST', '127.0.0.1')
+    port = int(os.getenv('PORT', 5000))
+    reload = os.getenv('RELOAD', 'true').lower() == 'true'
+    
+    uvicorn.run('app:app', host=host, port=port, reload=reload)

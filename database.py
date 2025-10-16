@@ -11,7 +11,9 @@ logger = logging.getLogger(__name__)
 
 class DatabaseManager:
     def __init__(self, connection_string: str = None):
-        self.connection_string = connection_string or "postgresql://postgres:asdf1234@localhost:5432/intellisched"
+        # Use environment variable for database URL, fallback to default for development
+        default_connection = "postgresql://postgres:asdf1234@localhost:5432/intellisched"
+        self.connection_string = connection_string or os.getenv('DATABASE_URL', default_connection)
         
     def get_connection(self):
         """Get a database connection"""
@@ -222,7 +224,7 @@ class ScheduleDatabase:
             existing_admin = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('admin',))
             if not existing_admin:
                 # Create default admin user
-                password = "admin123"
+                password = os.getenv('ADMIN_PASSWORD', 'AdminSecure123!')
                 salt = secrets.token_hex(16)
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
@@ -231,13 +233,13 @@ class ScheduleDatabase:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, ('admin', password_hash, salt, 'Administrator', 'admin@intellisched.com', 'admin', 'active'))
                 
-                logger.info("Default admin user created (username: admin, password: admin123)")
+                logger.info("Default admin user created (username: admin, password: [HIDDEN])")
             
             # Check if chair user exists
             existing_chair = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('chair',))
             if not existing_chair:
                 # Create default chair user
-                password = "chair123"
+                password = os.getenv('CHAIR_PASSWORD', 'ChairSecure123!')
                 salt = secrets.token_hex(16)
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
@@ -246,13 +248,13 @@ class ScheduleDatabase:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, ('chair', password_hash, salt, 'Department Chair', 'chair@intellisched.com', 'chair', 'active'))
                 
-                logger.info("Default chair user created (username: chair, password: chair123)")
+                logger.info("Default chair user created (username: chair, password: [HIDDEN])")
             
             # Check if dean user exists
             existing_dean = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('dean',))
             if not existing_dean:
                 # Create default dean user
-                password = "dean123"
+                password = os.getenv('DEAN_PASSWORD', 'DeanSecure123!')
                 salt = secrets.token_hex(16)
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
@@ -261,13 +263,13 @@ class ScheduleDatabase:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, ('dean', password_hash, salt, 'Dean', 'dean@intellisched.com', 'dean', 'active'))
                 
-                print("✅ Default dean user created (username: dean, password: dean123)")
+                print("✅ Default dean user created (username: dean, password: [HIDDEN])")
             
             # Check if secretary user exists
             existing_secretary = self.db.execute_query("SELECT id FROM users WHERE username = %s", ('sec',))
             if not existing_secretary:
                 # Create default secretary user
-                password = "sec123"
+                password = os.getenv('SECRETARY_PASSWORD', 'SecretarySecure123!')
                 salt = secrets.token_hex(16)
                 password_hash = hashlib.sha256((password + salt).encode()).hexdigest()
                 
@@ -276,7 +278,7 @@ class ScheduleDatabase:
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """, ('sec', password_hash, salt, 'Secretary', 'secretary@intellisched.com', 'secretary', 'active'))
                 
-                print("✅ Default secretary user created (username: sec, password: sec123)")
+                print("✅ Default secretary user created (username: sec, password: [HIDDEN])")
                 
         except Exception as e:
             print(f"⚠️ Could not create default users: {e}")
