@@ -432,16 +432,33 @@ class ScheduleDatabase:
     
     def load_teachers(self) -> List[Dict[str, Any]]:
         """Load all teachers from database"""
-        query = """
-        SELECT 
-            teacher_id,
-            teacher_name,
-            can_teach,
-            availability_days
-        FROM teachers
-        ORDER BY teacher_name
-        """
-        return self.db.execute_query(query)
+        # Check if availability_days column exists
+        try:
+            query = """
+            SELECT 
+                teacher_id,
+                teacher_name,
+                can_teach,
+                availability_days
+            FROM teachers
+            ORDER BY teacher_name
+            """
+            return self.db.execute_query(query)
+        except Exception as e:
+            if "availability_days" in str(e):
+                # Fallback query without availability_days
+                query = """
+                SELECT 
+                    teacher_id,
+                    teacher_name,
+                    can_teach,
+                    'Mon,Tue,Wed,Thu,Fri' as availability_days
+                FROM teachers
+                ORDER BY teacher_name
+                """
+                return self.db.execute_query(query)
+            else:
+                raise e
     
     def load_rooms(self) -> List[Dict[str, Any]]:
         """Load all rooms from database"""
