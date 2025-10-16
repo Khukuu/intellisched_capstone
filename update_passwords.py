@@ -26,13 +26,13 @@ def update_user_password(username, new_password):
         
         return True
     except Exception as e:
-        print(f"❌ Error updating {username}: {e}")
+        print(f"[ERROR] Error updating {username}: {e}")
         return False
 
 def update_all_passwords():
     """Update all default user passwords"""
     
-    print("🔐 Updating IntelliSched User Passwords")
+    print("Updating IntelliSched User Passwords")
     print("=" * 40)
     
     # Get passwords from environment variables
@@ -47,15 +47,15 @@ def update_all_passwords():
     
     for username, password in passwords.items():
         if update_user_password(username, password):
-            print(f"✅ Updated password for: {username}")
+            print(f"[OK] Updated password for: {username}")
             success_count += 1
         else:
-            print(f"❌ Failed to update: {username}")
+            print(f"[ERROR] Failed to update: {username}")
     
-    print(f"\n🎉 Updated {success_count}/4 user passwords!")
+    print(f"\n[SUCCESS] Updated {success_count}/4 user passwords!")
     
     if success_count == 4:
-        print("\n📝 You can now login with the new passwords:")
+        print("\nYou can now login with the new passwords:")
         print("   Admin: admin / [new password]")
         print("   Chair: chair / [new password]")
         print("   Dean: dean / [new password]")
@@ -64,7 +64,7 @@ def update_all_passwords():
     return success_count == 4
 
 if __name__ == "__main__":
-    print("⚠️  This will update existing user passwords!")
+    print("[WARN] This will update existing user passwords!")
     print("Make sure you have set your environment variables first.")
     
     confirm = input("\nDo you want to continue? (yes/no): ").strip().lower()
@@ -72,5 +72,5 @@ if __name__ == "__main__":
     if confirm in ['yes', 'y']:
         update_all_passwords()
     else:
-        print("❌ Operation cancelled.")
+        print("[CANCELLED] Operation cancelled.")
         sys.exit(1)

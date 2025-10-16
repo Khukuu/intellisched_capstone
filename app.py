@@ -1795,8 +1795,8 @@ if __name__ == '__main__':
     import os
     
     # Get configuration from environment variables
-    host = os.getenv('HOST', '127.0.0.1')
-    port = int(os.getenv('PORT', 5000))
-    reload = os.getenv('RELOAD', 'true').lower() == 'true'
+    host = os.getenv('HOST', '0.0.0.0')  # Railway needs 0.0.0.0
+    port = int(os.getenv('PORT', 8000))  # Railway sets PORT automatically
+    reload = os.getenv('RELOAD', 'false').lower() == 'true'  # Disable reload in production
     
     uvicorn.run('app:app', host=host, port=port, reload=reload)
