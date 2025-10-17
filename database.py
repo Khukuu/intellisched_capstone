@@ -69,11 +69,25 @@ class ScheduleDatabase:
             year_level INTEGER
         );
         
+        -- IT curriculum table (mirrors CS curriculum)
+        CREATE TABLE IF NOT EXISTS it_curriculum (
+            id SERIAL PRIMARY KEY,
+            subject_code VARCHAR(50) UNIQUE NOT NULL,
+            subject_name VARCHAR(255) NOT NULL,
+            lecture_hours_per_week INTEGER DEFAULT 0,
+            lab_hours_per_week INTEGER DEFAULT 0,
+            units INTEGER DEFAULT 0,
+            semester INTEGER,
+            program_specialization VARCHAR(255),
+            year_level INTEGER
+        );
+        
         CREATE TABLE IF NOT EXISTS teachers (
             id SERIAL PRIMARY KEY,
             teacher_id VARCHAR(20) UNIQUE NOT NULL,
             teacher_name VARCHAR(255) NOT NULL,
-            can_teach TEXT
+            can_teach TEXT,
+            availability_days TEXT
         );
         
         CREATE TABLE IF NOT EXISTS rooms (
@@ -164,6 +178,12 @@ class ScheduleDatabase:
             except Exception as e:
                 logger.warning(f"Could not execute statement: {e}")
                 # Continue with other statements
+        
+        # Idempotent schema fixes for existing deployments
+        try:
+            self.db.execute_single("ALTER TABLE teachers ADD COLUMN IF NOT EXISTS availability_days TEXT DEFAULT 'Mon,Tue,Wed,Thu,Fri,Sat'")
+        except Exception as e:
+            logger.warning(f"Schema fix failed (teachers.availability_days): {e}")
         
         # Check if users table has correct structure
         if not self._check_users_table_structure():
@@ -540,15 +560,26 @@ class ScheduleDatabase:
         self.db.execute_single(query, params)
         
     def insert_teacher(self, teacher_data: Dict[str, Any]) -> int:
-        """Insert a single teacher and return the generated ID"""
+        """Insert a single teacher and return the generated teacher_id"""
+        # Ensure teacher_id exists (generate if not provided)
+        teacher_id = teacher_data.get('teacher_id')
+        if not teacher_id:
+            import secrets
+            teacher_id = f"T{secrets.token_hex(4).upper()}"
+        
         query = """
-        INSERT INTO teachers (teacher_name, can_teach, availability_days)
-        VALUES (%s, %s, %s)
+        INSERT INTO teachers (teacher_id, teacher_name, can_teach, availability_days)
+        VALUES (%s, %s, %s, %s)
+        ON CONFLICT (teacher_id) DO UPDATE SET
+            teacher_name = EXCLUDED.teacher_name,
+            can_teach = EXCLUDED.can_teach,
+            availability_days = EXCLUDED.availability_days
         RETURNING teacher_id
         """
         # Default to all days available if not specified
         availability_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
         params = (
+            teacher_id,
             teacher_data['teacher_name'],
             teacher_data.get('can_teach', ''),
             availability_days
@@ -557,13 +588,22 @@ class ScheduleDatabase:
         return result[0]['teacher_id'] if result else None
     
     def insert_room(self, room_data: Dict[str, Any]) -> int:
-        """Insert a single room and return the generated ID"""
+        """Insert a single room and return the generated room_id"""
+        # Ensure room_id exists (generate if not provided)
+        room_id = room_data.get('room_id')
+        if not room_id:
+            import secrets
+            room_id = f"R{secrets.token_hex(4).upper()}"
         query = """
-        INSERT INTO rooms (room_name, is_laboratory)
-        VALUES (%s, %s)
+        INSERT INTO rooms (room_id, room_name, is_laboratory)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (room_id) DO UPDATE SET
+            room_name = EXCLUDED.room_name,
+            is_laboratory = EXCLUDED.is_laboratory
         RETURNING room_id
         """
         params = (
+            room_id,
             room_data['room_name'],
             room_data.get('is_laboratory', False)
         )
