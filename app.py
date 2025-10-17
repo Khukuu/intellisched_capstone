@@ -999,6 +999,9 @@ async def get_data(filename: str, username: str = Depends(require_chair_role)):
         else:
             raise HTTPException(status_code=404, detail='Data type not found')
         return JSONResponse(content=data)
+    except HTTPException:
+        # Preserve original status codes (e.g., 401/403/404)
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
