@@ -274,7 +274,12 @@
       
       <div class="mb-4">
         <label for="password" class="form-label"><b>Password</b></label>
-        <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
+        <div class="input-group">
+          <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="togglePasswordVisibility()">
+            <i class="bi bi-eye" id="toggleIcon"></i>
+          </button>
+        </div>
       </div>
       
       <button type="submit" class="btn btn-login">
@@ -381,6 +386,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       `;
+    }
+    
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const toggleIcon = document.getElementById('toggleIcon');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+      }
     }
     
     // Auto-focus username field

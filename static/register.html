@@ -187,14 +187,24 @@
       </div>
       <div class="mb-3">
         <label for="reg_password" class="form-label"><b>Password</b></label>
-        <input type="password" class="form-control" id="reg_password" required placeholder="Create a strong password (min 8 chars)">
+        <div class="input-group">
+          <input type="password" class="form-control" id="reg_password" required placeholder="Create a strong password (min 8 chars)">
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="togglePasswordVisibility('reg_password', 'toggleIcon')">
+            <i class="bi bi-eye" id="toggleIcon"></i>
+          </button>
+        </div>
         <div class="form-text">
           Password must contain at least 8 characters with uppercase, lowercase, and numbers.
         </div>
       </div>
       <div class="mb-4">
         <label for="reg_password2" class="form-label"><b>Confirm Password</b></label>
-        <input type="password" class="form-control" id="reg_password2" required placeholder="Confirm your password">
+        <div class="input-group">
+          <input type="password" class="form-control" id="reg_password2" required placeholder="Confirm your password">
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword2" onclick="togglePasswordVisibility('reg_password2', 'toggleIcon2')">
+            <i class="bi bi-eye" id="toggleIcon2"></i>
+          </button>
+        </div>
       </div>
       <button type="submit" class="btn btn-login">
         <i class="bi bi-person-plus me-2"></i>
@@ -274,6 +284,19 @@
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       `;
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const passwordInput = document.getElementById(inputId);
+      const toggleIcon = document.getElementById(iconId);
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+      }
     }
 
     // Auto-focus username field
