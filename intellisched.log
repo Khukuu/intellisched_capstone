@@ -11886,3 +11886,90 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-17 22:06:05,905 - app - INFO - Getting notifications for username: chair
 2025-10-17 22:06:06,027 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-17 22:06:06,131 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:47:18,032 - app - INFO - Login attempt for user: chair
+2025-10-18 16:47:18,348 - app - INFO - Login successful for user chair
+2025-10-18 16:47:19,987 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:47:20,177 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:47:20,289 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:47:27,249 - app - INFO - Received request for /schedule
+2025-10-18 16:47:27,249 - app - INFO - Scheduling for programs: ['CS']
+2025-10-18 16:47:27,635 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:47:27,636 - app - INFO - Available years: {1, 2, 3}
+2025-10-18 16:47:27,637 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:47:27,637 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-18 16:47:49,340 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:47:49,428 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:47:49,517 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:48:19,315 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:48:19,413 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:48:19,512 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:48:49,337 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:48:49,433 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:48:49,525 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:49:19,458 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:49:19,539 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:49:19,618 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:49:49,422 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:49:49,536 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:49:49,621 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:50:19,364 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:50:19,446 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:50:19,538 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:51:02,364 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:51:02,446 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:51:02,526 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:52:02,478 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:52:02,561 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:52:02,636 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:52:05,879 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:52:05,963 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:52:06,141 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:52:13,418 - app - INFO - Received request for /schedule
+2025-10-18 16:52:13,419 - app - INFO - Scheduling for programs: ['CS']
+2025-10-18 16:52:13,783 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:52:13,783 - app - INFO - Available years: {1, 2, 3}
+2025-10-18 16:52:13,784 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:52:13,784 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-18 16:52:35,324 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:52:35,417 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:52:35,496 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:52:39,781 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:52:39,866 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:52:39,952 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:53:05,357 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:53:05,454 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:53:05,547 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:53:28,015 - app - INFO - Updating teacher 3 with data: {'teacher_id': '3', 'teacher_name': 'Sir Joselito Dolot', 'can_teach': 'CS6,CS10,CS2,IT1,IT11,IT6', 'availability_days': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']}
+2025-10-18 16:53:28,016 - database - INFO - Updating teacher 3 with data: {'teacher_id': '3', 'teacher_name': 'Sir Joselito Dolot', 'can_teach': 'CS6,CS10,CS2,IT1,IT11,IT6', 'availability_days': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']}
+2025-10-18 16:53:28,016 - database - INFO - Executing query: 
+    UPDATE teachers 
+    SET teacher_name = %s, can_teach = %s, availability_days = %s
+    WHERE teacher_id = %s
+     with params: ['Sir Joselito Dolot', 'CS6,CS10,CS2,IT1,IT11,IT6', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], '3']
+2025-10-18 16:53:34,824 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:53:34,903 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:53:34,981 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:53:43,497 - app - INFO - Received request for /schedule
+2025-10-18 16:53:43,497 - app - INFO - Scheduling for programs: ['CS']
+2025-10-18 16:53:43,772 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:53:43,773 - app - INFO - Available years: {1, 2, 3}
+2025-10-18 16:53:43,774 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:53:43,775 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-18 16:54:04,821 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:54:04,910 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:54:04,998 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:54:34,828 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:54:34,913 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:54:34,996 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:55:04,833 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:55:04,923 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:55:05,003 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 16:55:16,022 - app - INFO - Received request for /schedule
+2025-10-18 16:55:16,023 - app - INFO - Scheduling for programs: ['CS']
+2025-10-18 16:55:16,382 - app - INFO - Filtering for semester: 3. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:55:16,382 - app - INFO - Available years: {1, 2}
+2025-10-18 16:55:16,383 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-18 16:55:16,383 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-18 16:55:34,839 - app - INFO - Getting notifications for username: chair
+2025-10-18 16:55:34,921 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 16:55:35,107 - app - INFO - Found 2 notifications for user_id: 8
