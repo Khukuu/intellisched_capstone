@@ -814,33 +814,31 @@ function rebuildRoomFilter() {
     console.error('Room filter elements not found');
     return;
   }
-  
-  // Build display list using schedule rooms (names) if present, else all rooms from DB
-  const roomsFromSchedule = new Set();
+
+  // Build display list using schedule rooms (IDs) if present, else all rooms from DB
+  const roomsFromSchedule = new Map();
   lastGeneratedSchedule.forEach(e => {
     if (e.room_id) {
-      roomsFromSchedule.add(getRoomName(e.room_id));
+      roomsFromSchedule.set(String(e.room_id), getRoomName(e.room_id));
     }
   });
   if (roomsFromSchedule.size > 0) {
-    availableRooms = Array.from(roomsFromSchedule).sort();
+    availableRooms = Array.from(roomsFromSchedule.entries()); // [id, name]
   } else {
-    const names = new Set();
+    const entries = [];
     (roomsCache || []).forEach(r => {
-      const name = (r && (r.room_name || r.room_id)) || '';
-      if (name) names.add(name);
+      if (r && (r.room_id || r.room_name)) {
+        entries.push([String(r.room_id), r.room_name || r.room_id]);
+      }
     });
-    availableRooms = Array.from(names).sort();
+    availableRooms = entries;
   }
-  
+
   // Update dropdown with all rooms
   updateRoomDropdown(availableRooms);
-  
-  // Enable/disable the filter
+
   roomFilter.disabled = availableRooms.length === 0;
-  
-  // Reset to "All Rooms" if disabled or if current selection is not available
-  if (roomFilter.disabled || (currentRoomFilter !== 'all' && !availableRooms.includes(currentRoomFilter))) {
+  if (roomFilter.disabled || (currentRoomFilter !== 'all' && !availableRooms.some(([id]) => id === currentRoomFilter))) {
     currentRoomFilter = 'all';
     roomFilter.value = '';
     roomFilter.placeholder = 'Search rooms...';
@@ -849,7 +847,6 @@ function rebuildRoomFilter() {
 
 function updateRoomDropdown(rooms) {
   roomDropdown.innerHTML = '';
-  
   // Add "All Rooms" option
   const allOption = document.createElement('div');
   allOption.className = 'dropdown-item';
@@ -857,21 +854,20 @@ function updateRoomDropdown(rooms) {
   allOption.textContent = 'All Rooms';
   allOption.style.cursor = 'pointer';
   roomDropdown.appendChild(allOption);
-  
-  // Add individual room options
-  rooms.forEach(room => {
+  // Add id-name pairs
+  rooms.forEach(([id, name]) => {
     const option = document.createElement('div');
     option.className = 'dropdown-item';
-    option.setAttribute('data-value', room);
-    option.textContent = room;
+    option.setAttribute('data-value', id);
+    option.textContent = name;
     option.style.cursor = 'pointer';
     roomDropdown.appendChild(option);
   });
 }
 
 function filterRoomDropdown(searchTerm) {
-  const filteredRooms = availableRooms.filter(room => 
-    room.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRooms = availableRooms.filter(([id, name]) =>
+    (name || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
   updateRoomDropdown(filteredRooms);
 }
@@ -955,14 +951,27 @@ function applyFilters(data) {
     }
     if (s !== 'all') ok = ok && e.section_id === s;
     if (r !== 'all') {
-      const evName = getRoomName(e.room_id);
-      ok = ok && (String(e.room_id) === String(r) || String(evName) === String(r));
+      ok = ok && String(e.room_id) === String(r);
     }
     return ok;
   });
 }
 
+// Ensure this is called before any filter/re-render of schedule
+function buildRoomIdToNameMap() {
+  roomIdToNameMap = {};
+  (roomsCache || []).forEach(r => {
+    if (r && r.room_id) {
+      roomIdToNameMap[String(r.room_id)] = r.room_name || r.room_id;
+    }
+  });
+}
+
+// Aliases that refer to roomFilter and filtering/rendering schedule should call buildRoomIdToNameMap before any filter or render involving rooms
+// e.g. inside renderScheduleAndTimetable, at the start:
+
 function renderScheduleAndTimetable(data) {
+  buildRoomIdToNameMap();
   const filtered = applyFilters(Array.isArray(data) ? data : []);
 
   // Schedule Table (side-by-side column)
