@@ -11973,9 +11973,28 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-18 16:55:34,839 - app - INFO - Getting notifications for username: chair
 2025-10-18 16:55:34,921 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-18 16:55:35,107 - app - INFO - Found 2 notifications for user_id: 8
+<<<<<<< HEAD
 2025-10-18 16:56:04,832 - app - INFO - Getting notifications for username: chair
 2025-10-18 16:56:04,923 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-18 16:56:05,015 - app - INFO - Found 2 notifications for user_id: 8
 2025-10-18 16:56:35,386 - app - INFO - Getting notifications for username: chair
 2025-10-18 16:56:35,472 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-18 16:56:35,553 - app - INFO - Found 2 notifications for user_id: 8
+=======
+>>>>>>> 36ef3ed65dc8fc15d731627582ddea6c2c0c8365
+2025-10-18 20:29:08,382 - app - INFO - Login attempt for user: chair
+2025-10-18 20:29:08,467 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-18 20:29:13,940 - app - INFO - Login attempt for user: chair
+2025-10-18 20:29:14,130 - app - INFO - Login successful for user chair
+2025-10-18 20:29:14,900 - app - INFO - Getting notifications for username: chair
+2025-10-18 20:29:14,988 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 20:29:15,087 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-18 20:29:41,912 - app - INFO - Received request for /schedule
+2025-10-18 20:29:41,913 - app - INFO - Scheduling for programs: ['CS', 'IT']
+2025-10-18 20:29:42,266 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-18 20:29:42,267 - app - INFO - Available years: {1, 2, 3}
+2025-10-18 20:29:42,268 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 1, '4': 0}, 'IT': {'1': 1, '2': 2, '3': 1, '4': 0}}
+2025-10-18 20:29:42,269 - app - INFO - Filtered program sections: {'CS': {1: 1, 3: 1}, 'IT': {1: 1, 2: 2, 3: 1}}
+2025-10-18 20:29:51,701 - app - INFO - Getting notifications for username: chair
+2025-10-18 20:29:51,797 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-18 20:29:51,998 - app - INFO - Found 2 notifications for user_id: 8
