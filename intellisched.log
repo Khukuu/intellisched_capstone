@@ -11780,3 +11780,109 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-17 20:04:40,314 - app - INFO - Getting notifications for username: chair
 2025-10-17 20:04:40,425 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-17 20:04:40,525 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:43:57,248 - app - INFO - Login attempt for user: chair
+2025-10-17 21:43:57,492 - app - INFO - Login successful for user chair
+2025-10-17 21:43:59,089 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:43:59,212 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:43:59,322 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:44:06,768 - app - INFO - Received request for /schedule
+2025-10-17 21:44:06,768 - app - INFO - Scheduling for programs: ['CS']
+2025-10-17 21:44:07,099 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-17 21:44:07,099 - app - INFO - Available years: {1, 2, 3}
+2025-10-17 21:44:07,100 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-17 21:44:07,100 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-17 21:44:28,512 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:44:28,620 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:44:28,733 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:44:58,493 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:44:58,603 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:44:58,710 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:45:28,509 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:45:28,624 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:45:28,731 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:45:58,512 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:45:58,626 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:45:58,734 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:46:28,830 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:46:28,946 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:46:29,052 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:46:58,832 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:46:58,969 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:46:59,103 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:48:05,849 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:48:05,956 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:48:06,067 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:49:05,835 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:49:05,954 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:49:06,080 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:50:05,826 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:50:05,945 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:50:06,059 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:51:05,848 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:51:05,960 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:51:06,072 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:52:05,849 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:52:05,969 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:52:06,074 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:53:05,939 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:53:06,061 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:53:06,172 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:54:05,835 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:54:05,956 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:54:06,068 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:54:24,786 - app - INFO - Received request for /schedule
+2025-10-17 21:54:24,787 - app - INFO - Scheduling for programs: ['CS']
+2025-10-17 21:54:25,104 - app - INFO - Filtering for semester: 2. Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-17 21:54:25,104 - app - INFO - Available years: {1, 2, 3}
+2025-10-17 21:54:25,105 - app - INFO - Program sections: {'CS': {'1': 1, '2': 0, '3': 0, '4': 0}}
+2025-10-17 21:54:25,105 - app - INFO - Filtered program sections: {'CS': {1: 1}}
+2025-10-17 21:54:28,493 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:54:28,611 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:54:28,721 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:54:58,482 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:54:58,599 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:54:58,706 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:55:28,485 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:55:28,597 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:55:28,709 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:58:56,977 - app - INFO - Login attempt for user: chair
+2025-10-17 21:58:57,221 - app - INFO - Login successful for user chair
+2025-10-17 21:58:58,974 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:58:59,071 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:58:59,173 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:59:28,390 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:59:28,503 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:59:28,628 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 21:59:58,875 - app - INFO - Getting notifications for username: chair
+2025-10-17 21:59:58,988 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 21:59:59,100 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:00:28,857 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:00:28,972 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:00:29,207 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:00:58,846 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:00:58,963 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:00:59,070 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:01:28,915 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:01:29,082 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:01:29,211 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:01:58,895 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:01:59,030 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:01:59,146 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:03:05,834 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:03:05,960 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:03:06,074 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:04:05,815 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:04:05,934 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:04:06,044 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:04:46,537 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:04:46,654 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:04:46,766 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:04:58,821 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:04:58,934 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:04:59,143 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:05:28,854 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:05:28,966 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:05:29,076 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-17 22:06:05,905 - app - INFO - Getting notifications for username: chair
+2025-10-17 22:06:06,027 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-17 22:06:06,131 - app - INFO - Found 2 notifications for user_id: 8
