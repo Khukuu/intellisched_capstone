@@ -4,37 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from starlette.middleware.base import BaseHTTPMiddleware
 import logging
-from scheduler import generate_schedule
-from database import (
-    db,
-    load_subjects_from_db,
-    load_teachers_from_db,
-    load_rooms_from_db,
-    load_sections_from_db,
-    get_pending_users,
-    approve_user,
-    reject_user,
-    check_email_exists,
-    get_all_users,
-    delete_user,
-    create_schedule_approval,
-    get_pending_schedules,
-    get_approved_schedules,
-    approve_schedule,
-    reject_schedule,
-    get_schedule_approval_status,
-    delete_schedule_approval,
-    record_user_activity,
-    get_user_activity_stats,
-    get_system_analytics,
-    record_metric,
-    get_metrics_history,
-    get_system_setting,
-    set_system_setting,
-    get_all_system_settings,
-    delete_system_setting,
-    get_user_id_by_username,
-)
+# Import modules only when needed to avoid startup errors
+# from scheduler import generate_schedule
+# from database import db, load_subjects_from_db, etc.
 import os
 import io
 import json
