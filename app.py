@@ -989,6 +989,12 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
         else:
             raise HTTPException(status_code=400, detail='Specify id or semester')
 
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in download_schedule: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f'Internal server error: {str(e)}')
+
     # Helper function to calculate end time from start time slot and duration
     def calculate_time_range(start_time_slot, duration_slots):
         if not start_time_slot or not duration_slots:
