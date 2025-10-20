@@ -168,6 +168,16 @@ class ScheduleDatabase:
             user_agent TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+        
+        CREATE TABLE IF NOT EXISTS saved_schedules (
+            id SERIAL PRIMARY KEY,
+            schedule_id VARCHAR(50) UNIQUE NOT NULL,
+            schedule_name VARCHAR(255) NOT NULL,
+            semester INTEGER,
+            created_by VARCHAR(50) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            schedule_data JSONB NOT NULL
+        );
         """
         
         # Split and execute each statement
@@ -1159,6 +1169,81 @@ def get_all_users() -> List[Dict[str, Any]]:
     except Exception as e:
         print(f"Error getting all users: {e}")
         return []
+
+# Saved Schedules Functions
+def save_schedule_to_db(schedule_id: str, schedule_name: str, semester: int, created_by: str, schedule_data: list) -> bool:
+    """Save a schedule to the database"""
+    try:
+        query = """
+        INSERT INTO saved_schedules (schedule_id, schedule_name, semester, created_by, schedule_data)
+        VALUES (%s, %s, %s, %s, %s)
+        ON CONFLICT (schedule_id) DO UPDATE SET
+            schedule_name = EXCLUDED.schedule_name,
+            semester = EXCLUDED.semester,
+            created_by = EXCLUDED.created_by,
+            schedule_data = EXCLUDED.schedule_data,
+            created_at = CURRENT_TIMESTAMP
+        """
+        db.db.execute_single(query, (schedule_id, schedule_name, semester, created_by, json.dumps(schedule_data)))
+        logger.info(f"Schedule {schedule_id} saved to database")
+        return True
+    except Exception as e:
+        logger.error(f"Error saving schedule to database: {e}")
+        return False
+
+def load_schedule_from_db(schedule_id: str) -> dict:
+    """Load a schedule from the database"""
+    try:
+        query = "SELECT * FROM saved_schedules WHERE schedule_id = %s"
+        result = db.db.execute_query(query, (schedule_id,))
+        if not result:
+            return None
+        
+        schedule = result[0]
+        schedule['schedule'] = json.loads(schedule['schedule_data'])
+        del schedule['schedule_data']  # Remove the raw JSONB data
+        return schedule
+    except Exception as e:
+        logger.error(f"Error loading schedule from database: {e}")
+        return None
+
+def list_saved_schedules_from_db(created_by: str = None) -> list:
+    """List all saved schedules from the database"""
+    try:
+        if created_by:
+            query = "SELECT * FROM saved_schedules WHERE created_by = %s ORDER BY created_at DESC"
+            result = db.db.execute_query(query, (created_by,))
+        else:
+            query = "SELECT * FROM saved_schedules ORDER BY created_at DESC"
+            result = db.db.execute_query(query)
+        
+        schedules = []
+        for row in result:
+            schedule = {
+                'id': row['schedule_id'],
+                'name': row['schedule_name'],
+                'semester': row['semester'],
+                'created_at': row['created_at'].isoformat() if row['created_at'] else None,
+                'created_by': row['created_by'],
+                'count': len(json.loads(row['schedule_data']))
+            }
+            schedules.append(schedule)
+        
+        return schedules
+    except Exception as e:
+        logger.error(f"Error listing saved schedules from database: {e}")
+        return []
+
+def delete_schedule_from_db(schedule_id: str) -> bool:
+    """Delete a schedule from the database"""
+    try:
+        query = "DELETE FROM saved_schedules WHERE schedule_id = %s"
+        db.db.execute_single(query, (schedule_id,))
+        logger.info(f"Schedule {schedule_id} deleted from database")
+        return True
+    except Exception as e:
+        logger.error(f"Error deleting schedule from database: {e}")
+        return False
 
 def delete_user(user_id: int, admin_username: str) -> bool:
     """Delete a user from the database with proper error handling and transaction management"""
