@@ -385,25 +385,25 @@
             <div class="card schedule-card h-100 ${statusClass}">
               <div class="card-body d-flex flex-column">
                 <div class="d-flex justify-content-between align-items-start mb-2">
-                  <h6 class="card-title mb-0">${schedule.schedule_name || 'Unnamed Schedule'}</h6>
+                  <h6 class="card-title mb-0">${schedule.name || 'Unnamed Schedule'}</h6>
                   <span class="badge status-badge ${statusClass}">${statusText}</span>
                 </div>
                 <p class="card-text text-muted small mb-2">
-                  <strong>ID:</strong> ${schedule.schedule_id}<br>
+                  <strong>ID:</strong> ${schedule.id}<br>
                   <strong>Semester:</strong> ${schedule.semester || 'N/A'}<br>
                   <strong>Created:</strong> ${createdDate}<br>
-                  <strong>Approved:</strong> ${schedule.approved_at ? new Date(schedule.approved_at).toLocaleDateString() : 'N/A'}<br>
+                  <strong>Approved:</strong> ${schedule.approval_date ? new Date(schedule.approval_date).toLocaleDateString() : 'N/A'}<br>
                   <strong>Approved by:</strong> ${schedule.approved_by || 'N/A'}
                 </p>
-                ${schedule.comments ? `<p class="card-text text-muted small mb-3"><strong>Comments:</strong> ${schedule.comments}</p>` : ''}
+                ${schedule.approval_notes ? `<p class="card-text text-muted small mb-3"><strong>Notes:</strong> ${schedule.approval_notes}</p>` : ''}
                 <div class="d-flex gap-2">
-                  <button class="btn btn-sm btn-outline-primary" onclick="viewSchedule('${schedule.schedule_id}')">
+                  <button class="btn btn-sm btn-outline-primary" onclick="viewSchedule('${schedule.id}')">
                     <i class="bi bi-eye me-1"></i> View
                   </button>
-                  <button class="btn btn-sm btn-outline-info" onclick="downloadScheduleCSV('${schedule.schedule_id}')">
+                  <button class="btn btn-sm btn-outline-info" onclick="downloadScheduleCSV('${schedule.id}')">
                     <i class="bi bi-download me-1"></i> CSV
                   </button>
-                  <button class="btn btn-sm btn-outline-danger" onclick="deleteSchedule('${schedule.schedule_id}')">
+                  <button class="btn btn-sm btn-outline-danger" onclick="deleteSchedule('${schedule.id}')">
                     <i class="bi bi-trash me-1"></i> Delete
                   </button>
                 </div>

@@ -822,6 +822,13 @@ async def saved_schedules(username: str = Depends(require_chair_role)):
         for approval in pending_schedules:
             if approval.get('created_by') == username:
                 schedule_id = approval.get('schedule_id')
+                logger.info(f"Processing pending schedule: {schedule_id} for user {username}")
+                
+                # Skip if schedule_id is None or empty
+                if not schedule_id:
+                    logger.warning(f"Skipping schedule with empty ID for user {username}")
+                    continue
+                    
                 # Check if we already have this schedule from database
                 if not any(s.get('id') == schedule_id for s in all_user_schedules):
                     schedule = {
@@ -834,11 +841,19 @@ async def saved_schedules(username: str = Depends(require_chair_role)):
                         'count': 0  # We don't have the actual schedule data
                     }
                     all_user_schedules.append(schedule)
+                    logger.info(f"Added pending schedule: {schedule_id}")
         
         # Add approved schedules (from schedule_approvals table)
         for approval in approved_schedules:
             if approval.get('created_by') == username:
                 schedule_id = approval.get('schedule_id')
+                logger.info(f"Processing approved schedule: {schedule_id} for user {username}")
+                
+                # Skip if schedule_id is None or empty
+                if not schedule_id:
+                    logger.warning(f"Skipping approved schedule with empty ID for user {username}")
+                    continue
+                    
                 # Check if we already have this schedule from database
                 if not any(s.get('id') == schedule_id for s in all_user_schedules):
                     schedule = {
@@ -854,6 +869,7 @@ async def saved_schedules(username: str = Depends(require_chair_role)):
                         'count': 0  # We don't have the actual schedule data
                     }
                     all_user_schedules.append(schedule)
+                    logger.info(f"Added approved schedule: {schedule_id}")
         
         logger.info(f"Returning {len(all_user_schedules)} total schedules for user {username}")
         return JSONResponse(content=all_user_schedules)
