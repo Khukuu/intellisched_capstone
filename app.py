@@ -74,7 +74,7 @@ class MaintenanceMiddleware(BaseHTTPMiddleware):
                 # Allow access to maintenance page, login, auth endpoints, admin pages, and static files
                 # CRITICAL: Always allow login and auth endpoints so admin can login to disable maintenance
                 # BLOCK: All other user dashboards (chair, dean, secretary) should be blocked
-                if (request.url.path in ['/maintenance', '/login', '/register', '/admin', '/static/maintenance.html'] or
+                if (request.url.path in ['/maintenance', '/login', '/register', '/admin', '/static/maintenance.html', '/health', '/status'] or
                     request.url.path.startswith('/api/maintenance/') or
                     request.url.path.startswith('/api/auth/') or
                     request.url.path.startswith('/auth/') or  # Allow /auth/login endpoint
