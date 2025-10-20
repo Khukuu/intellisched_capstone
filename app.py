@@ -918,45 +918,63 @@ async def delete_saved_schedule(schedule_id: str, username: str = Depends(requir
 
 @app.delete('/api/schedule/{schedule_id}')
 async def delete_schedule_endpoint(schedule_id: str, username: str = Depends(require_role(['dean', 'chair']))):
-    """Delete a schedule (both file and approval record) - accessible by dean and chair"""
-    # Check if schedule exists
-    approval_status = get_schedule_approval_status(schedule_id)
-    if not approval_status:
-        raise HTTPException(status_code=404, detail='Schedule not found')
-    
-    # Check if user has permission to delete this schedule
-    user_role = db.get_user_by_username(username).get('role')
-    schedule_status = approval_status.get('status')
-    
-    # Chair can delete any schedule they created or any pending schedule
-    # Dean can delete any approved schedule
-    if user_role == 'chair':
-        if approval_status.get('created_by') != username and schedule_status != 'pending':
-            raise HTTPException(status_code=403, detail='You can only delete schedules you created or pending schedules')
-    elif user_role == 'dean':
-        if schedule_status != 'approved':
-            raise HTTPException(status_code=403, detail='Dean can only delete approved schedules')
-    
-    # Delete the schedule file
-    saved_dir = _ensure_saved_dir()
-    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
-    if candidates:
-        fpath = os.path.join(saved_dir, candidates[0])
+    """Delete a schedule and its approval record (if any). Works for DB-backed schedules too."""
+    try:
+        # Load approval status (may not exist) and DB schedule (may not exist)
+        from database import load_schedule_from_db, delete_schedule_from_db
+        approval_status = get_schedule_approval_status(schedule_id)
+        db_schedule = load_schedule_from_db(schedule_id)
+
+        if not approval_status and not db_schedule:
+            raise HTTPException(status_code=404, detail='Schedule not found')
+
+        # Permission check
+        user_role = db.get_user_by_username(username).get('role')
+        created_by = (approval_status or {}).get('created_by') or (db_schedule or {}).get('created_by')
+        schedule_status = (approval_status or {}).get('status') or 'saved'
+
+        if user_role == 'chair':
+            if created_by != username and schedule_status != 'pending':
+                raise HTTPException(status_code=403, detail='You can only delete schedules you created or pending schedules')
+        # Dean can delete anything
+
+        # 1) Delete from database saved_schedules (if present)
         try:
-            os.remove(fpath)
-            logger.info(f"Deleted schedule file: {fpath}")
+            deleted_db = delete_schedule_from_db(schedule_id)
+            if deleted_db:
+                logger.info(f"Deleted schedule {schedule_id} from saved_schedules table")
         except Exception as e:
-            logger.warning(f"Could not delete schedule file: {e}")
-    
-    # Delete the schedule approval record
-    logger.info(f"Attempting to delete schedule approval record for {schedule_id}")
-    approval_deleted = delete_schedule_approval(schedule_id)
-    if approval_deleted:
-        logger.info(f"Successfully deleted schedule approval record for {schedule_id}")
-    else:
-        logger.warning(f"Could not delete schedule approval record for {schedule_id}")
-    
-    return JSONResponse(content={'message': 'Schedule deleted successfully', 'id': schedule_id})
+            logger.warning(f"Could not delete schedule {schedule_id} from DB: {e}")
+
+        # 2) Delete file-based schedule (legacy)
+        try:
+            saved_dir = _ensure_saved_dir()
+            candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
+            if candidates:
+                fpath = os.path.join(saved_dir, candidates[0])
+                os.remove(fpath)
+                logger.info(f"Deleted legacy schedule file: {fpath}")
+        except Exception as e:
+            logger.warning(f"Could not delete legacy schedule file for {schedule_id}: {e}")
+
+        # 3) Delete approval record (if any)
+        try:
+            logger.info(f"Attempting to delete schedule approval record for {schedule_id}")
+            approval_deleted = delete_schedule_approval(schedule_id)
+            if approval_deleted:
+                logger.info(f"Successfully deleted schedule approval record for {schedule_id}")
+            else:
+                logger.info(f"No approval record to delete for {schedule_id}")
+        except Exception as e:
+            logger.warning(f"Could not delete approval record for {schedule_id}: {e}")
+
+        return JSONResponse(content={'message': 'Schedule deleted successfully', 'id': schedule_id})
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting schedule {schedule_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail='Failed to delete schedule')
 
 @app.post('/save_schedule')
 async def save_schedule(payload: dict, username: str = Depends(require_chair_role)):
