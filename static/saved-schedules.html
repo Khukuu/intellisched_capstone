@@ -93,14 +93,9 @@
             <p class="text-muted mb-0">View, manage, and track the approval status of your saved schedules.</p>
           </div>
         </div>
-        <div>
-          <button id="debugBtn" class="btn btn-outline-info me-2">
-            <i class="bi bi-bug me-1"></i> Debug
-          </button>
-          <button id="refreshBtn" class="btn btn-outline-primary">
-            <i class="bi bi-arrow-clockwise me-1"></i> Refresh
-          </button>
-        </div>
+        <button id="refreshBtn" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+        </button>
       </div>
     </div>
 
@@ -338,23 +333,15 @@
     // Load saved schedules for chair users
     async function loadSchedules() {
       try {
-        console.log('Loading schedules...');
         const response = await fetch('/saved_schedules', {
           headers: getAuthHeaders()
         });
         
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Response error:', errorText);
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const schedules = await response.json();
-        console.log('Received schedules:', schedules);
-        console.log('Schedules count:', schedules.length);
         
         // Ensure schedules is an array
         if (!Array.isArray(schedules)) {
@@ -363,7 +350,6 @@
         }
         
         allSchedules = schedules;
-        console.log('Setting allSchedules to:', allSchedules);
         displaySchedules(allSchedules);
       } catch (error) {
         console.error('Error loading schedules:', error);
@@ -375,9 +361,6 @@
 
     // Display schedules with filtering
     function displaySchedules(schedules) {
-      console.log('displaySchedules called with:', schedules);
-      console.log('Schedules length:', schedules.length);
-      
       const container = document.getElementById('schedulesContainer');
       const emptyState = document.getElementById('emptyState');
       const loadingState = document.getElementById('loadingState');
@@ -385,7 +368,6 @@
       loadingState.style.display = 'none';
       
       if (schedules.length === 0) {
-        console.log('No schedules found, showing empty state');
         container.innerHTML = '';
         emptyState.style.display = 'block';
         return;
@@ -949,36 +931,6 @@
       
       displaySchedules(filtered);
     }
-
-    // Debug button
-    document.getElementById('debugBtn').addEventListener('click', async function() {
-      try {
-        console.log('Debug button clicked');
-        const response = await fetch('/api/debug-saved-schedules', {
-          headers: getAuthHeaders()
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const debugData = await response.json();
-        console.log('Debug data:', debugData);
-        
-        // Show debug info in an alert
-        alert(`Debug Info:
-Total schedules in DB: ${debugData.total_schedules}
-User schedules: ${debugData.user_schedules}
-File schedules: ${debugData.file_schedules_count}
-Username: ${debugData.username}
-
-Check console for full details.`);
-        
-      } catch (error) {
-        console.error('Debug error:', error);
-        alert('Debug failed: ' + error.message);
-      }
-    });
 
     // Refresh button
     document.getElementById('refreshBtn').addEventListener('click', function() {
