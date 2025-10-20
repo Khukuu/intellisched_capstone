@@ -1023,27 +1023,6 @@ async def load_schedule(id: str, username: str = Depends(require_chair_role)):
         from database import load_schedule_from_db
         schedule_data = load_schedule_from_db(id)
         
-        # Fallback to legacy file-based storage if DB miss
-        if not schedule_data:
-            logger.info(f"Schedule {id} not found in DB, attempting legacy file load")
-            try:
-                saved_dir = _ensure_saved_dir()
-                candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(id) and fn.endswith('.json')]
-                if candidates:
-                    fpath = os.path.join(saved_dir, candidates[0])
-                    with open(fpath, 'r', encoding='utf-8') as f:
-                        file_data = json.load(f)
-                    schedule_data = {
-                        'id': file_data.get('id') or id,
-                        'name': file_data.get('name') or 'Schedule',
-                        'semester': file_data.get('semester'),
-                        'created_at': file_data.get('created_at'),
-                        'created_by': username,
-                        'schedule': file_data.get('schedule') or []
-                    }
-            except Exception as e:
-                logger.warning(f"Legacy file load failed for {id}: {e}")
-        
         if not schedule_data:
             logger.warning(f"No saved schedule found with ID: {id}")
             raise HTTPException(status_code=404, detail=f'Saved schedule with ID {id} not found')
@@ -1068,27 +1047,9 @@ async def get_schedule_for_dean(schedule_id: str, username: str = Depends(requir
         if not approval_status:
             raise HTTPException(status_code=404, detail='Schedule not found or has been deleted')
         
-        # Load schedule from database, fallback to legacy file
+        # Load schedule from database
         from database import load_schedule_from_db
         schedule_data = load_schedule_from_db(schedule_id)
-        if not schedule_data:
-            try:
-                saved_dir = _ensure_saved_dir()
-                candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(schedule_id) and fn.endswith('.json')]
-                if candidates:
-                    fpath = os.path.join(saved_dir, candidates[0])
-                    with open(fpath, 'r', encoding='utf-8') as f:
-                        file_data = json.load(f)
-                    schedule_data = {
-                        'id': file_data.get('id') or schedule_id,
-                        'name': file_data.get('name') or 'Schedule',
-                        'semester': file_data.get('semester'),
-                        'created_at': file_data.get('created_at'),
-                        'created_by': approval_status.get('created_by') if approval_status else None,
-                        'schedule': file_data.get('schedule') or []
-                    }
-            except Exception as e:
-                logger.warning(f"Legacy file load failed for {schedule_id}: {e}")
         
         if not schedule_data:
             raise HTTPException(status_code=404, detail='Schedule data not found')
