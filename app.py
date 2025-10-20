@@ -787,11 +787,30 @@ async def reject_schedule_endpoint_alias(schedule_id: str, payload: dict, userna
 
 @app.get('/saved_schedules')
 async def saved_schedules(username: str = Depends(require_chair_role)):
-    """Get all saved schedules from database"""
+    """Get all saved schedules with approval status for chair users"""
     try:
-        from database import list_saved_schedules_from_db
+        from database import list_saved_schedules_from_db, get_schedule_approval_status
+        
+        # Get schedules from database
         schedules = list_saved_schedules_from_db(username)
         logger.info(f"Retrieved {len(schedules)} saved schedules for user {username}")
+        
+        # Add approval status to each schedule
+        for schedule in schedules:
+            schedule_id = schedule.get('id')
+            if schedule_id:
+                approval_status = get_schedule_approval_status(schedule_id)
+                if approval_status:
+                    schedule['status'] = approval_status.get('status', 'pending')
+                    schedule['approved_by'] = approval_status.get('approved_by')
+                    schedule['rejected_by'] = approval_status.get('rejected_by')
+                    schedule['approval_date'] = approval_status.get('approval_date')
+                    schedule['rejection_date'] = approval_status.get('rejection_date')
+                    schedule['approval_notes'] = approval_status.get('approval_notes')
+                    schedule['rejection_notes'] = approval_status.get('rejection_notes')
+                else:
+                    schedule['status'] = 'pending'
+        
         return JSONResponse(content=schedules)
     except Exception as e:
         logger.error(f"Error retrieving saved schedules: {e}", exc_info=True)
