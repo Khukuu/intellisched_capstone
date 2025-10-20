@@ -330,10 +330,10 @@
       };
     }
 
-    // Load saved schedules (using same endpoint as dean side)
+    // Load saved schedules for chair users
     async function loadSchedules() {
       try {
-        const response = await fetch('/api/approved_schedules', {
+        const response = await fetch('/saved_schedules', {
           headers: getAuthHeaders()
         });
         
