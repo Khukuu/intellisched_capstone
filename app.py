@@ -396,6 +396,15 @@ async def register(payload: dict):
 async def health_check():
     """Health check endpoint to test database connectivity"""
     try:
+        # Simple health check first
+        return {"status": "healthy", "message": "Application is running"}
+    except Exception as e:
+        return {"status": "unhealthy", "message": f"Application error: {str(e)}"}
+
+@app.get('/health/database')
+async def health_check_database():
+    """Detailed health check endpoint to test database connectivity"""
+    try:
         # Test database connection
         from database import db
         test_query = db.db.execute_query("SELECT 1 as test")
@@ -412,6 +421,11 @@ async def health_check():
 async def index():
     """Main route - redirect users to appropriate dashboard"""
     return RedirectResponse(url='/login')
+
+@app.get('/status')
+async def status():
+    """Simple status endpoint for Railway healthcheck"""
+    return {"status": "ok", "message": "IntelliSched is running"}
 
 @app.get('/maintenance')
 async def maintenance_page():

@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 import hashlib
 import secrets
 import logging
+import json
 
 # Configure logging for database module
 logger = logging.getLogger(__name__)
