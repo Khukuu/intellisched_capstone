@@ -11998,3 +11998,29 @@ TypeError: Object of type datetime is not JSON serializable
 2025-10-18 20:29:51,701 - app - INFO - Getting notifications for username: chair
 2025-10-18 20:29:51,797 - app - INFO - Retrieving notifications for user_id: 8
 2025-10-18 20:29:51,998 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-20 14:43:35,353 - app - INFO - Login attempt for user: chair
+2025-10-20 14:43:35,403 - app - WARNING - Login failed for user chair: Invalid credentials
+2025-10-20 14:43:39,868 - app - INFO - Login attempt for user: chair
+2025-10-20 14:43:39,997 - app - INFO - Login successful for user chair
+2025-10-20 14:43:41,313 - app - INFO - Getting notifications for username: chair
+2025-10-20 14:43:41,366 - app - INFO - Retrieving notifications for user_id: 8
+2025-10-20 14:43:41,430 - app - INFO - Found 2 notifications for user_id: 8
+2025-10-20 14:44:20,163 - app - INFO - Login attempt for user: admin
+2025-10-20 14:44:20,273 - app - INFO - Login successful for user admin
+2025-10-20 14:44:20,742 - app - INFO - Getting notifications for username: admin
+2025-10-20 14:44:20,789 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-20 14:44:20,836 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-20 14:44:25,579 - database - INFO - Creating notification for user_id: 15, title: Account Approved, type: success
+2025-10-20 14:44:25,640 - database - INFO - Successfully created notification for user_id: 15
+2025-10-20 14:44:51,271 - app - INFO - Getting notifications for username: admin
+2025-10-20 14:44:51,328 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-20 14:44:51,379 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-20 14:45:21,246 - app - INFO - Getting notifications for username: admin
+2025-10-20 14:45:21,298 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-20 14:45:21,355 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-20 14:45:51,254 - app - INFO - Getting notifications for username: admin
+2025-10-20 14:45:51,420 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-20 14:45:51,471 - app - INFO - Found 0 notifications for user_id: 1
+2025-10-20 14:46:21,258 - app - INFO - Getting notifications for username: admin
+2025-10-20 14:46:21,310 - app - INFO - Retrieving notifications for user_id: 1
+2025-10-20 14:46:21,361 - app - INFO - Found 0 notifications for user_id: 1

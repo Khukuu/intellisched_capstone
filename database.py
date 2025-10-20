@@ -1161,46 +1161,62 @@ def get_all_users() -> List[Dict[str, Any]]:
         return []
 
 def delete_user(user_id: int, admin_username: str) -> bool:
-    """Delete a user from the database"""
+    """Delete a user from the database with proper error handling and transaction management"""
     try:
         # Get user info for logging
         user = db.db.execute_query("SELECT username, full_name, role FROM users WHERE id = %s", (user_id,))
         if not user:
-            print(f"User with ID {user_id} not found")
+            logger.warning(f"User with ID {user_id} not found")
             return False
         
         user_info = user[0]
+        username = user_info['username']
         
-        # Delete related records first (notifications, schedule_approvals, etc.)
-        # Delete notifications associated with this user
-        try:
-            db.db.execute_single("DELETE FROM notifications WHERE user_id = %s", (user_id,))
-            print(f"Deleted notifications for user {user_id}")
-        except Exception as e:
-            print(f"Warning: Could not delete notifications for user {user_id}: {e}")
+        logger.info(f"Starting deletion process for user {user_id} ({username}) by admin {admin_username}")
         
-        # Delete schedule approvals created by this user
-        try:
-            db.db.execute_single("DELETE FROM schedule_approvals WHERE created_by = %s", (user_info['username'],))
-            print(f"Deleted schedule approvals for user {user_id}")
-        except Exception as e:
-            print(f"Warning: Could not delete schedule approvals for user {user_id}: {e}")
-        
-        # Delete schedule approvals approved by this user (set to NULL)
-        try:
-            db.db.execute_single("UPDATE schedule_approvals SET approved_by = NULL WHERE approved_by = %s", (user_info['username'],))
-            print(f"Cleared approval records for user {user_id}")
-        except Exception as e:
-            print(f"Warning: Could not clear approval records for user {user_id}: {e}")
-        
-        # Finally, delete the user
-        db.db.execute_single("DELETE FROM users WHERE id = %s", (user_id,))
-        
-        print(f"User deleted by {admin_username}: {user_info['username']} ({user_info['full_name']}) - Role: {user_info['role']}")
-        return True
+        # Use a single transaction for all operations
+        with db.db.get_connection() as conn:
+            with conn.cursor() as cursor:
+                try:
+                    # Start transaction
+                    cursor.execute("BEGIN")
+                    
+                    # Delete user activity logs first (has foreign key to users)
+                    cursor.execute("DELETE FROM user_activity_log WHERE user_id = %s", (user_id,))
+                    logger.info(f"Deleted user activity logs for user {user_id}")
+                    
+                    # Delete notifications associated with this user
+                    cursor.execute("DELETE FROM notifications WHERE user_id = %s", (user_id,))
+                    logger.info(f"Deleted notifications for user {user_id}")
+                    
+                    # Delete schedule approvals created by this user
+                    cursor.execute("DELETE FROM schedule_approvals WHERE created_by = %s", (username,))
+                    logger.info(f"Deleted schedule approvals created by user {user_id}")
+                    
+                    # Update schedule approvals approved by this user (set to NULL)
+                    cursor.execute("UPDATE schedule_approvals SET approved_by = NULL WHERE approved_by = %s", (username,))
+                    logger.info(f"Cleared approval records for user {user_id}")
+                    
+                    # Finally, delete the user
+                    cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+                    logger.info(f"Deleted user {user_id} from users table")
+                    
+                    # Commit transaction
+                    cursor.execute("COMMIT")
+                    conn.commit()
+                    
+                    logger.info(f"User successfully deleted by {admin_username}: {username} ({user_info['full_name']}) - Role: {user_info['role']}")
+                    return True
+                    
+                except Exception as e:
+                    # Rollback transaction on error
+                    cursor.execute("ROLLBACK")
+                    conn.rollback()
+                    logger.error(f"Error deleting user {user_id}: {e}")
+                    raise e
         
     except Exception as e:
-        print(f"Error deleting user: {e}")
+        logger.error(f"Failed to delete user {user_id}: {e}")
         return False
 
 # Analytics Functions

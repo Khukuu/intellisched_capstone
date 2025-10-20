@@ -1476,6 +1476,52 @@ async def debug_user_endpoint(username: str = Depends(verify_token)):
         logger.error(f"Debug: Error checking user info: {e}", exc_info=True)
         return JSONResponse(content={'error': str(e), 'username': username, 'user_id': None})
 
+@app.get('/api/debug-database')
+async def debug_database_endpoint(username: str = Depends(require_admin_role)):
+    """Debug endpoint to check database tables and foreign key constraints"""
+    try:
+        # Check if all required tables exist
+        tables_query = """
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name IN ('users', 'notifications', 'schedule_approvals', 'user_activity_log')
+        ORDER BY table_name
+        """
+        
+        tables = db.db.execute_query(tables_query)
+        logger.info(f"Found {len(tables)} required tables: {[t['table_name'] for t in tables]}")
+        
+        # Check foreign key constraints
+        fk_query = """
+        SELECT 
+            tc.table_name, 
+            kcu.column_name, 
+            ccu.table_name AS foreign_table_name,
+            ccu.column_name AS foreign_column_name 
+        FROM 
+            information_schema.table_constraints AS tc 
+            JOIN information_schema.key_column_usage AS kcu
+              ON tc.constraint_name = kcu.constraint_name
+            JOIN information_schema.constraint_column_usage AS ccu
+              ON ccu.constraint_name = tc.constraint_name
+        WHERE constraint_type = 'FOREIGN KEY' 
+        AND tc.table_name IN ('notifications', 'user_activity_log')
+        """
+        
+        foreign_keys = db.db.execute_query(fk_query)
+        logger.info(f"Found {len(foreign_keys)} foreign key constraints")
+        
+        return JSONResponse(content={
+            'tables_found': [t['table_name'] for t in tables],
+            'foreign_keys': foreign_keys,
+            'status': 'database_check_complete'
+        })
+        
+    except Exception as e:
+        logger.error(f"Debug database error: {e}", exc_info=True)
+        return JSONResponse(content={'error': str(e), 'status': 'database_check_failed'})
+
 @app.post('/api/test-notification')
 async def test_notification_endpoint(username: str = Depends(verify_token)):
     """Test endpoint to create a notification"""
@@ -1565,20 +1611,37 @@ async def get_all_users_endpoint(username: str = Depends(require_admin_role)):
 async def delete_user_endpoint(user_id: int, username: str = Depends(require_admin_role)):
     """Delete a user (admin only)"""
     try:
+        logger.info(f"Admin {username} attempting to delete user {user_id}")
+        
         # Prevent admin from deleting themselves
         admin_user = db.get_user_by_username(username)
         if admin_user and admin_user.get('id') == user_id:
+            logger.warning(f"Admin {username} attempted to delete their own account")
             raise HTTPException(status_code=400, detail="Cannot delete your own account")
+        
+        # Check if user exists before attempting deletion
+        target_user = db.db.execute_query("SELECT username, full_name, role FROM users WHERE id = %s", (user_id,))
+        if not target_user:
+            logger.warning(f"User with ID {user_id} not found for deletion")
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        target_user_info = target_user[0]
+        logger.info(f"Attempting to delete user: {target_user_info['username']} (ID: {user_id})")
         
         success = delete_user(user_id, username)
         if success:
+            logger.info(f"User {user_id} successfully deleted by admin {username}")
             return JSONResponse(content={'message': 'User deleted successfully'})
         else:
-            raise HTTPException(status_code=500, detail="Failed to delete user")
+            logger.error(f"Failed to delete user {user_id} - delete_user function returned False")
+            raise HTTPException(status_code=500, detail="Failed to delete user - check logs for details")
+            
     except HTTPException:
+        # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Unexpected error deleting user {user_id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 # Analytics endpoints (Admin only)
 @app.get('/api/analytics/overview')
