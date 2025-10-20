@@ -1632,6 +1632,32 @@ async def debug_saved_schedules_endpoint(username: str = Depends(require_chair_r
         logger.info(f"Found {len(all_schedules)} total schedules in database")
         logger.info(f"Found {len(user_schedules)} schedules for user {username}")
         
+        # Check for old file-based schedules
+        saved_dir = os.path.join('.', 'saved_schedules')
+        file_schedules = []
+        if os.path.exists(saved_dir):
+            try:
+                all_files = os.listdir(saved_dir)
+                json_files = [f for f in all_files if f.endswith('.json')]
+                logger.info(f"Found {len(json_files)} JSON files in saved_schedules directory")
+                
+                for filename in json_files:
+                    filepath = os.path.join(saved_dir, filename)
+                    try:
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                            file_schedules.append({
+                                'filename': filename,
+                                'id': data.get('id'),
+                                'name': data.get('name'),
+                                'created_by': 'unknown',  # File doesn't store creator
+                                'schedule_count': len(data.get('schedule', []))
+                            })
+                    except Exception as e:
+                        logger.error(f"Error reading file {filename}: {e}")
+            except Exception as e:
+                logger.error(f"Error listing files: {e}")
+        
         # Get approval records
         approval_records = []
         for schedule in all_schedules:
@@ -1651,12 +1677,76 @@ async def debug_saved_schedules_endpoint(username: str = Depends(require_chair_r
             'username': username,
             'all_schedules': all_schedules,
             'user_schedules': user_schedules,
-            'approval_records': approval_records
+            'approval_records': approval_records,
+            'file_schedules': file_schedules,
+            'file_schedules_count': len(file_schedules)
         })
         
     except Exception as e:
         logger.error(f"Debug saved schedules error: {e}", exc_info=True)
         return JSONResponse(content={'error': str(e), 'status': 'debug_failed'})
+
+@app.post('/api/migrate-schedules')
+async def migrate_schedules_endpoint(username: str = Depends(require_chair_role)):
+    """Migrate file-based schedules to database"""
+    try:
+        logger.info(f"Starting schedule migration for user: {username}")
+        
+        from database import save_schedule_to_db
+        
+        saved_dir = os.path.join('.', 'saved_schedules')
+        if not os.path.exists(saved_dir):
+            return JSONResponse(content={'message': 'No saved_schedules directory found', 'migrated': 0})
+        
+        migrated_count = 0
+        errors = []
+        
+        try:
+            all_files = os.listdir(saved_dir)
+            json_files = [f for f in all_files if f.endswith('.json')]
+            logger.info(f"Found {len(json_files)} JSON files to migrate")
+            
+            for filename in json_files:
+                try:
+                    filepath = os.path.join(saved_dir, filename)
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    
+                    schedule_id = data.get('id')
+                    schedule_name = data.get('name', 'Migrated Schedule')
+                    semester = data.get('semester', 0)
+                    schedule_data = data.get('schedule', [])
+                    
+                    if schedule_id and schedule_data:
+                        # Save to database
+                        success = save_schedule_to_db(schedule_id, schedule_name, semester, username, schedule_data)
+                        if success:
+                            migrated_count += 1
+                            logger.info(f"Migrated schedule {schedule_id}")
+                        else:
+                            errors.append(f"Failed to save {schedule_id} to database")
+                    else:
+                        errors.append(f"Invalid data in {filename}")
+                        
+                except Exception as e:
+                    error_msg = f"Error processing {filename}: {str(e)}"
+                    errors.append(error_msg)
+                    logger.error(error_msg)
+            
+            return JSONResponse(content={
+                'message': f'Migration completed',
+                'migrated': migrated_count,
+                'total_files': len(json_files),
+                'errors': errors
+            })
+            
+        except Exception as e:
+            logger.error(f"Error during migration: {e}")
+            return JSONResponse(content={'error': str(e), 'migrated': migrated_count})
+        
+    except Exception as e:
+        logger.error(f"Migration endpoint error: {e}", exc_info=True)
+        return JSONResponse(content={'error': str(e), 'status': 'migration_failed'})
 
 @app.post('/api/test-notification')
 async def test_notification_endpoint(username: str = Depends(verify_token)):
