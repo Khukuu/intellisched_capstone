@@ -1193,22 +1193,29 @@ def save_schedule_to_db(schedule_id: str, schedule_name: str, semester: int, cre
         return False
 
 def load_schedule_from_db(schedule_id: str) -> dict:
-    """Load a schedule from the database"""
+    """Load a schedule from the database and normalize field names for API consumers"""
     try:
-        query = "SELECT * FROM saved_schedules WHERE schedule_id = %s"
+        query = "SELECT schedule_id, schedule_name, semester, created_by, created_at, schedule_data FROM saved_schedules WHERE schedule_id = %s"
         result = db.db.execute_query(query, (schedule_id,))
         if not result:
             return None
-        
-        schedule = result[0]
-        raw = schedule.get('schedule_data')
-        # Handle JSONB returned as text or already-parsed object
+
+        row = result[0]
+        raw = row.get('schedule_data')
         if isinstance(raw, (str, bytes)):
-            schedule['schedule'] = json.loads(raw)
+            parsed = json.loads(raw)
         else:
-            schedule['schedule'] = raw or []
-        del schedule['schedule_data']  # Remove the raw JSONB data
-        return schedule
+            parsed = raw or []
+
+        normalized = {
+            'id': row.get('schedule_id'),
+            'name': row.get('schedule_name'),
+            'semester': row.get('semester'),
+            'created_by': row.get('created_by'),
+            'created_at': row.get('created_at').isoformat() if row.get('created_at') else None,
+            'schedule': parsed,
+        }
+        return normalized
     except Exception as e:
         logger.error(f"Error loading schedule from database: {e}")
         return None
