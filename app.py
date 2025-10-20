@@ -789,35 +789,74 @@ async def reject_schedule_endpoint_alias(schedule_id: str, payload: dict, userna
 async def saved_schedules(username: str = Depends(require_chair_role)):
     """Get all saved schedules with approval status for chair users"""
     try:
-        from database import list_saved_schedules_from_db, get_schedule_approval_status
+        from database import list_saved_schedules_from_db, get_schedule_approval_status, get_pending_schedules, get_approved_schedules
         
-        # Get schedules from database
-        schedules = list_saved_schedules_from_db(username)
-        logger.info(f"Retrieved {len(schedules)} saved schedules for user {username}")
+        # Get schedules from database first
+        db_schedules = list_saved_schedules_from_db(username)
+        logger.info(f"Retrieved {len(db_schedules)} saved schedules from database for user {username}")
         
-        # Debug: Log all schedules found
-        for schedule in schedules:
-            logger.info(f"Found schedule: {schedule.get('id')} - {schedule.get('name')}")
+        # Get approval records for this user
+        pending_schedules = get_pending_schedules()
+        approved_schedules = get_approved_schedules()
         
-        # Add approval status to each schedule
-        for schedule in schedules:
+        # Combine all schedules that belong to this user
+        all_user_schedules = []
+        
+        # Add database schedules
+        for schedule in db_schedules:
             schedule_id = schedule.get('id')
-            if schedule_id:
-                approval_status = get_schedule_approval_status(schedule_id)
-                logger.info(f"Approval status for {schedule_id}: {approval_status}")
-                if approval_status:
-                    schedule['status'] = approval_status.get('status', 'pending')
-                    schedule['approved_by'] = approval_status.get('approved_by')
-                    schedule['rejected_by'] = approval_status.get('rejected_by')
-                    schedule['approval_date'] = approval_status.get('approval_date')
-                    schedule['rejection_date'] = approval_status.get('rejection_date')
-                    schedule['approval_notes'] = approval_status.get('approval_notes')
-                    schedule['rejection_notes'] = approval_status.get('rejection_notes')
-                else:
-                    schedule['status'] = 'pending'
+            approval_status = get_schedule_approval_status(schedule_id)
+            if approval_status:
+                schedule['status'] = approval_status.get('status', 'pending')
+                schedule['approved_by'] = approval_status.get('approved_by')
+                schedule['rejected_by'] = approval_status.get('rejected_by')
+                schedule['approval_date'] = approval_status.get('approval_date')
+                schedule['rejection_date'] = approval_status.get('rejection_date')
+                schedule['approval_notes'] = approval_status.get('approval_notes')
+                schedule['rejection_notes'] = approval_status.get('rejection_notes')
+            else:
+                schedule['status'] = 'pending'
+            all_user_schedules.append(schedule)
         
-        logger.info(f"Returning {len(schedules)} schedules with status information")
-        return JSONResponse(content=schedules)
+        # Add pending schedules (from schedule_approvals table)
+        for approval in pending_schedules:
+            if approval.get('created_by') == username:
+                schedule_id = approval.get('schedule_id')
+                # Check if we already have this schedule from database
+                if not any(s.get('id') == schedule_id for s in all_user_schedules):
+                    schedule = {
+                        'id': schedule_id,
+                        'name': approval.get('schedule_name', 'Unknown Schedule'),
+                        'semester': approval.get('semester', 0),
+                        'created_at': approval.get('created_at', ''),
+                        'created_by': approval.get('created_by'),
+                        'status': 'pending',
+                        'count': 0  # We don't have the actual schedule data
+                    }
+                    all_user_schedules.append(schedule)
+        
+        # Add approved schedules (from schedule_approvals table)
+        for approval in approved_schedules:
+            if approval.get('created_by') == username:
+                schedule_id = approval.get('schedule_id')
+                # Check if we already have this schedule from database
+                if not any(s.get('id') == schedule_id for s in all_user_schedules):
+                    schedule = {
+                        'id': schedule_id,
+                        'name': approval.get('schedule_name', 'Unknown Schedule'),
+                        'semester': approval.get('semester', 0),
+                        'created_at': approval.get('created_at', ''),
+                        'created_by': approval.get('created_by'),
+                        'status': 'approved',
+                        'approved_by': approval.get('approved_by'),
+                        'approval_date': approval.get('approval_date'),
+                        'approval_notes': approval.get('approval_notes'),
+                        'count': 0  # We don't have the actual schedule data
+                    }
+                    all_user_schedules.append(schedule)
+        
+        logger.info(f"Returning {len(all_user_schedules)} total schedules for user {username}")
+        return JSONResponse(content=all_user_schedules)
     except Exception as e:
         logger.error(f"Error retrieving saved schedules: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f'Internal server error: {str(e)}')
