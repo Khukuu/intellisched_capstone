@@ -1201,7 +1201,12 @@ def load_schedule_from_db(schedule_id: str) -> dict:
             return None
         
         schedule = result[0]
-        schedule['schedule'] = json.loads(schedule['schedule_data'])
+        raw = schedule.get('schedule_data')
+        # Handle JSONB returned as text or already-parsed object
+        if isinstance(raw, (str, bytes)):
+            schedule['schedule'] = json.loads(raw)
+        else:
+            schedule['schedule'] = raw or []
         del schedule['schedule_data']  # Remove the raw JSONB data
         return schedule
     except Exception as e:
@@ -1226,7 +1231,7 @@ def list_saved_schedules_from_db(created_by: str = None) -> list:
                 'semester': row['semester'],
                 'created_at': row['created_at'].isoformat() if row['created_at'] else None,
                 'created_by': row['created_by'],
-                'count': len(json.loads(row['schedule_data']))
+                'count': len(json.loads(row['schedule_data'])) if isinstance(row['schedule_data'], (str, bytes)) else len(row['schedule_data'] or [])
             }
             schedules.append(schedule)
         
