@@ -795,11 +795,16 @@ async def saved_schedules(username: str = Depends(require_chair_role)):
         schedules = list_saved_schedules_from_db(username)
         logger.info(f"Retrieved {len(schedules)} saved schedules for user {username}")
         
+        # Debug: Log all schedules found
+        for schedule in schedules:
+            logger.info(f"Found schedule: {schedule.get('id')} - {schedule.get('name')}")
+        
         # Add approval status to each schedule
         for schedule in schedules:
             schedule_id = schedule.get('id')
             if schedule_id:
                 approval_status = get_schedule_approval_status(schedule_id)
+                logger.info(f"Approval status for {schedule_id}: {approval_status}")
                 if approval_status:
                     schedule['status'] = approval_status.get('status', 'pending')
                     schedule['approved_by'] = approval_status.get('approved_by')
@@ -811,6 +816,7 @@ async def saved_schedules(username: str = Depends(require_chair_role)):
                 else:
                     schedule['status'] = 'pending'
         
+        logger.info(f"Returning {len(schedules)} schedules with status information")
         return JSONResponse(content=schedules)
     except Exception as e:
         logger.error(f"Error retrieving saved schedules: {e}", exc_info=True)
@@ -1613,61 +1619,39 @@ async def debug_database_endpoint(username: str = Depends(require_admin_role)):
 
 @app.get('/api/debug-saved-schedules')
 async def debug_saved_schedules_endpoint(username: str = Depends(require_chair_role)):
-    """Debug endpoint to check saved schedules directory and files"""
+    """Debug endpoint to check saved schedules in database"""
     try:
-        logger.info(f"Debug: Checking saved schedules for user: {username}")
+        logger.info(f"Debug: Checking saved schedules in database for user: {username}")
         
-        # Check if saved_schedules directory exists
-        saved_dir = os.path.join('.', 'saved_schedules')
-        directory_exists = os.path.exists(saved_dir)
+        from database import list_saved_schedules_from_db, get_schedule_approval_status
         
-        if not directory_exists:
-            logger.warning(f"Saved schedules directory does not exist: {saved_dir}")
-            return JSONResponse(content={
-                'directory_exists': False,
-                'directory_path': saved_dir,
-                'files': [],
-                'error': 'Directory does not exist'
-            })
+        # Get all schedules from database
+        all_schedules = list_saved_schedules_from_db()  # Get all schedules, not just user's
+        user_schedules = list_saved_schedules_from_db(username)  # Get user's schedules
         
-        # List all files in the directory
-        try:
-            all_files = os.listdir(saved_dir)
-            logger.info(f"Found {len(all_files)} files in saved_schedules directory")
-        except Exception as e:
-            logger.error(f"Cannot list files in saved_schedules directory: {e}")
-            return JSONResponse(content={
-                'directory_exists': True,
-                'directory_path': saved_dir,
-                'files': [],
-                'error': f'Cannot list files: {str(e)}'
-            })
+        logger.info(f"Found {len(all_schedules)} total schedules in database")
+        logger.info(f"Found {len(user_schedules)} schedules for user {username}")
         
-        # Get file details
-        file_details = []
-        for filename in all_files:
-            if filename.endswith('.json'):
-                filepath = os.path.join(saved_dir, filename)
-                try:
-                    stat = os.stat(filepath)
-                    file_details.append({
-                        'filename': filename,
-                        'size': stat.st_size,
-                        'modified': stat.st_mtime,
-                        'readable': os.access(filepath, os.R_OK)
-                    })
-                except Exception as e:
-                    file_details.append({
-                        'filename': filename,
-                        'error': str(e)
-                    })
+        # Get approval records
+        approval_records = []
+        for schedule in all_schedules:
+            schedule_id = schedule.get('id')
+            if schedule_id:
+                approval_status = get_schedule_approval_status(schedule_id)
+                approval_records.append({
+                    'schedule_id': schedule_id,
+                    'schedule_name': schedule.get('name'),
+                    'created_by': schedule.get('created_by'),
+                    'approval_status': approval_status
+                })
         
         return JSONResponse(content={
-            'directory_exists': True,
-            'directory_path': saved_dir,
-            'files': file_details,
-            'total_files': len(all_files),
-            'json_files': len([f for f in all_files if f.endswith('.json')])
+            'total_schedules': len(all_schedules),
+            'user_schedules': len(user_schedules),
+            'username': username,
+            'all_schedules': all_schedules,
+            'user_schedules': user_schedules,
+            'approval_records': approval_records
         })
         
     except Exception as e:
