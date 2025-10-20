@@ -9,10 +9,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="icon" type="image/png" href="/static/favicon.png">
   <style>
+    /* Match card sizing/feel from Generate page */
     .schedule-card {
       transition: all 0.3s ease;
       border: 1px solid #e9ecef;
       background-color: #f8fff8;
+      min-height: 220px;            /* uniform height across cards */
+      display: flex;                /* allow body to stretch */
+      flex-direction: column;
     }
     .schedule-card.status-approved {
       background-color: #f0f8f0;
@@ -46,6 +50,15 @@
     .schedule-actions {
       opacity: 1;
       transition: opacity 0.3s ease;
+    }
+
+    /* Make the card body fill full height and keep actions pinned to bottom */
+    .schedule-card .card-body {
+      display: flex;
+      flex-direction: column;
+    }
+    .schedule-card .card-body .d-flex.gap-2 {
+      margin-top: auto;             /* push actions to bottom for consistent height */
     }
     .schedule-card .card-title {
       color: #212529 !important;
