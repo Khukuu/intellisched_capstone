@@ -622,9 +622,32 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
     return JSONResponse(content=result)
 
 def _ensure_saved_dir():
-    saved_dir = os.path.join('.', 'saved_schedules')
-    os.makedirs(saved_dir, exist_ok=True)
-    return saved_dir
+    """Ensure the saved_schedules directory exists and is accessible"""
+    try:
+        saved_dir = os.path.join('.', 'saved_schedules')
+        os.makedirs(saved_dir, exist_ok=True)
+        
+        # Verify the directory was created and is accessible
+        if not os.path.exists(saved_dir):
+            logger.error(f"Failed to create saved_schedules directory: {saved_dir}")
+            raise Exception(f"Cannot create saved_schedules directory")
+        
+        # Test if we can write to the directory
+        test_file = os.path.join(saved_dir, '.test_write')
+        try:
+            with open(test_file, 'w') as f:
+                f.write('test')
+            os.remove(test_file)
+        except Exception as e:
+            logger.error(f"Cannot write to saved_schedules directory: {e}")
+            raise Exception(f"Cannot write to saved_schedules directory: {e}")
+        
+        logger.info(f"Saved schedules directory ready: {saved_dir}")
+        return saved_dir
+        
+    except Exception as e:
+        logger.error(f"Error ensuring saved_schedules directory: {e}")
+        raise
 
 def _safe_filename_part(name: str) -> str:
     return ''.join(c for c in (name or '') if c.isalnum() or c in ('-', '_'))[:64] or 'schedule'
@@ -873,15 +896,60 @@ async def save_schedule(payload: dict, username: str = Depends(require_chair_rol
 
 @app.get('/load_schedule')
 async def load_schedule(id: str, username: str = Depends(require_chair_role)):
-    saved_dir = _ensure_saved_dir()
-    # Find file by id prefix
-    candidates = [fn for fn in os.listdir(saved_dir) if fn.startswith(id) and fn.endswith('.json')]
-    if not candidates:
-        raise HTTPException(status_code=404, detail='Saved schedule not found')
-    fpath = os.path.join(saved_dir, candidates[0])
-    with open(fpath, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    return JSONResponse(content=data)
+    """Load a saved schedule by ID"""
+    try:
+        logger.info(f"Loading schedule with ID: {id} for user: {username}")
+        
+        saved_dir = _ensure_saved_dir()
+        logger.info(f"Saved schedules directory: {saved_dir}")
+        
+        # Check if directory exists and is accessible
+        if not os.path.exists(saved_dir):
+            logger.error(f"Saved schedules directory does not exist: {saved_dir}")
+            raise HTTPException(status_code=404, detail='Saved schedules directory not found')
+        
+        # List all files in the directory for debugging
+        try:
+            all_files = os.listdir(saved_dir)
+            logger.info(f"Files in saved_schedules directory: {all_files}")
+        except Exception as e:
+            logger.error(f"Cannot list files in saved_schedules directory: {e}")
+            raise HTTPException(status_code=500, detail='Cannot access saved schedules directory')
+        
+        # Find file by id prefix
+        candidates = [fn for fn in all_files if fn.startswith(id) and fn.endswith('.json')]
+        logger.info(f"Found {len(candidates)} candidates for ID {id}: {candidates}")
+        
+        if not candidates:
+            logger.warning(f"No saved schedule found with ID: {id}")
+            raise HTTPException(status_code=404, detail=f'Saved schedule with ID {id} not found')
+        
+        fpath = os.path.join(saved_dir, candidates[0])
+        logger.info(f"Loading schedule from file: {fpath}")
+        
+        # Check if file exists and is readable
+        if not os.path.exists(fpath):
+            logger.error(f"Schedule file does not exist: {fpath}")
+            raise HTTPException(status_code=404, detail='Schedule file not found')
+        
+        try:
+            with open(fpath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            logger.info(f"Successfully loaded schedule {id} with {len(data.get('schedule', []))} entries")
+            return JSONResponse(content=data)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON in schedule file {fpath}: {e}")
+            raise HTTPException(status_code=500, detail='Invalid schedule file format')
+        except Exception as e:
+            logger.error(f"Error reading schedule file {fpath}: {e}")
+            raise HTTPException(status_code=500, detail='Error reading schedule file')
+            
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error loading schedule {id}: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f'Internal server error: {str(e)}')
 
 # Dean view: fetch schedule details by id
 @app.get('/api/schedule/{schedule_id}')
@@ -1521,6 +1589,69 @@ async def debug_database_endpoint(username: str = Depends(require_admin_role)):
     except Exception as e:
         logger.error(f"Debug database error: {e}", exc_info=True)
         return JSONResponse(content={'error': str(e), 'status': 'database_check_failed'})
+
+@app.get('/api/debug-saved-schedules')
+async def debug_saved_schedules_endpoint(username: str = Depends(require_chair_role)):
+    """Debug endpoint to check saved schedules directory and files"""
+    try:
+        logger.info(f"Debug: Checking saved schedules for user: {username}")
+        
+        # Check if saved_schedules directory exists
+        saved_dir = os.path.join('.', 'saved_schedules')
+        directory_exists = os.path.exists(saved_dir)
+        
+        if not directory_exists:
+            logger.warning(f"Saved schedules directory does not exist: {saved_dir}")
+            return JSONResponse(content={
+                'directory_exists': False,
+                'directory_path': saved_dir,
+                'files': [],
+                'error': 'Directory does not exist'
+            })
+        
+        # List all files in the directory
+        try:
+            all_files = os.listdir(saved_dir)
+            logger.info(f"Found {len(all_files)} files in saved_schedules directory")
+        except Exception as e:
+            logger.error(f"Cannot list files in saved_schedules directory: {e}")
+            return JSONResponse(content={
+                'directory_exists': True,
+                'directory_path': saved_dir,
+                'files': [],
+                'error': f'Cannot list files: {str(e)}'
+            })
+        
+        # Get file details
+        file_details = []
+        for filename in all_files:
+            if filename.endswith('.json'):
+                filepath = os.path.join(saved_dir, filename)
+                try:
+                    stat = os.stat(filepath)
+                    file_details.append({
+                        'filename': filename,
+                        'size': stat.st_size,
+                        'modified': stat.st_mtime,
+                        'readable': os.access(filepath, os.R_OK)
+                    })
+                except Exception as e:
+                    file_details.append({
+                        'filename': filename,
+                        'error': str(e)
+                    })
+        
+        return JSONResponse(content={
+            'directory_exists': True,
+            'directory_path': saved_dir,
+            'files': file_details,
+            'total_files': len(all_files),
+            'json_files': len([f for f in all_files if f.endswith('.json')])
+        })
+        
+    except Exception as e:
+        logger.error(f"Debug saved schedules error: {e}", exc_info=True)
+        return JSONResponse(content={'error': str(e), 'status': 'debug_failed'})
 
 @app.post('/api/test-notification')
 async def test_notification_endpoint(username: str = Depends(verify_token)):
