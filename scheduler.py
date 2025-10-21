@@ -265,8 +265,16 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             else:
                 if lecture_hours > 0:
                     total_slots = int(lecture_hours * 2)
-                    # If total slots can be evenly split, create two meetings across day pairs (e.g., MW/TTh/FS)
-                    if total_slots % 2 == 0 and total_slots >= 2:
+                    
+                    # Single session constraint for specific subjects
+                    single_session_subjects = ['BSC1', 'BSC2', 'PE1', 'PE2', 'PE3', 'PE4']
+                    is_single_session = subject_code in single_session_subjects
+                    
+                    if is_single_session:
+                        print(f"Debug: Applying single session constraint for {subject_code}")
+                    
+                    # If total slots can be evenly split AND it's not a single session subject, create two meetings across day pairs (e.g., MW/TTh/FS)
+                    if total_slots % 2 == 0 and total_slots >= 2 and not is_single_session:
                         half_slots = total_slots // 2
                         meeting_events.append({
                             'section_id': cohort_section_id,
@@ -287,7 +295,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                             'meeting_idx': 1
                         })
                     else:
-                        # Otherwise, schedule as a single meeting on one day
+                        # For single session subjects or when splitting is not possible, schedule as a single meeting on one day
                         meeting_events.append({
                             'section_id': cohort_section_id,
                             'subject_code': subject_code,
