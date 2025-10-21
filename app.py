@@ -423,7 +423,7 @@ async def index():
     return RedirectResponse(url='/login')
 
 @app.get('/status')
-async def status():
+async def health_status():
     """Simple status endpoint for Railway healthcheck"""
     return {"status": "ok", "message": "IntelliSched is running"}
 
