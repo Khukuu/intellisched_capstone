@@ -600,7 +600,11 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         logger.warning('Scheduler: No applicable year levels for the selected semester based on requested sections. Returning empty schedule.')
         return JSONResponse(content=[])
 
-    result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
+    try:
+        result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
+    except Exception as e:
+        logger.error(f"Error in schedule generation: {e}", exc_info=True)
+        return JSONResponse(content={'error': f'Schedule generation failed: {str(e)}'}, status_code=500)
 
     # Record user activity
     try:

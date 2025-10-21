@@ -1,5 +1,7 @@
 from ortools.sat.python import cp_model
 from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+import gc
+import sys
 
 def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, program_sections, programs=['CS']):
     logs = []
@@ -67,7 +69,13 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
     available_years = set()
     for subject in subjects_data:
         if subject.get('program', '').upper() in [p.upper() for p in programs]:
-            available_years.add(int(subject.get('year_level', 0)))
+            year_level = subject.get('year_level')
+            if year_level is not None:
+                try:
+                    available_years.add(int(year_level))
+                except (ValueError, TypeError):
+                    print(f"Warning: Invalid year_level '{year_level}' for subject {subject.get('subject_code', 'Unknown')}")
+                    continue
     
     print(f"Available years in curriculum: {sorted(available_years)}")
     
@@ -769,6 +777,8 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         
         # Validate the schedule for conflicts
         validate_schedule(result, logs)
+        # Memory cleanup
+        gc.collect()
         return { 'schedule': result, 'logs': logs }
 
     # Fallback: retry without any overlap constraints to always produce a schedule
@@ -855,10 +865,15 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         
         # Validate the fallback schedule for conflicts
         validate_schedule(result, logs)
+        # Memory cleanup
+        gc.collect()
         return { 'schedule': result, 'logs': logs }
 
     print('Scheduler: No feasible solution found even after fallback.')
     logs.append('Scheduler: No feasible solution found even after fallback.')
+    
+    # Memory cleanup
+    gc.collect()
     return { 'schedule': [], 'logs': logs }
 
 def validate_schedule(schedule, logs):
