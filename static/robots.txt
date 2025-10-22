@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /chair
+Disallow: /dean
+Disallow: /secretary
+Disallow: /saved-schedules
+Disallow: /login
+Disallow: /register
+
+# Allow public pages
+Allow: /
+Allow: /health
+Allow: /status
+
+# Sitemap (if you have one)
+# Sitemap: https://your-domain.com/sitemap.xml

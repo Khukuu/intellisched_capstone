@@ -427,6 +427,19 @@ async def health_status():
     """Simple status endpoint for Railway healthcheck"""
     return {"status": "ok", "message": "IntelliSched is running"}
 
+@app.get('/robots.txt')
+async def robots_txt():
+    """Serve robots.txt for search engine crawlers"""
+    robots_path = os.path.join('static', 'robots.txt')
+    if os.path.exists(robots_path):
+        return FileResponse(robots_path, media_type='text/plain')
+    else:
+        # Return a basic robots.txt if file doesn't exist
+        return Response(
+            content="User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\nDisallow: /chair\nDisallow: /dean\nDisallow: /secretary\nDisallow: /saved-schedules\nDisallow: /login\nDisallow: /register\n\nAllow: /\nAllow: /health\nAllow: /status",
+            media_type='text/plain'
+        )
+
 @app.get('/maintenance')
 async def maintenance_page():
     """Serve maintenance page when system is under maintenance"""
