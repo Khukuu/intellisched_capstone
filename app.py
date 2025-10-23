@@ -615,6 +615,34 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
 
     try:
         result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
+        
+        # Generate analytics if schedule was successfully created
+        if result and isinstance(result, dict) and 'schedule' in result:
+            try:
+                from analytics import generate_schedule_analytics
+                analytics = generate_schedule_analytics(result['schedule'], rooms, teachers)
+                result['analytics'] = analytics
+                logger.info("Analytics generated successfully for schedule")
+            except Exception as e:
+                logger.warning(f"Failed to generate analytics: {e}")
+                # Don't fail the entire request if analytics fail
+                result['analytics'] = None
+        elif result and isinstance(result, list):
+            # Handle case where result is just a list (legacy format)
+            try:
+                from analytics import generate_schedule_analytics
+                analytics = generate_schedule_analytics(result, rooms, teachers)
+                # Convert to dict format with analytics
+                result = {
+                    'schedule': result,
+                    'analytics': analytics
+                }
+                logger.info("Analytics generated successfully for schedule (legacy format)")
+            except Exception as e:
+                logger.warning(f"Failed to generate analytics: {e}")
+                # Keep original result format
+                pass
+                
     except Exception as e:
         logger.error(f"Error in schedule generation: {e}", exc_info=True)
         return JSONResponse(content={'error': f'Schedule generation failed: {str(e)}'}, status_code=500)
@@ -752,6 +780,17 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
             program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
     result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, program_sections, programs)
+    
+    # Generate analytics for the schedule
+    analytics = None
+    if result and isinstance(result, list) and len(result) > 0:
+        try:
+            from analytics import generate_schedule_analytics
+            analytics = generate_schedule_analytics(result, rooms, teachers)
+            logger.info("Analytics generated successfully for submitted schedule")
+        except Exception as e:
+            logger.warning(f"Failed to generate analytics for submitted schedule: {e}")
+    
     name = (payload.get('name') or 'Generated Schedule')
     semester_int = int(semester_filter) if semester_filter else None
     uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')
@@ -767,7 +806,14 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
 
     # Create approval record
     create_schedule_approval(uid, name, semester_int or 0, username)
-    return JSONResponse(content={'id': uid, 'name': name, 'status': 'pending', 'semester': semester_int, 'schedule': result})
+    return JSONResponse(content={
+        'id': uid, 
+        'name': name, 
+        'status': 'pending', 
+        'semester': semester_int, 
+        'schedule': result,
+        'analytics': analytics
+    })
 
 @app.get('/schedules/pending')
 async def list_pending_schedules(username: str = Depends(require_role(['dean']))):

@@ -625,6 +625,7 @@ document.getElementById('generateBtn').onclick = async function() {
     });
     const data = await response.json();
     const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
+    const analytics = data.analytics || null;
     lastGeneratedSchedule = scheduleArray;
     lastSavedId = '';
 
@@ -632,11 +633,12 @@ document.getElementById('generateBtn').onclick = async function() {
       document.getElementById('result').innerHTML = "<b>No schedule generated.</b>";
       document.getElementById('timetable').innerHTML = "";
       if (downloadBtn) downloadBtn.disabled = true;
+      hideAnalytics();
       return;
     }
 
     populateFilters(lastGeneratedSchedule);
-    renderScheduleAndTimetable(lastGeneratedSchedule);
+    renderScheduleAndTimetable(lastGeneratedSchedule, analytics);
       // Saved schedule list refresh moved to separate page
   } catch (e) {
     console.error('Error generating schedule', e);
@@ -889,11 +891,11 @@ yearFilter.addEventListener('change', () => {
   });
   rebuildSectionFilter(sectionsByYear);
   rebuildRoomFilter();
-  renderScheduleAndTimetable(lastGeneratedSchedule);
+  renderScheduleAndTimetable(lastGeneratedSchedule, null);
 });
 
 sectionFilter.addEventListener('change', () => {
-  renderScheduleAndTimetable(lastGeneratedSchedule);
+  renderScheduleAndTimetable(lastGeneratedSchedule, null);
 });
 
 // Room filter event listeners
@@ -930,7 +932,7 @@ roomDropdown.addEventListener('click', (e) => {
     }
     
     roomDropdown.style.display = 'none';
-    renderScheduleAndTimetable(lastGeneratedSchedule);
+    renderScheduleAndTimetable(lastGeneratedSchedule, null);
   }
 });
 
@@ -962,7 +964,7 @@ function applyFilters(data) {
   });
 }
 
-function renderScheduleAndTimetable(data) {
+function renderScheduleAndTimetable(data, analytics = null) {
   const filtered = applyFilters(Array.isArray(data) ? data : []);
 
   // Schedule Table (side-by-side column)
@@ -1107,6 +1109,13 @@ function renderScheduleAndTimetable(data) {
   }
   // View toggle handling
   applyViewMode();
+  
+  // Display analytics if available
+  if (analytics) {
+    displayAnalytics(analytics);
+  } else {
+    hideAnalytics();
+  }
 }
 
 // Build a readable time range from start slot and duration (e.g., 08:00-10:00)
@@ -1951,3 +1960,243 @@ async function clearAllNotifications() {
 
 // Auto-refresh notifications every 30 seconds
 setInterval(loadNotifications, 30000);
+
+// Analytics Functions
+function displayAnalytics(analytics) {
+  const analyticsSection = document.getElementById('analyticsSection');
+  const analyticsContent = document.getElementById('analyticsContent');
+  
+  if (!analyticsSection || !analyticsContent) return;
+  
+  // Show analytics section
+  analyticsSection.style.display = 'block';
+  
+  // Generate analytics HTML
+  let html = '<div class="row g-4">';
+  
+  // Summary Cards
+  if (analytics.summary) {
+    html += `
+      <div class="col-12">
+        <h6 class="fw-bold mb-3">📊 Summary</h6>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="card bg-primary text-white">
+              <div class="card-body text-center">
+                <h4 class="mb-1">${analytics.summary.total_events || 0}</h4>
+                <small>Total Events</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-success text-white">
+              <div class="card-body text-center">
+                <h4 class="mb-1">${analytics.summary.rooms_used || 0}</h4>
+                <small>Rooms Used</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-info text-white">
+              <div class="card-body text-center">
+                <h4 class="mb-1">${analytics.summary.teachers_used || 0}</h4>
+                <small>Teachers Used</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card bg-warning text-white">
+              <div class="card-body text-center">
+                <h4 class="mb-1">${analytics.summary.total_contact_hours || 0}</h4>
+                <small>Contact Hours</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Room Utilization Chart
+  if (analytics.room_utilization && Object.keys(analytics.room_utilization).length > 0) {
+    html += `
+      <div class="col-md-6">
+        <h6 class="fw-bold mb-3">🏢 Room Utilization</h6>
+        <div class="card">
+          <div class="card-body">
+            <canvas id="roomUtilizationChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Faculty Workload Chart
+  if (analytics.faculty_workload && Object.keys(analytics.faculty_workload).length > 0) {
+    html += `
+      <div class="col-md-6">
+        <h6 class="fw-bold mb-3">👨‍🏫 Faculty Contact Hours</h6>
+        <div class="card">
+          <div class="card-body">
+            <canvas id="facultyWorkloadChart" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Weekly Occupancy Chart
+  if (analytics.weekly_occupancy && Object.keys(analytics.weekly_occupancy).length > 0) {
+    html += `
+      <div class="col-12">
+        <h6 class="fw-bold mb-3">📅 Weekly Occupancy Rates</h6>
+        <div class="card">
+          <div class="card-body">
+            <canvas id="weeklyOccupancyChart" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  html += '</div>';
+  analyticsContent.innerHTML = html;
+  
+  // Create charts after DOM is updated
+  setTimeout(() => {
+    createRoomUtilizationChart(analytics.room_utilization);
+    createFacultyWorkloadChart(analytics.faculty_workload);
+    createWeeklyOccupancyChart(analytics.weekly_occupancy);
+  }, 100);
+}
+
+function hideAnalytics() {
+  const analyticsSection = document.getElementById('analyticsSection');
+  if (analyticsSection) {
+    analyticsSection.style.display = 'none';
+  }
+}
+
+function createRoomUtilizationChart(roomData) {
+  const canvas = document.getElementById('roomUtilizationChart');
+  if (!canvas || !roomData) return;
+  
+  const rooms = Object.keys(roomData);
+  const utilizationData = rooms.map(roomId => roomData[roomId].utilization_percentage);
+  const roomNames = rooms.map(roomId => roomData[roomId].room_name);
+  
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: roomNames,
+      datasets: [{
+        label: 'Utilization %',
+        data: utilizationData,
+        backgroundColor: utilizationData.map(val => 
+          val > 80 ? '#dc3545' : val > 60 ? '#ffc107' : '#28a745'
+        ),
+        borderColor: '#333',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            callback: function(value) {
+              return value + '%';
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+}
+
+function createFacultyWorkloadChart(facultyData) {
+  const canvas = document.getElementById('facultyWorkloadChart');
+  if (!canvas || !facultyData) return;
+  
+  const teachers = Object.keys(facultyData);
+  const workloadData = teachers.map(teacher => facultyData[teacher].total_hours);
+  const teacherNames = teachers.map(teacher => facultyData[teacher].teacher_name);
+  
+  new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: teacherNames,
+      datasets: [{
+        data: workloadData,
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+          '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            usePointStyle: true,
+            padding: 20
+          }
+        }
+      }
+    }
+  });
+}
+
+function createWeeklyOccupancyChart(occupancyData) {
+  const canvas = document.getElementById('weeklyOccupancyChart');
+  if (!canvas || !occupancyData) return;
+  
+  const days = Object.keys(occupancyData);
+  const occupancyRates = days.map(day => occupancyData[day].occupancy_rate);
+  
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Occupancy Rate %',
+        data: occupancyRates,
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            callback: function(value) {
+              return value + '%';
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+}
