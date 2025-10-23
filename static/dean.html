@@ -29,11 +29,29 @@
             border-color: rgba(245, 198, 203, 0.5);
         }
         
-        /* Fix notification dropdown visibility */
-        .navbar {
-            position: relative;
-            z-index: 10000 !important;
-        }
+    /* Fix notification dropdown visibility */
+    .navbar {
+      position: relative;
+      z-index: 99997 !important;
+    }
+    
+    /* Ensure alerts appear above navbar */
+    .alert {
+      position: relative;
+      z-index: 100000 !important;
+      border-left: none !important;
+    }
+    
+    .alert-container {
+      position: relative;
+      z-index: 100000 !important;
+    }
+    
+    /* Ensure main content doesn't interfere with notifications */
+    .container {
+      position: relative;
+      z-index: 1 !important;
+    }
         
         .dropdown {
             position: relative;
@@ -42,7 +60,7 @@
         
         #notificationDropdown {
             position: relative;
-            z-index: 10002 !important;
+            z-index: 99998 !important;
         }
         
         #notificationDropdownMenu {
@@ -50,7 +68,7 @@
             top: 100% !important;
             right: 0 !important;
             left: auto !important;
-            z-index: 10003 !important;
+            z-index: 99999 !important;
             margin-top: 8px !important;
             min-width: 320px !important;
             max-width: 420px !important;
@@ -122,11 +140,6 @@
             pointer-events: none !important;
         }
         
-        /* Ensure main content doesn't interfere with notifications */
-        .container {
-            position: relative;
-            z-index: 1 !important;
-        }
         
         .card {
             position: relative;
@@ -1362,6 +1375,15 @@ function renderViewScheduleTimetable(filteredData) {
         // Initialize responsive dropdown fix
         document.addEventListener('DOMContentLoaded', function() {
             fixNotificationDropdownResponsive();
+            
+            // Ensure notification dropdown toggle works
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            if (notificationDropdown) {
+                notificationDropdown.addEventListener('click', function(e) {
+                    // Let Bootstrap handle the dropdown toggle
+                    e.stopPropagation();
+                });
+            }
         });
 
         async function loadNotifications() {

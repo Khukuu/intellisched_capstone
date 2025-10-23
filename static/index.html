@@ -24,14 +24,27 @@
     }
     
     /* Drop shadows for all dropdowns */
-    #yearFilter, #sectionFilter, #roomFilter, #viewMode {
+    #yearFilter, #sectionFilter, #roomFilter, #teacherFilter {
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
+    
     
     /* Fix notification dropdown visibility */
     .navbar {
       position: relative;
       z-index: 10000 !important;
+    }
+    
+    /* Ensure alerts appear above navbar */
+    .alert {
+      position: relative;
+      z-index: 10005 !important;
+      border-left: none !important;
+    }
+    
+    .alert-container {
+      position: relative;
+      z-index: 10005 !important;
     }
     
     .dropdown {
@@ -801,8 +814,9 @@
         </div>
       </div>
       
-      <!-- Tabs -->
-      <ul class="nav nav-tabs mb-4" id="dataTabs" role="tablist">
+      <!-- Tabs with inline summary cards -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <ul class="nav nav-tabs" id="dataTabs" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="tab-subjects" data-tab="subjects" data-bs-toggle="tab" data-bs-target="#pane-subjects" type="button" role="tab" aria-controls="pane-subjects" aria-selected="true">
             <i class="bi bi-book me-2"></i>Subjects
@@ -818,7 +832,27 @@
             <i class="bi bi-building me-2"></i>Rooms
           </button>
         </li>
-      </ul>
+        </ul>
+        
+        <!-- Summary Cards - Inline with tabs -->
+        <div class="d-flex gap-2">
+          <div class="d-flex align-items-center bg-danger text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
+            <i class="bi bi-book-fill me-1"></i>
+            <span class="fw-semibold" id="totalSubjects">0</span>
+            <span class="ms-1 small">Subjects</span>
+          </div>
+          <div class="d-flex align-items-center bg-primary text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
+            <i class="bi bi-people-fill me-1"></i>
+            <span class="fw-semibold" id="totalTeachers">0</span>
+            <span class="ms-1 small">Teachers</span>
+          </div>
+          <div class="d-flex align-items-center bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
+            <i class="bi bi-building me-1"></i>
+            <span class="fw-semibold" id="totalRooms">0</span>
+            <span class="ms-1 small">Rooms</span>
+          </div>
+        </div>
+      </div>
       <div class="tab-content">
         <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
           <h2>Subjects</h2>
@@ -932,11 +966,35 @@
         </div>
       </div>
 
+      <!-- Navigation Tabs -->
+      <ul class="nav nav-tabs mb-4" id="scheduleTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="hybrid-tab" data-bs-toggle="tab" data-bs-target="#hybridContent" type="button" role="tab">
+            <i class="bi bi-layout-split me-1"></i>Default View
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#scheduleContent" type="button" role="tab">
+            <i class="bi bi-list-ul me-1"></i>Schedule List
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="timetable-tab" data-bs-toggle="tab" data-bs-target="#timetableContent" type="button" role="tab">
+            <i class="bi bi-calendar-week me-1"></i>Timetable View
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analyticsTabPane" type="button" role="tab">
+            <i class="bi bi-graph-up me-1"></i>Analytics
+          </button>
+        </li>
+      </ul>
+
       <!-- Filters -->
       <div class="card border-0 shadow-sm rounded-3 mb-4" style="background: rgba(255,255,255,0.8);">
         <div class="card-body p-4">
           <h5 class="mb-3 fw-semibold">
-            <i class="bi bi-funnel text-primary me-2"></i>Filters & View Options
+            <i class="bi bi-funnel text-primary me-2"></i>Filters
           </h5>
           <div class="row g-3">
             <div class="col-12 col-md-3">
@@ -963,60 +1021,139 @@
               <label for="roomFilter" class="form-label fw-medium">
                 <i class="bi bi-building me-1"></i>Room
               </label>
-              <div class="position-relative">
-                <input type="text" id="roomFilter" class="form-control" placeholder="Search rooms..." disabled>
-                <div id="roomDropdown" class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto; display: none;">
-                  <div class="dropdown-item" data-value="all">All Rooms</div>
-                </div>
-              </div>
+              <select id="roomFilter" class="form-select" disabled>
+                <option value="all" selected>All Rooms</option>
+              </select>
             </div>
             <div class="col-12 col-md-3">
-              <label for="viewMode" class="form-label fw-medium">
-                <i class="bi bi-eye me-1"></i>View Mode
+              <label for="teacherFilter" class="form-label fw-medium">
+                <i class="bi bi-person-badge me-1"></i>Teacher
               </label>
-              <select id="viewMode" class="form-select">
-                <option value="both" selected>Both Views</option>
-                <option value="list">List Only</option>
-                <option value="timetable">Timetable Only</option>
+              <select id="teacherFilter" class="form-select" disabled>
+                <option value="all" selected>All Teachers</option>
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Results Display -->
-      <div class="row g-4">
-        <div class="col-12 col-md-6" id="result">
-          <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-header bg-light border-0">
-              <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-list-ul text-primary me-2"></i>Schedule List
-              </h5>
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Hybrid View Tab (Default) -->
+        <div class="tab-pane fade show active" id="hybridContent" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-md-6" id="hybridResult">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-list-ul text-primary me-2"></i>Schedule List
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">No schedule generated yet.</p>
+                      <p class="small">Click <strong>Generate Schedule</strong> to create one.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body p-4">
-              <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
-                <div>
-                  <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
-                  <p class="mt-3 mb-0">No schedule generated yet.</p>
-                  <p class="small">Click <strong>Generate Schedule</strong> to create one.</p>
+            <div class="col-12 col-md-6" id="hybridTimetable">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-calendar-week text-primary me-2"></i>Timetable View
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">Timetable will appear here</p>
+                      <p class="small">after schedule generation.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-12 col-md-6" id="timetable">
-          <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-header bg-light border-0">
-              <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-calendar-week text-primary me-2"></i>Timetable View
-              </h5>
+
+        <!-- Schedule List Tab -->
+        <div class="tab-pane fade" id="scheduleContent" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12" id="result">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-list-ul text-primary me-2"></i>Schedule List
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">No schedule generated yet.</p>
+                      <p class="small">Click <strong>Generate Schedule</strong> to create one.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body p-4">
-              <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
-                <div>
-                  <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.3;"></i>
-                  <p class="mt-3 mb-0">Timetable will appear here</p>
-                  <p class="small">after schedule generation.</p>
+          </div>
+        </div>
+
+        <!-- Timetable View Tab -->
+        <div class="tab-pane fade" id="timetableContent" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12" id="timetable">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-calendar-week text-primary me-2"></i>Timetable View
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">Timetable will appear here</p>
+                      <p class="small">after schedule generation.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-pane fade" id="analyticsTabPane" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="analytics-container">
+                <div class="analytics-header">
+                  <div class="analytics-title">
+                    <div class="analytics-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    <h2 class="analytics-title-text">Schedule Analytics</h2>
+                  </div>
+                  <div class="analytics-subtitle">Insights into resource utilization and efficiency</div>
+                </div>
+                <div class="analytics-content">
+                  <div id="analyticsContent">
+                    <!-- Analytics content will be populated by JavaScript -->
+                    <div class="text-center py-5">
+                      <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.3; color: #6c757d;"></i>
+                      <p class="mt-3 mb-0 text-muted">No analytics available yet.</p>
+                      <p class="small text-muted">Generate a schedule to see analytics.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1024,29 +1161,6 @@
         </div>
       </div>
 
-      <!-- Analytics Display -->
-      <div class="row g-4 mt-4" id="analyticsSection" style="display: none;">
-        <div class="col-12">
-          <div class="analytics-container">
-            <div class="analytics-header">
-              <div class="analytics-title">
-                <div class="analytics-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z" fill="currentColor"/>
-                  </svg>
-                </div>
-                <h2 class="analytics-title-text">Schedule Analytics</h2>
-              </div>
-              <div class="analytics-subtitle">Insights into resource utilization and efficiency</div>
-            </div>
-            <div class="analytics-content">
-              <div id="analyticsContent">
-                <!-- Analytics content will be populated by JavaScript -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 

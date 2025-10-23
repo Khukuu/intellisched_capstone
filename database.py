@@ -1417,7 +1417,11 @@ def get_system_analytics() -> Dict[str, Any]:
         # System data counts
         data_counts_query = """
         SELECT 
-            'subjects' as type, COUNT(*) as count FROM cs_curriculum
+            'subjects' as type, COUNT(*) as count FROM (
+                SELECT * FROM cs_curriculum
+                UNION ALL
+                SELECT * FROM it_curriculum
+            ) as all_subjects
             UNION ALL
             SELECT 'teachers', COUNT(*) FROM teachers
             UNION ALL

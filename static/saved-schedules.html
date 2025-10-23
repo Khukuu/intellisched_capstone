@@ -81,6 +81,24 @@
       color: #212529 !important;
       font-weight: 600;
     }
+    
+    /* Fix notification dropdown visibility */
+    .navbar {
+      position: relative;
+      z-index: 10000 !important;
+    }
+    
+    /* Ensure alerts appear above navbar */
+    .alert {
+      position: relative;
+      z-index: 10005 !important;
+      border-left: none !important;
+    }
+    
+    .alert-container {
+      position: relative;
+      z-index: 10005 !important;
+    }
   </style>
 </head>
 <body>
@@ -99,7 +117,7 @@
             <a class="nav-link" href="/chair">Generate</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/chair#data-management-section">Data</a>
+            <a class="nav-link" href="/chair">Data</a>
           </li>
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#">Schedules</a>
