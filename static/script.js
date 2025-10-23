@@ -16,14 +16,14 @@ const semesterSelect = document.getElementById('semesterSelect'); // New: Get se
 const yearFilter = document.getElementById('yearFilter');
 const sectionFilter = document.getElementById('sectionFilter');
 const roomFilter = document.getElementById('roomFilter');
-const roomDropdown = document.getElementById('roomDropdown');
-const viewMode = document.getElementById('viewMode');
+const teacherFilter = document.getElementById('teacherFilter');
 const saveBtn = document.getElementById('saveBtn');
 const saveNameInput = document.getElementById('saveNameInput');
 // Saved schedule controls removed - now handled in separate page
 
 // Keep last generated schedule in memory for filtering
 let lastGeneratedSchedule = [];
+let lastAnalytics = null;
 let lastSavedId = '';
 let currentRoomFilter = 'all';
 let availableRooms = [];
@@ -260,7 +260,10 @@ function showSection(sectionId) {
     dataManagementSection.style.display = 'block';
     dataNavLink.classList.add('active');
     if (resultsCard) resultsCard.style.display = 'none';
-    loadDataManagementTables(); // Load data when showing this section
+    // Load all data and update cards immediately
+    setTimeout(() => {
+      loadDataManagementTables();
+    }, 100);
   }
 }
 
@@ -625,18 +628,25 @@ document.getElementById('generateBtn').onclick = async function() {
     });
     const data = await response.json();
     const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
+    const analytics = data.analytics || null;
     lastGeneratedSchedule = scheduleArray;
+    lastAnalytics = analytics;
     lastSavedId = '';
 
     if (!Array.isArray(scheduleArray) || scheduleArray.length === 0) {
-      document.getElementById('result').innerHTML = "<b>No schedule generated.</b>";
+      const noScheduleMsg = "<b>No schedule generated.</b>";
+      document.getElementById('result').innerHTML = noScheduleMsg;
       document.getElementById('timetable').innerHTML = "";
+      document.getElementById('hybridResult').innerHTML = noScheduleMsg;
+      document.getElementById('hybridTimetable').innerHTML = "";
       if (downloadBtn) downloadBtn.disabled = true;
+      hideAnalytics();
       return;
     }
 
     populateFilters(lastGeneratedSchedule);
-    renderScheduleAndTimetable(lastGeneratedSchedule);
+    populateTeacherFilter(lastGeneratedSchedule);
+    renderScheduleAndTimetable(lastGeneratedSchedule, analytics);
       // Saved schedule list refresh moved to separate page
   } catch (e) {
     console.error('Error generating schedule', e);
@@ -810,8 +820,8 @@ function rebuildSectionFilter(sectionsByYear) {
 }
 
 function rebuildRoomFilter() {
-  if (!roomFilter || !roomDropdown) {
-    console.error('Room filter elements not found');
+  if (!roomFilter) {
+    console.error('Room filter element not found');
     return;
   }
   
@@ -833,48 +843,22 @@ function rebuildRoomFilter() {
     availableRooms = Array.from(names).sort();
   }
   
-  // Update dropdown with all rooms
-  updateRoomDropdown(availableRooms);
+  // Clear existing options except "All Rooms"
+  roomFilter.innerHTML = '<option value="all" selected>All Rooms</option>';
+  
+  // Add room options
+  availableRooms.forEach(room => {
+    const option = document.createElement('option');
+    option.value = room;
+    option.textContent = room;
+    roomFilter.appendChild(option);
+  });
   
   // Enable/disable the filter
   roomFilter.disabled = availableRooms.length === 0;
-  
-  // Reset to "All Rooms" if disabled or if current selection is not available
-  if (roomFilter.disabled || (currentRoomFilter !== 'all' && !availableRooms.includes(currentRoomFilter))) {
-    currentRoomFilter = 'all';
-    roomFilter.value = '';
-    roomFilter.placeholder = 'Search rooms...';
-  }
 }
 
-function updateRoomDropdown(rooms) {
-  roomDropdown.innerHTML = '';
-  
-  // Add "All Rooms" option
-  const allOption = document.createElement('div');
-  allOption.className = 'dropdown-item';
-  allOption.setAttribute('data-value', 'all');
-  allOption.textContent = 'All Rooms';
-  allOption.style.cursor = 'pointer';
-  roomDropdown.appendChild(allOption);
-  
-  // Add individual room options
-  rooms.forEach(room => {
-    const option = document.createElement('div');
-    option.className = 'dropdown-item';
-    option.setAttribute('data-value', room);
-    option.textContent = room;
-    option.style.cursor = 'pointer';
-    roomDropdown.appendChild(option);
-  });
-}
 
-function filterRoomDropdown(searchTerm) {
-  const filteredRooms = availableRooms.filter(room => 
-    room.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  updateRoomDropdown(filteredRooms);
-}
 
 yearFilter.addEventListener('change', () => {
   // Rebuild section list based on year
@@ -889,64 +873,25 @@ yearFilter.addEventListener('change', () => {
   });
   rebuildSectionFilter(sectionsByYear);
   rebuildRoomFilter();
-  renderScheduleAndTimetable(lastGeneratedSchedule);
+  renderScheduleAndTimetable(lastGeneratedSchedule, lastAnalytics);
 });
 
 sectionFilter.addEventListener('change', () => {
-  renderScheduleAndTimetable(lastGeneratedSchedule);
+  renderScheduleAndTimetable(lastGeneratedSchedule, lastAnalytics);
 });
 
 // Room filter event listeners
-roomFilter.addEventListener('input', (e) => {
-  const searchTerm = e.target.value;
-  filterRoomDropdown(searchTerm);
-  roomDropdown.style.display = 'block';
+roomFilter.addEventListener('change', () => {
+  renderScheduleAndTimetable(lastGeneratedSchedule, lastAnalytics);
 });
 
-roomFilter.addEventListener('focus', () => {
-  if (!roomFilter.disabled) {
-    roomDropdown.style.display = 'block';
-  }
-});
-
-roomFilter.addEventListener('blur', (e) => {
-  // Delay hiding to allow click on dropdown items
-  setTimeout(() => {
-    roomDropdown.style.display = 'none';
-  }, 200);
-});
-
-// Handle dropdown item clicks
-roomDropdown.addEventListener('click', (e) => {
-  if (e.target.classList.contains('dropdown-item')) {
-    const value = e.target.getAttribute('data-value');
-    currentRoomFilter = value;
-    
-    if (value === 'all') {
-      roomFilter.value = '';
-      roomFilter.placeholder = 'Search rooms...';
-    } else {
-      roomFilter.value = value;
-    }
-    
-    roomDropdown.style.display = 'none';
-    renderScheduleAndTimetable(lastGeneratedSchedule);
-  }
-});
-
-// Handle keyboard navigation
-roomFilter.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    roomDropdown.style.display = 'none';
-    roomFilter.blur();
-  }
-});
 
 
 function applyFilters(data) {
   const y = yearFilter.value;
   const s = sectionFilter.value;
-  const r = currentRoomFilter;
+  const r = roomFilter.value;
+  const t = teacherFilter ? teacherFilter.value : 'all';
   return data.filter(e => {
     let ok = true;
     if (y !== 'all') {
@@ -958,11 +903,12 @@ function applyFilters(data) {
       const evName = getRoomName(e.room_id);
       ok = ok && (String(e.room_id) === String(r) || String(evName) === String(r));
     }
+    if (t !== 'all') ok = ok && e.teacher_name === t;
     return ok;
   });
 }
 
-function renderScheduleAndTimetable(data) {
+function renderScheduleAndTimetable(data, analytics = null) {
   const filtered = applyFilters(Array.isArray(data) ? data : []);
 
   // Schedule Table (side-by-side column)
@@ -981,9 +927,14 @@ function renderScheduleAndTimetable(data) {
     </tr>`;
   }
   html += "</tbody></table></div>";
+  // Update both individual tabs and hybrid view
   const resultDiv = document.getElementById('result');
+  const hybridResultDiv = document.getElementById('hybridResult');
   if (resultDiv) {
     resultDiv.innerHTML = html;
+  }
+  if (hybridResultDiv) {
+    hybridResultDiv.innerHTML = html;
   }
   downloadBtn.disabled = filtered.length === 0;
 
@@ -1101,12 +1052,23 @@ function renderScheduleAndTimetable(data) {
     tthtml += '</tr>';
   }
   tthtml += '</tbody></table></div>';
+  // Update both individual tabs and hybrid view
   const timetableDiv = document.getElementById('timetable');
+  const hybridTimetableDiv = document.getElementById('hybridTimetable');
   if (timetableDiv) {
     timetableDiv.innerHTML = tthtml;
   }
-  // View toggle handling
-  applyViewMode();
+  if (hybridTimetableDiv) {
+    hybridTimetableDiv.innerHTML = tthtml;
+  }
+  // View toggle handling removed - now using tabs
+  
+  // Display analytics if available
+  if (analytics) {
+    displayAnalytics(analytics, false); // Don't switch tabs when filtering
+  } else {
+    hideAnalytics();
+  }
 }
 
 // Build a readable time range from start slot and duration (e.g., 08:00-10:00)
@@ -1152,10 +1114,34 @@ function applyViewMode() {
   }
 }
 
-// Change view when selector changes
-if (viewMode) {
-  viewMode.addEventListener('change', () => {
-    applyViewMode();
+// Teacher filter functionality
+function populateTeacherFilter(scheduleData) {
+  if (!teacherFilter || !scheduleData) return;
+  
+  // Get unique teachers from schedule data
+  const teachers = [...new Set(scheduleData.map(item => item.teacher_name).filter(name => name))];
+  
+  // Clear existing options except "All Teachers"
+  teacherFilter.innerHTML = '<option value="all" selected>All Teachers</option>';
+  
+  // Add teacher options
+  teachers.sort().forEach(teacher => {
+    const option = document.createElement('option');
+    option.value = teacher;
+    option.textContent = teacher;
+    teacherFilter.appendChild(option);
+  });
+  
+  // Enable the filter
+  teacherFilter.disabled = false;
+}
+
+// Teacher filter change handler
+if (teacherFilter) {
+  teacherFilter.addEventListener('change', () => {
+    if (lastGeneratedSchedule) {
+      renderScheduleAndTimetable(lastGeneratedSchedule, lastAnalytics);
+    }
   });
 }
 
@@ -1281,13 +1267,136 @@ else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teache
   else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
 }
 
+async function updateDataManagementCards() {
+  try {
+    // Try to get data from API first
+    let subjectsCount = 0;
+    let teachersCount = 0;
+    let roomsCount = 0;
+
+    // Update subjects count
+    try {
+      const subjectsResponse = await fetch('/api/subjects', {
+        headers: getAuthHeaders()
+      });
+      if (subjectsResponse.ok) {
+        const subjectsData = await subjectsResponse.json();
+        console.log('Subjects data:', subjectsData);
+        const subjects = Array.isArray(subjectsData) ? subjectsData : (subjectsData.subjects || []);
+        subjectsCount = subjects.length;
+      }
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+    }
+
+    // Update teachers count
+    try {
+      const teachersResponse = await fetch('/api/teachers', {
+        headers: getAuthHeaders()
+      });
+      if (teachersResponse.ok) {
+        const teachersData = await teachersResponse.json();
+        console.log('Teachers data:', teachersData);
+        const teachers = Array.isArray(teachersData) ? teachersData : (teachersData.teachers || []);
+        teachersCount = teachers.length;
+      }
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+    }
+
+    // Update rooms count
+    try {
+      const roomsResponse = await fetch('/api/rooms', {
+        headers: getAuthHeaders()
+      });
+      if (roomsResponse.ok) {
+        const roomsData = await roomsResponse.json();
+        console.log('Rooms data:', roomsData);
+        const rooms = Array.isArray(roomsData) ? roomsData : (roomsData.rooms || []);
+        roomsCount = rooms.length;
+      }
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    }
+
+    // Fallback: try to count from cached data if API calls failed
+    if (subjectsCount === 0 && (csSubjectsCache.length > 0 || itSubjectsCache.length > 0)) {
+      subjectsCount = csSubjectsCache.length + itSubjectsCache.length;
+      console.log('Using cached subjects data:', subjectsCount);
+    }
+
+    if (teachersCount === 0 && teachersCache.length > 0) {
+      teachersCount = teachersCache.length;
+      console.log('Using cached teachers data:', teachersCount);
+    }
+
+    if (roomsCount === 0 && roomsCache.length > 0) {
+      roomsCount = roomsCache.length;
+      console.log('Using cached rooms data:', roomsCount);
+    }
+
+    // Final fallback: count from table rows if all else fails
+    if (teachersCount === 0) {
+      const teachersTable = document.querySelector('#teachersData table tbody');
+      if (teachersTable) {
+        const teacherRows = teachersTable.querySelectorAll('tr');
+        teachersCount = teacherRows.length;
+        console.log('Using table row count for teachers:', teachersCount);
+      }
+    }
+
+    if (subjectsCount === 0) {
+      const csSubjectsTable = document.querySelector('#csSubjectsData table tbody');
+      const itSubjectsTable = document.querySelector('#itSubjectsData table tbody');
+      let csCount = 0;
+      let itCount = 0;
+      
+      if (csSubjectsTable) {
+        csCount = csSubjectsTable.querySelectorAll('tr').length;
+      }
+      if (itSubjectsTable) {
+        itCount = itSubjectsTable.querySelectorAll('tr').length;
+      }
+      
+      subjectsCount = csCount + itCount;
+      if (subjectsCount > 0) {
+        console.log('Using table row count for subjects:', subjectsCount);
+      }
+    }
+
+    if (roomsCount === 0) {
+      const roomsTable = document.querySelector('#roomsData table tbody');
+      if (roomsTable) {
+        const roomRows = roomsTable.querySelectorAll('tr');
+        roomsCount = roomRows.length;
+        console.log('Using table row count for rooms:', roomsCount);
+      }
+    }
+
+    // Update the display
+    document.getElementById('totalSubjects').textContent = subjectsCount;
+    document.getElementById('totalTeachers').textContent = teachersCount;
+    document.getElementById('totalRooms').textContent = roomsCount;
+
+  } catch (error) {
+    console.error('Error updating data management cards:', error);
+    // Set to 0 if there's an error
+    document.getElementById('totalSubjects').textContent = '0';
+    document.getElementById('totalTeachers').textContent = '0';
+    document.getElementById('totalRooms').textContent = '0';
+  }
+}
+
 async function loadDataManagementTables() {
-  // Determine active tab and load only it
-  const activeBtn = document.querySelector('#dataTabs .nav-link.active');
-  const tab = activeBtn ? activeBtn.dataset.tab : 'subjects';
-  if (tab === 'subjects') await loadSubjectsTable();
-  else if (tab === 'teachers') await loadTeachersTable();
-  else if (tab === 'rooms') await loadRoomsTable();
+  // Load all data to populate cards immediately
+  await Promise.all([
+    loadSubjectsTable(),
+    loadTeachersTable(),
+    loadRoomsTable()
+  ]);
+  
+  // Update cards after loading all data
+  await updateDataManagementCards();
 }
 
 // Wire tab buttons to load content when activated (use Bootstrap event)
@@ -1296,20 +1405,36 @@ document.querySelectorAll('#dataTabs button[data-bs-toggle="tab"]').forEach(btn 
     const tab = e.target.dataset.tab;
     if (tab === 'subjects') {
       // Small delay to ensure DOM is rendered
-      setTimeout(() => loadSubjectsTable(), 100);
+      setTimeout(async () => {
+        await loadSubjectsTable();
+        await updateDataManagementCards();
+      }, 100);
     }
-    else if (tab === 'teachers') loadTeachersTable();
-    else if (tab === 'rooms') loadRoomsTable();
+    else if (tab === 'teachers') {
+      loadTeachersTable().then(() => updateDataManagementCards());
+    }
+    else if (tab === 'rooms') {
+      loadRoomsTable().then(() => updateDataManagementCards());
+    }
   });
 });
 
 // Wire refresh buttons
 ['subjects','teachers','rooms'].forEach(key => {
   const btn = document.getElementById(`${key}Refresh`);
-  if (btn) btn.addEventListener('click', () => {
-    if (key === 'subjects') loadSubjectsTable();
-    if (key === 'teachers') loadTeachersTable();
-    if (key === 'rooms') loadRoomsTable();
+  if (btn) btn.addEventListener('click', async () => {
+    if (key === 'subjects') {
+      await loadSubjectsTable();
+      await updateDataManagementCards();
+    }
+    if (key === 'teachers') {
+      await loadTeachersTable();
+      await updateDataManagementCards();
+    }
+    if (key === 'rooms') {
+      await loadRoomsTable();
+      await updateDataManagementCards();
+    }
   });
 });
 
@@ -1407,8 +1532,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return new bootstrap.Tooltip(tooltipTriggerEl);
   });
   
-  // Apply initial view mode
-  applyViewMode();
+  // Initial view mode removed - now using tabs
 });
 
 function getSelectedRowData(elementId, headers) {
@@ -1951,3 +2075,286 @@ async function clearAllNotifications() {
 
 // Auto-refresh notifications every 30 seconds
 setInterval(loadNotifications, 30000);
+
+// Analytics Functions
+function displayAnalytics(analytics, switchToTab = true) {
+  const analyticsContent = document.getElementById('analyticsContent');
+  
+  if (!analyticsContent) return;
+  
+  // Switch to analytics tab only if requested
+  if (switchToTab) {
+    const analyticsTab = document.getElementById('analytics-tab');
+    if (analyticsTab) {
+      const tab = new bootstrap.Tab(analyticsTab);
+      tab.show();
+    }
+  }
+  
+  // Generate analytics HTML
+  let html = '';
+  
+  // Summary Cards
+  if (analytics.summary) {
+    html += `
+      <div class="analytics-summary-grid">
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.total_events || 0}</div>
+          <div class="analytics-summary-label">Total Events</div>
+        </div>
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.rooms_used || 0}</div>
+          <div class="analytics-summary-label">Rooms Used</div>
+        </div>
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.teachers_used || 0}</div>
+          <div class="analytics-summary-label">Teachers Used</div>
+        </div>
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.total_contact_hours || 0}</div>
+          <div class="analytics-summary-label">Contact Hours</div>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Room Utilization Chart
+  if (analytics.room_utilization && Object.keys(analytics.room_utilization).length > 0) {
+    html += `
+      <div class="analytics-chart-container">
+        <div class="analytics-chart-title">🏢 Room Utilization</div>
+        <div class="analytics-chart">
+          <canvas id="roomUtilizationChart"></canvas>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Faculty Workload Chart
+  if (analytics.faculty_workload && Object.keys(analytics.faculty_workload).length > 0) {
+    html += `
+      <div class="analytics-chart-container">
+        <div class="analytics-chart-title">👨‍🏫 Faculty Contact Hours</div>
+        <div class="analytics-chart">
+          <canvas id="facultyWorkloadChart"></canvas>
+        </div>
+      </div>
+    `;
+  }
+  
+  // Weekly Occupancy Chart
+  if (analytics.weekly_occupancy && Object.keys(analytics.weekly_occupancy).length > 0) {
+    html += `
+      <div class="analytics-chart-container">
+        <div class="analytics-chart-title">📅 Weekly Occupancy Rates</div>
+        <div class="analytics-chart">
+          <canvas id="weeklyOccupancyChart"></canvas>
+        </div>
+      </div>
+    `;
+  }
+  analyticsContent.innerHTML = html;
+  
+  // Create charts after DOM is updated
+  setTimeout(() => {
+    createRoomUtilizationChart(analytics.room_utilization);
+    createFacultyWorkloadChart(analytics.faculty_workload);
+    createWeeklyOccupancyChart(analytics.weekly_occupancy);
+  }, 100);
+}
+
+function hideAnalytics() {
+  const analyticsContent = document.getElementById('analyticsContent');
+  if (analyticsContent) {
+    analyticsContent.innerHTML = `
+      <div class="text-center py-5">
+        <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.3; color: #6c757d;"></i>
+        <p class="mt-3 mb-0 text-muted">No analytics available yet.</p>
+        <p class="small text-muted">Generate a schedule to see analytics.</p>
+      </div>
+    `;
+  }
+}
+
+function createRoomUtilizationChart(roomData) {
+  const canvas = document.getElementById('roomUtilizationChart');
+  if (!canvas || !roomData) return;
+  
+  const rooms = Object.keys(roomData);
+  const utilizationData = rooms.map(roomId => roomData[roomId].utilization_percentage);
+  const roomNames = rooms.map(roomId => roomData[roomId].room_name);
+  
+  new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: roomNames,
+      datasets: [{
+        label: 'Utilization %',
+        data: utilizationData,
+        backgroundColor: utilizationData.map(val => 
+          val > 80 ? 'rgba(255, 59, 48, 0.8)' : val > 60 ? 'rgba(255, 149, 0, 0.8)' : 'rgba(52, 199, 89, 0.8)'
+        ),
+        borderColor: utilizationData.map(val => 
+          val > 80 ? '#FF3B30' : val > 60 ? '#FF9500' : '#34C759'
+        ),
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: {
+            color: 'rgba(142, 142, 147, 0.2)',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            },
+            callback: function(value) {
+              return value + '%';
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+}
+
+function createFacultyWorkloadChart(facultyData) {
+  const canvas = document.getElementById('facultyWorkloadChart');
+  if (!canvas || !facultyData) return;
+  
+  const teachers = Object.keys(facultyData);
+  const workloadData = teachers.map(teacher => facultyData[teacher].total_hours);
+  const teacherNames = teachers.map(teacher => facultyData[teacher].teacher_name);
+  
+  new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: teacherNames,
+      datasets: [{
+        data: workloadData,
+        backgroundColor: [
+          '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE',
+          '#FF2D92', '#5AC8FA', '#FFCC00', '#FF6B6B', '#4ECDC4'
+        ],
+        borderWidth: 0,
+        cutout: '60%'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            usePointStyle: true,
+            padding: 20,
+            color: '#1D1D1F',
+            font: {
+              size: 12,
+              weight: '500'
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function createWeeklyOccupancyChart(occupancyData) {
+  const canvas = document.getElementById('weeklyOccupancyChart');
+  if (!canvas || !occupancyData) return;
+  
+  const days = Object.keys(occupancyData);
+  const occupancyRates = days.map(day => occupancyData[day].occupancy_rate);
+  
+  new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [{
+        label: 'Occupancy Rate %',
+        data: occupancyRates,
+        borderColor: '#007AFF',
+        backgroundColor: 'rgba(0, 122, 255, 0.1)',
+        tension: 0.4,
+        fill: true,
+        borderWidth: 3,
+        pointBackgroundColor: '#007AFF',
+        pointBorderColor: '#FFFFFF',
+        pointBorderWidth: 2,
+        pointRadius: 6,
+        pointHoverRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: {
+            color: 'rgba(142, 142, 147, 0.2)',
+            drawBorder: false
+          },
+          ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            },
+            callback: function(value) {
+              return value + '%';
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+}

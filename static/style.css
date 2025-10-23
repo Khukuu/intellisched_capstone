@@ -43,38 +43,51 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
   padding: 0;
-  /* Page background image: replace the URL below with your preferred image or keep it in /static/ */
+  /* Apple-like background with LPU theme */
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
   background-image: url('/static/assets/lpu.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  /* Fallback color */
-  background-color: #f5f7fa;
+  background-blend-mode: overlay;
+  min-height: 100vh;
 }
 
 .card-mac-style {
-  border-radius: 12px;
-  /* Make cards slightly translucent so the background shows through subtly */
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(6px);
-  /* Apple-like subtle border and shadow */
-  border: 1px solid rgba(0,0,0,0.04);
-  box-shadow: 0 6px 20px rgba(60,64,67,0.06);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.card-mac-style:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 }
 
 .placeholder {
-  background: #fbfbfd;
-  border: 1px dashed #e6e9ef;
-  border-radius: 0.6rem;
+  background: rgba(251, 251, 253, 0.8);
+  border: 1px dashed rgba(230, 233, 239, 0.6);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 200px;
   text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.placeholder:hover {
+  background: rgba(251, 251, 253, 0.9);
+  border-color: rgba(230, 233, 239, 0.8);
 }
 
 /* Tables: slightly softer look */
@@ -91,6 +104,8 @@ body {
 #notificationDropdownMenu {
   overflow-x: hidden !important;
   word-wrap: break-word !important;
+  z-index: 1051 !important;
+  margin-top: 8px !important;
 }
 
 #notificationDropdownMenu * {
@@ -1035,6 +1050,440 @@ body {
 /* Enhanced tooltip styling */
 .tooltip {
   font-size: 0.875rem;
+}
+
+/* ===== APPLE-LIKE DESIGN SYSTEM ===== */
+
+/* Apple-like Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+}
+
+h1 { font-size: 2.5rem; font-weight: 700; }
+h2 { font-size: 2rem; font-weight: 600; }
+h3 { font-size: 1.5rem; font-weight: 600; }
+h4 { font-size: 1.25rem; font-weight: 600; }
+h5 { font-size: 1.1rem; font-weight: 600; }
+h6 { font-size: 1rem; font-weight: 600; }
+
+/* Apple-like Buttons */
+.btn {
+  border-radius: 12px;
+  font-weight: 500;
+  padding: 12px 24px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #b83a3f 0%, #9f1e28 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(184, 58, 63, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(184, 58, 63, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(142, 142, 147, 0.1);
+  color: #1d1d1f;
+  border: 1px solid rgba(142, 142, 147, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(142, 142, 147, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Apple-like Cards */
+.card {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+  background: linear-gradient(135deg, rgba(184, 58, 63, 0.05) 0%, rgba(255, 255, 255, 0.8) 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 24px 32px 16px;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.card-body {
+  padding: 32px;
+}
+
+/* Apple-like Forms */
+.form-control {
+  border-radius: 12px;
+  border: 1px solid rgba(142, 142, 147, 0.2);
+  padding: 12px 16px;
+  font-size: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.form-control:focus {
+  border-color: #b83a3f;
+  box-shadow: 0 0 0 3px rgba(184, 58, 63, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.form-label {
+  font-weight: 500;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+}
+
+/* Apple-like Tables */
+.table {
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
+.table thead th {
+  background: linear-gradient(135deg, rgba(184, 58, 63, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%);
+  border: none;
+  font-weight: 600;
+  color: #1d1d1f;
+  padding: 20px 24px;
+}
+
+.table tbody td {
+  border: none;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.table tbody tr:hover {
+  background: rgba(184, 58, 63, 0.03);
+}
+
+/* Apple-like Navigation */
+.navbar {
+  backdrop-filter: blur(20px);
+  background: rgba(159, 30, 40, 0.95) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.nav-link {
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  margin: 0 4px;
+  padding: 8px 16px !important;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Apple-like Modals */
+.modal-content {
+  border-radius: 24px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 32px 32px 16px;
+}
+
+.modal-body {
+  padding: 24px 32px;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 16px 32px 32px;
+}
+
+/* Apple-like Alerts */
+.alert {
+  border-radius: 16px;
+  border: none;
+  padding: 16px 24px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.alert-success {
+  background: rgba(52, 199, 89, 0.1);
+  color: #1d1d1f;
+  border-left: 4px solid #34c759;
+}
+
+.alert-danger {
+  background: rgba(255, 59, 48, 0.1);
+  color: #1d1d1f;
+  border-left: 4px solid #ff3b30;
+}
+
+.alert-warning {
+  background: rgba(255, 149, 0, 0.1);
+  color: #1d1d1f;
+  border-left: 4px solid #ff9500;
+}
+
+.alert-info {
+  background: rgba(0, 122, 255, 0.1);
+  color: #1d1d1f;
+  border-left: 4px solid #007aff;
+}
+
+/* Apple-like Badges */
+.badge {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+}
+
+.badge-primary {
+  background: linear-gradient(135deg, #b83a3f 0%, #9f1e28 100%);
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+}
+
+.badge-warning {
+  background: linear-gradient(135deg, #ff9500 0%, #ffcc02 100%);
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, #ff3b30 0%, #ff6b6b 100%);
+}
+
+/* Apple-like Dropdowns */
+.dropdown-menu {
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px;
+  z-index: 1050;
+  margin-top: 8px;
+}
+
+.dropdown-item {
+  border-radius: 8px;
+  margin: 2px 0;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-item:hover {
+  background: rgba(184, 58, 63, 0.1);
+  transform: translateX(4px);
+}
+
+/* Notification Dropdown Specific Styling */
+#notificationDropdownMenu {
+  z-index: 9999 !important;
+  margin-top: 12px !important;
+  min-width: 320px !important;
+  max-width: 400px !important;
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important;
+}
+
+/* Ensure notification button stays visible */
+#notificationDropdown {
+  position: relative !important;
+  z-index: 10000 !important;
+}
+
+/* Notification badge positioning - consolidated */
+#notificationBadge {
+  z-index: 10001 !important;
+  position: absolute !important;
+  top: -8px !important;
+  right: -8px !important;
+  font-size: 0.7rem !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: none !important;
+}
+
+/* Ensure notification dropdown doesn't cover the button */
+.dropdown-menu-end {
+  right: 0 !important;
+  left: auto !important;
+  margin-top: 8px !important;
+  z-index: 9999 !important;
+}
+
+/* Notification button container */
+.dropdown {
+  position: relative;
+  z-index: 10000;
+}
+
+/* Ensure dropdown container has proper stacking */
+.dropdown.show {
+  z-index: 10000;
+}
+
+/* Fix for notification dropdown positioning */
+#notificationDropdownMenu.dropdown-menu-end {
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important;
+  margin-top: 8px !important;
+  z-index: 9999 !important;
+  position: absolute !important;
+  top: 100% !important;
+}
+
+/* Ensure notification button and badge are always visible */
+#notificationDropdown {
+  position: relative !important;
+  z-index: 10000 !important;
+}
+
+#notificationDropdown .position-relative {
+  position: relative !important;
+  z-index: 10001 !important;
+}
+
+/* Fix notification badge visibility - handled above */
+
+/* Force notification dropdown to float above everything */
+#notificationDropdownMenu {
+  z-index: 99999 !important;
+  position: fixed !important;
+  top: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: 0 !important;
+  margin-top: 8px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(20px) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 16px !important;
+}
+
+/* Ensure notification button stays on top when dropdown is open */
+#notificationDropdown.show {
+  z-index: 100000 !important;
+}
+
+/* Apple-like Progress Bars */
+.progress {
+  border-radius: 8px;
+  height: 8px;
+  background: rgba(142, 142, 147, 0.2);
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(135deg, #b83a3f 0%, #9f1e28 100%);
+  border-radius: 8px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apple-like Spinners */
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+  border-width: 3px;
+  border-color: #b83a3f;
+  border-right-color: transparent;
+}
+
+/* Apple-like Utilities */
+.text-primary { color: #b83a3f !important; }
+.bg-primary { background: linear-gradient(135deg, #b83a3f 0%, #9f1e28 100%) !important; }
+.border-primary { border-color: #b83a3f !important; }
+
+/* Apple-like Shadows */
+.shadow-sm { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important; }
+.shadow { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important; }
+.shadow-lg { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important; }
+
+/* Apple-like Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apple-like Responsive Design */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 24px 20px;
+  }
+  
+  .modal-body {
+    padding: 20px 24px;
+  }
+  
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
 }
 .tooltip-inner {
   background-color: #212529;

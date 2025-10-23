@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="icon" type="image/png" href="/static/favicon.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .dropdown-item:hover {
       background-color: #f8f9fa;
@@ -23,8 +24,528 @@
     }
     
     /* Drop shadows for all dropdowns */
-    #yearFilter, #sectionFilter, #roomFilter, #viewMode {
+    #yearFilter, #sectionFilter, #roomFilter, #teacherFilter {
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    
+    /* Fix notification dropdown visibility */
+    .navbar {
+      position: relative;
+      z-index: 10000 !important;
+    }
+    
+    /* Ensure alerts appear above navbar */
+    .alert {
+      position: relative;
+      z-index: 10005 !important;
+      border-left: none !important;
+    }
+    
+    .alert-container {
+      position: relative;
+      z-index: 10005 !important;
+    }
+    
+    .dropdown {
+      position: relative;
+      z-index: 10001 !important;
+    }
+    
+    #notificationDropdown {
+      position: relative;
+      z-index: 10002 !important;
+    }
+    
+    #notificationDropdownMenu {
+      position: absolute !important;
+      top: 100% !important;
+      right: 0 !important;
+      left: auto !important;
+      z-index: 10003 !important;
+      margin-top: 8px !important;
+      min-width: 320px !important;
+      max-width: 420px !important;
+      max-height: 450px !important;
+      overflow-y: auto !important;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2) !important;
+      backdrop-filter: blur(20px) !important;
+      background: rgba(255, 255, 255, 0.98) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      border-radius: 20px !important;
+      padding: 8px !important;
+      /* Hide scrollbar */
+      scrollbar-width: none !important; /* Firefox */
+      -ms-overflow-style: none !important; /* Internet Explorer 10+ */
+    }
+    
+    #notificationDropdownMenu::-webkit-scrollbar {
+      display: none !important; /* WebKit browsers (Chrome, Safari, Edge) */
+    }
+    
+    /* Enhanced notification item styling */
+    #notificationDropdownMenu .dropdown-item {
+      border-radius: 12px !important;
+      margin: 4px 0 !important;
+      padding: 12px 16px !important;
+      transition: all 0.2s ease !important;
+      border: 1px solid transparent !important;
+    }
+    
+    #notificationDropdownMenu .dropdown-item:hover {
+      background: rgba(184, 58, 63, 0.08) !important;
+      border-color: rgba(184, 58, 63, 0.2) !important;
+      transform: translateX(4px) !important;
+    }
+    
+    #notificationDropdownMenu .dropdown-item.bg-light {
+      background: rgba(184, 58, 63, 0.05) !important;
+      border-color: rgba(184, 58, 63, 0.15) !important;
+    }
+    
+    #notificationDropdownMenu .badge {
+      font-size: 0.7rem !important;
+      padding: 4px 8px !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+    }
+    
+    #notificationDropdownMenu .btn-sm {
+      padding: 6px 8px !important;
+      border-radius: 8px !important;
+      transition: all 0.2s ease !important;
+    }
+    
+    #notificationDropdownMenu .btn-sm:hover {
+      transform: scale(1.05) !important;
+    }
+    
+    #notificationBadge {
+      position: absolute !important;
+      top: -8px !important;
+      right: -8px !important;
+      z-index: 10004 !important;
+      font-size: 0.7rem !important;
+      min-width: 18px !important;
+      height: 18px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+    }
+    
+    /* Ensure main content doesn't interfere with notifications */
+    .container {
+      position: relative;
+      z-index: 1 !important;
+    }
+    
+    .card {
+      position: relative;
+      z-index: 2 !important;
+    }
+    
+    /* Apple-like Analytics Styles */
+    .analytics-container {
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    
+    .analytics-header {
+      background: linear-gradient(135deg, #b83a3f 0%, #9f1e28 100%);
+      color: white;
+      padding: 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .analytics-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+    
+    .analytics-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .analytics-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .analytics-icon svg {
+      color: white;
+      width: 24px;
+      height: 24px;
+    }
+    
+    .analytics-title-text {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .analytics-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      font-weight: 400;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .analytics-content {
+      padding: 40px;
+      background: #ffffff;
+    }
+    
+    .analytics-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 24px;
+    }
+    
+    .analytics-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    
+    .analytics-card-header {
+      padding: 24px 32px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    }
+    
+    .analytics-card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .analytics-card-body {
+      padding: 32px;
+    }
+    
+    .analytics-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .analytics-summary-card {
+      background: linear-gradient(135deg, #b83a3f 0%, #9f1e28 100%);
+      border-radius: 16px;
+      padding: 24px;
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .analytics-summary-card:nth-child(2) {
+      background: linear-gradient(135deg, #9f1e28 0%, #7a1a1f 100%);
+    }
+    
+    .analytics-summary-card:nth-child(3) {
+      background: linear-gradient(135deg, #b83a3f 0%, #d44a4f 100%);
+    }
+    
+    .analytics-summary-card:nth-child(4) {
+      background: linear-gradient(135deg, #9f1e28 0%, #b83a3f 100%);
+    }
+    
+    .analytics-summary-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      transform: rotate(45deg);
+    }
+    
+    .analytics-summary-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .analytics-summary-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .analytics-summary-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .analytics-chart-container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
+    }
+    
+    .analytics-chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .analytics-chart-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+    }
+    
+    .analytics-chart {
+      position: relative;
+      height: 300px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .analytics-header {
+        padding: 24px 20px;
+      }
+      
+      .analytics-title-text {
+        font-size: 2rem;
+      }
+      
+      .analytics-content {
+        padding: 24px 20px;
+      }
+      
+      .analytics-summary-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 16px;
+      }
+      
+      .analytics-summary-value {
+        font-size: 2rem;
+      }
+    }
+    
+    /* Enhanced responsive design */
+    @media (max-width: 1200px) {
+      .card-mac-style {
+        width: 95vw !important;
+        max-width: 95vw !important;
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .card-mac-style {
+        width: 98vw !important;
+        max-width: 98vw !important;
+        margin: 0.5rem;
+      }
+      
+      .navbar-brand .fs-5 {
+        font-size: 1.1rem !important;
+      }
+      
+      .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .card-mac-style {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        margin: 0;
+        border-radius: 0;
+        left: 0 !important;
+        transform: none !important;
+        position: relative !important;
+      }
+      
+      .container {
+        padding: 0;
+        margin: 0;
+      }
+      
+      .navbar-brand .fs-5 {
+        font-size: 1rem !important;
+      }
+      
+      .btn {
+        padding: 0.35rem 0.7rem;
+        font-size: 0.85rem;
+      }
+      
+      .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+      }
+      
+      .card-body {
+        padding: 1rem !important;
+      }
+      
+      .d-flex.gap-2 {
+        flex-direction: column;
+      }
+      
+      .d-flex.gap-2 > * {
+        width: 100% !important;
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .card-mac-style {
+        border-radius: 0;
+      }
+      
+      .navbar {
+        padding: 0.5rem 0;
+      }
+      
+      .navbar-brand .fs-5 {
+        font-size: 0.9rem !important;
+      }
+      
+      .btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+      }
+      
+      .btn-sm {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.75rem;
+      }
+      
+      .card-body {
+        padding: 0.75rem !important;
+      }
+      
+      .h1, .h2, .h3, .h4, .h5, .h6 {
+        font-size: 1.2rem;
+      }
+      
+      .fs-5 {
+        font-size: 1rem !important;
+      }
+      
+      .analytics-header {
+        padding: 16px 12px;
+      }
+      
+      .analytics-title-text {
+        font-size: 1.8rem;
+      }
+      
+      .analytics-icon {
+        width: 36px;
+        height: 36px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .navbar-brand .fs-5 {
+        font-size: 0.8rem !important;
+      }
+      
+      .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      .btn-sm {
+        padding: 0.15rem 0.3rem;
+        font-size: 0.7rem;
+      }
+      
+      .card-body {
+        padding: 0.5rem !important;
+      }
+      
+      .analytics-header {
+        padding: 12px 8px;
+      }
+      
+      .analytics-title-text {
+        font-size: 1.5rem;
+      }
+      
+      .analytics-icon {
+        width: 32px;
+        height: 32px;
+      }
+    }
+    
+    /* Landscape mobile orientation */
+    @media (max-width: 768px) and (orientation: landscape) {
+      .card-mac-style {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .navbar {
+        padding: 0.25rem 0;
+      }
+      
+      .container.mt-4 {
+        margin-top: 1rem !important;
+      }
     }
   </style>
 </head>
@@ -138,7 +659,7 @@
                       <div class="form-check p-3 rounded-3 border" style="background: rgba(184, 58, 63, 0.02); border-color: rgba(184, 58, 63, 0.1) !important;">
                         <input class="form-check-input" type="checkbox" id="programIT" value="IT">
                         <label class="form-check-label fw-medium" for="programIT">
-                          <i class="bi bi-gear text-info me-2"></i>Information Technology (IT)
+                          <i class="bi bi-gear text-primary me-2"></i>Information Technology (IT)
                         </label>
                       </div>
                     </div>
@@ -199,9 +720,9 @@
             </div>
 
             <!-- IT Sections -->
-            <div id="itSectionControls" class="card border-0 shadow-sm rounded-3 mb-4" style="background: rgba(13, 202, 240, 0.03);">
+            <div id="itSectionControls" class="card border-0 shadow-sm rounded-3 mb-4" style="background: rgba(184, 58, 63, 0.03);">
               <div class="card-body p-4">
-                <h5 class="text-info mb-3 fw-semibold">
+                <h5 class="text-primary mb-3 fw-semibold">
                   <i class="bi bi-gear me-2"></i>Information Technology (IT) Sections
                   <i class="bi bi-question-circle text-muted ms-1" data-bs-toggle="tooltip" title="Specify how many sections you want for each year level. For example, if you want 2 sections for 1st year IT students, enter '2' in the 1st Year field. This will create IT1A and IT1B sections."></i>
                 </h5>
@@ -293,8 +814,9 @@
         </div>
       </div>
       
-      <!-- Tabs -->
-      <ul class="nav nav-tabs mb-4" id="dataTabs" role="tablist">
+      <!-- Tabs with inline summary cards -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <ul class="nav nav-tabs" id="dataTabs" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="tab-subjects" data-tab="subjects" data-bs-toggle="tab" data-bs-target="#pane-subjects" type="button" role="tab" aria-controls="pane-subjects" aria-selected="true">
             <i class="bi bi-book me-2"></i>Subjects
@@ -310,7 +832,27 @@
             <i class="bi bi-building me-2"></i>Rooms
           </button>
         </li>
-      </ul>
+        </ul>
+        
+        <!-- Summary Cards - Inline with tabs -->
+        <div class="d-flex gap-2">
+          <div class="d-flex align-items-center bg-danger text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
+            <i class="bi bi-book-fill me-1"></i>
+            <span class="fw-semibold" id="totalSubjects">0</span>
+            <span class="ms-1 small">Subjects</span>
+          </div>
+          <div class="d-flex align-items-center bg-primary text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
+            <i class="bi bi-people-fill me-1"></i>
+            <span class="fw-semibold" id="totalTeachers">0</span>
+            <span class="ms-1 small">Teachers</span>
+          </div>
+          <div class="d-flex align-items-center bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
+            <i class="bi bi-building me-1"></i>
+            <span class="fw-semibold" id="totalRooms">0</span>
+            <span class="ms-1 small">Rooms</span>
+          </div>
+        </div>
+      </div>
       <div class="tab-content">
         <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
           <h2>Subjects</h2>
@@ -424,11 +966,35 @@
         </div>
       </div>
 
+      <!-- Navigation Tabs -->
+      <ul class="nav nav-tabs mb-4" id="scheduleTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="hybrid-tab" data-bs-toggle="tab" data-bs-target="#hybridContent" type="button" role="tab">
+            <i class="bi bi-layout-split me-1"></i>Default View
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#scheduleContent" type="button" role="tab">
+            <i class="bi bi-list-ul me-1"></i>Schedule List
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="timetable-tab" data-bs-toggle="tab" data-bs-target="#timetableContent" type="button" role="tab">
+            <i class="bi bi-calendar-week me-1"></i>Timetable View
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analyticsTabPane" type="button" role="tab">
+            <i class="bi bi-graph-up me-1"></i>Analytics
+          </button>
+        </li>
+      </ul>
+
       <!-- Filters -->
       <div class="card border-0 shadow-sm rounded-3 mb-4" style="background: rgba(255,255,255,0.8);">
         <div class="card-body p-4">
           <h5 class="mb-3 fw-semibold">
-            <i class="bi bi-funnel text-primary me-2"></i>Filters & View Options
+            <i class="bi bi-funnel text-primary me-2"></i>Filters
           </h5>
           <div class="row g-3">
             <div class="col-12 col-md-3">
@@ -455,66 +1021,146 @@
               <label for="roomFilter" class="form-label fw-medium">
                 <i class="bi bi-building me-1"></i>Room
               </label>
-              <div class="position-relative">
-                <input type="text" id="roomFilter" class="form-control" placeholder="Search rooms..." disabled>
-                <div id="roomDropdown" class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto; display: none;">
-                  <div class="dropdown-item" data-value="all">All Rooms</div>
-                </div>
-              </div>
+              <select id="roomFilter" class="form-select" disabled>
+                <option value="all" selected>All Rooms</option>
+              </select>
             </div>
             <div class="col-12 col-md-3">
-              <label for="viewMode" class="form-label fw-medium">
-                <i class="bi bi-eye me-1"></i>View Mode
+              <label for="teacherFilter" class="form-label fw-medium">
+                <i class="bi bi-person-badge me-1"></i>Teacher
               </label>
-              <select id="viewMode" class="form-select">
-                <option value="both" selected>Both Views</option>
-                <option value="list">List Only</option>
-                <option value="timetable">Timetable Only</option>
+              <select id="teacherFilter" class="form-select" disabled>
+                <option value="all" selected>All Teachers</option>
               </select>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Results Display -->
-      <div class="row g-4">
-        <div class="col-12 col-md-6" id="result">
-          <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-header bg-light border-0">
-              <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-list-ul text-primary me-2"></i>Schedule List
-              </h5>
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Hybrid View Tab (Default) -->
+        <div class="tab-pane fade show active" id="hybridContent" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12 col-md-6" id="hybridResult">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-list-ul text-primary me-2"></i>Schedule List
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">No schedule generated yet.</p>
+                      <p class="small">Click <strong>Generate Schedule</strong> to create one.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body p-4">
-              <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
-                <div>
-                  <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
-                  <p class="mt-3 mb-0">No schedule generated yet.</p>
-                  <p class="small">Click <strong>Generate Schedule</strong> to create one.</p>
+            <div class="col-12 col-md-6" id="hybridTimetable">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-calendar-week text-primary me-2"></i>Timetable View
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">Timetable will appear here</p>
+                      <p class="small">after schedule generation.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-12 col-md-6" id="timetable">
-          <div class="card border-0 shadow-sm rounded-3 h-100">
-            <div class="card-header bg-light border-0">
-              <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-calendar-week text-info me-2"></i>Timetable View
-              </h5>
+
+        <!-- Schedule List Tab -->
+        <div class="tab-pane fade" id="scheduleContent" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12" id="result">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-list-ul text-primary me-2"></i>Schedule List
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-x" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">No schedule generated yet.</p>
+                      <p class="small">Click <strong>Generate Schedule</strong> to create one.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body p-4">
-              <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
-                <div>
-                  <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.3;"></i>
-                  <p class="mt-3 mb-0">Timetable will appear here</p>
-                  <p class="small">after schedule generation.</p>
+          </div>
+        </div>
+
+        <!-- Timetable View Tab -->
+        <div class="tab-pane fade" id="timetableContent" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12" id="timetable">
+              <div class="card border-0 shadow-sm rounded-3 h-100">
+                <div class="card-header bg-light border-0">
+                  <h5 class="mb-0 fw-semibold">
+                    <i class="bi bi-calendar-week text-primary me-2"></i>Timetable View
+                  </h5>
+                </div>
+                <div class="card-body p-4">
+                  <div class="placeholder p-4 text-center text-muted" style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                    <div>
+                      <i class="bi bi-calendar-week" style="font-size: 3rem; opacity: 0.3;"></i>
+                      <p class="mt-3 mb-0">Timetable will appear here</p>
+                      <p class="small">after schedule generation.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-pane fade" id="analyticsTabPane" role="tabpanel">
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="analytics-container">
+                <div class="analytics-header">
+                  <div class="analytics-title">
+                    <div class="analytics-icon">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 13H11V3H3V13ZM3 21H11V15H3V21ZM13 21H21V11H13V21ZM13 3V9H21V3H13Z" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    <h2 class="analytics-title-text">Schedule Analytics</h2>
+                  </div>
+                  <div class="analytics-subtitle">Insights into resource utilization and efficiency</div>
+                </div>
+                <div class="analytics-content">
+                  <div id="analyticsContent">
+                    <!-- Analytics content will be populated by JavaScript -->
+                    <div class="text-center py-5">
+                      <i class="bi bi-graph-up" style="font-size: 3rem; opacity: 0.3; color: #6c757d;"></i>
+                      <p class="mt-3 mb-0 text-muted">No analytics available yet.</p>
+                      <p class="small text-muted">Generate a schedule to see analytics.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
