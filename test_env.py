@@ -16,7 +16,7 @@ except ImportError:
 except Exception as e:
     print(f"[ERROR] Error loading .env file: {e}")
 
-print("\n🔍 Environment Variables Status:")
+print("\nEnvironment Variables Status:")
 print("=" * 40)
 
 # Check key variables
@@ -44,7 +44,7 @@ for var, description in variables.items():
     else:
         print(f"[MISSING] {var}: NOT SET")
 
-print("\n🎯 Summary:")
+print("\nSummary:")
 loaded_count = sum(1 for var in variables if os.getenv(var))
 total_count = len(variables)
 print(f"Loaded: {loaded_count}/{total_count} variables")

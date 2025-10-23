@@ -9,14 +9,14 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def debug_database():
     """Debug database issues"""
-    print("🔍 Debugging database...")
+    print("Debugging database...")
     
     try:
         from database import db
         print("✅ Database module imported")
         
         # Check if users table exists
-        print("\n🔍 Checking users table...")
+        print("\nChecking users table...")
         result = db.db.execute_query("""
             SELECT table_name 
             FROM information_schema.tables 
@@ -26,7 +26,7 @@ def debug_database():
         
         if len(result) > 0:
             # Check users table structure
-            print("\n🔍 Checking users table structure...")
+            print("\nChecking users table structure...")
             columns = db.db.execute_query("""
                 SELECT column_name, data_type 
                 FROM information_schema.columns 
@@ -38,14 +38,14 @@ def debug_database():
                 print(f"  - {col['column_name']}: {col['data_type']}")
             
             # Check if there are any users
-            print("\n🔍 Checking existing users...")
+            print("\nChecking existing users...")
             users = db.db.execute_query("SELECT username, role FROM users")
             print(f"Found {len(users)} users:")
             for user in users:
                 print(f"  - {user['username']} ({user['role']})")
         
         # Check if new tables exist
-        print("\n🔍 Checking new tables...")
+        print("\nChecking new tables...")
         tables_to_check = ['schedule_approvals', 'notifications']
         for table in tables_to_check:
             result = db.db.execute_query(f"""
@@ -56,7 +56,7 @@ def debug_database():
             print(f"{table} table exists: {len(result) > 0}")
         
         # Test creating a user manually
-        print("\n🔍 Testing manual user creation...")
+        print("\nTesting manual user creation...")
         try:
             import hashlib
             import secrets

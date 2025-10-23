@@ -18,7 +18,7 @@ def test_teacher_matching():
     print(f"👨‍🏫 Teachers: {len(teachers)}")
     
     # Test the teacher cleaning logic from scheduler
-    print("\n🔧 Testing Teacher Data Cleaning:")
+    print("\nTesting Teacher Data Cleaning:")
     cleaned_teachers_data = []
     for t in teachers:
         teacher_id = t.get('teacher_id')
@@ -35,7 +35,7 @@ def test_teacher_matching():
     print(f"Cleaned teachers: {len(cleaned_teachers_data)}")
     
     # Test subject-teacher matching for a few subjects
-    print("\n🎯 Testing Subject-Teacher Matching:")
+    print("\nTesting Subject-Teacher Matching:")
     
     for subject in subjects[:5]:  # Test first 5 subjects
         subject_code = subject['subject_code'].strip()

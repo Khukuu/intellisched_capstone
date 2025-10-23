@@ -11,7 +11,7 @@ from database import db
 def setup_database():
     """Set up the database schema and initial data"""
     
-    print("🚀 Setting up Railway Database")
+    print("Setting up Railway Database")
     print("=" * 40)
     
     try:
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     print("This will check your database connection and structure.")
     
     if setup_database():
-        print("\n🎉 Database setup completed!")
+        print("\nDatabase setup completed!")
     else:
         print("\n❌ Database setup failed!")
         sys.exit(1)

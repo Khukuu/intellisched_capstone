@@ -10,7 +10,7 @@ from database import db
 def fix_teachers_table():
     """Add missing availability_days column to teachers table"""
     
-    print("🔧 Fixing Railway Database Schema")
+    print("Fixing Railway Database Schema")
     print("=" * 40)
     
     try:
@@ -45,7 +45,7 @@ def fix_teachers_table():
         """)
         print("✅ Default availability set!")
         
-        print("\n🎉 Database schema fixed!")
+        print("\nDatabase schema fixed!")
         print("Your app should now start without errors.")
         
         return True

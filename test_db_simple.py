@@ -126,7 +126,7 @@ def test_credential_verification(db_instance):
 
 def main():
     """Main test function"""
-    print("🔍 IntelliSched Database Test")
+    print("IntelliSched Database Test")
     print("=" * 40)
     
     # Test 1: Import database module
@@ -155,7 +155,7 @@ def main():
         print("\n❌ Credential verification failed")
         return
     
-    print("\n🎉 All database tests passed!")
+    print("\nAll database tests passed!")
     print("Your authentication system should work now.")
 
 if __name__ == "__main__":

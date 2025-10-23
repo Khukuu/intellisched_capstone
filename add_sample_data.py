@@ -80,7 +80,7 @@ def add_sample_data():
         
         print("✅ Sample rooms added!")
         
-        print("\n🎉 Sample data added successfully!")
+        print("\nSample data added successfully!")
         print("Your app should now work with basic data.")
         
         return True

@@ -7,7 +7,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def debug_database():
-    print("🔍 Debugging Database Contents")
+    print("Debugging Database Contents")
     print("=" * 50)
     
     connection_string = "postgresql://postgres:asdf1234@localhost:5432/intellisched"

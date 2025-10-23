@@ -126,7 +126,7 @@ for option in subject_options:
 print("\n📋 Assigned Variables Summary:")
 for i, option in enumerate(subject_options):
     code = subject_code_from_index[option['subject_index']]
-    print(f"\n🔧 Subject {code}:")
+    print(f"\nSubject {code}:")
     print(f"  ➤ Valid Teachers (IDs): {option['valid_teachers']}")
     print(f"  ➤ Valid Rooms (IDs): {option['valid_rooms']}")
     print(f"  ➤ Variable Names: teacher_s{i}, room_s{i}, day_s{i}, time_s{i}")

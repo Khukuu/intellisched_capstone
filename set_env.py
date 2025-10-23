@@ -10,7 +10,7 @@ import sys
 def set_environment_variables():
     """Set environment variables for IntelliSched deployment"""
     
-    print("🔧 Setting up IntelliSched Environment Variables")
+    print("Setting up IntelliSched Environment Variables")
     print("=" * 50)
     
     # Environment variables to set
@@ -32,8 +32,8 @@ def set_environment_variables():
         os.environ[key] = value
         print(f"✅ Set {key} = {value}")
     
-    print("\n🎉 Environment variables set successfully!")
-    print("\n📝 To make these permanent, add them to your shell profile:")
+    print("\nEnvironment variables set successfully!")
+    print("\nTo make these permanent, add them to your shell profile:")
     print("   - Windows: Add to system environment variables")
     print("   - Linux/Mac: Add to ~/.bashrc or ~/.zshrc")
     
@@ -42,7 +42,7 @@ def set_environment_variables():
 def show_export_commands():
     """Show export commands for manual setup"""
     
-    print("\n🔧 Manual Setup Commands:")
+    print("\nManual Setup Commands:")
     print("=" * 30)
     
     commands = [
@@ -61,7 +61,7 @@ def show_export_commands():
     for cmd in commands:
         print(cmd)
     
-    print("\n💡 Copy and paste these commands in your terminal before running the app")
+    print("\nCopy and paste these commands in your terminal before running the app")
 
 if __name__ == "__main__":
     print("IntelliSched Environment Setup")

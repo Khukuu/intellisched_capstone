@@ -6,22 +6,22 @@ Migration script to populate PostgreSQL database with CSV data
 from database import db
 
 def main():
-    print("🚀 Starting migration from CSV to PostgreSQL...")
-    print(f"📊 Connection string: {db.db.connection_string}")
+    print("Starting migration from CSV to PostgreSQL...")
+    print(f"Connection string: {db.db.connection_string}")
     
     try:
         # Test database connection
-        print("🔌 Testing database connection...")
+        print("Testing database connection...")
         test_connection = db.db.get_connection()
         test_connection.close()
         print("✅ Database connection successful!")
         
         # Migrate data from CSV files
-        print("\n📥 Migrating data from CSV files...")
+        print("\nMigrating data from CSV files...")
         db.migrate_from_csv()
         
         # Verify migration
-        print("\n🔍 Verifying migration...")
+        print("\nVerifying migration...")
         subjects_count = len(db.load_subjects())
         teachers_count = len(db.load_teachers())
         rooms_count = len(db.load_rooms())
@@ -47,7 +47,7 @@ def main():
         
     except Exception as e:
         print(f"❌ Migration failed: {str(e)}")
-        print("\n🔧 Troubleshooting tips:")
+        print("\nTroubleshooting tips:")
         print("   1. Make sure PostgreSQL is running")
         print("   2. Verify the connection string is correct")
         print("   3. Ensure the database 'intellisched' exists")
@@ -59,8 +59,8 @@ def main():
 if __name__ == "__main__":
     success = main()
     if success:
-        print("\n🎉 Migration completed! Your application is now using PostgreSQL.")
-        print("💡 You can now run your application with: python app.py")
+        print("\nMigration completed! Your application is now using PostgreSQL.")
+        print("You can now run your application with: python app.py")
     else:
-        print("\n💥 Migration failed. Please check the error messages above.")
+        print("\nMigration failed. Please check the error messages above.")
         exit(1)

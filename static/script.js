@@ -1972,46 +1972,27 @@ function displayAnalytics(analytics) {
   analyticsSection.style.display = 'block';
   
   // Generate analytics HTML
-  let html = '<div class="row g-4">';
+  let html = '';
   
   // Summary Cards
   if (analytics.summary) {
     html += `
-      <div class="col-12">
-        <h6 class="fw-bold mb-3">📊 Summary</h6>
-        <div class="row g-3">
-          <div class="col-md-3">
-            <div class="card bg-primary text-white">
-              <div class="card-body text-center">
-                <h4 class="mb-1">${analytics.summary.total_events || 0}</h4>
-                <small>Total Events</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card bg-success text-white">
-              <div class="card-body text-center">
-                <h4 class="mb-1">${analytics.summary.rooms_used || 0}</h4>
-                <small>Rooms Used</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card bg-info text-white">
-              <div class="card-body text-center">
-                <h4 class="mb-1">${analytics.summary.teachers_used || 0}</h4>
-                <small>Teachers Used</small>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card bg-warning text-white">
-              <div class="card-body text-center">
-                <h4 class="mb-1">${analytics.summary.total_contact_hours || 0}</h4>
-                <small>Contact Hours</small>
-              </div>
-            </div>
-          </div>
+      <div class="analytics-summary-grid">
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.total_events || 0}</div>
+          <div class="analytics-summary-label">Total Events</div>
+        </div>
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.rooms_used || 0}</div>
+          <div class="analytics-summary-label">Rooms Used</div>
+        </div>
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.teachers_used || 0}</div>
+          <div class="analytics-summary-label">Teachers Used</div>
+        </div>
+        <div class="analytics-summary-card">
+          <div class="analytics-summary-value">${analytics.summary.total_contact_hours || 0}</div>
+          <div class="analytics-summary-label">Contact Hours</div>
         </div>
       </div>
     `;
@@ -2020,12 +2001,10 @@ function displayAnalytics(analytics) {
   // Room Utilization Chart
   if (analytics.room_utilization && Object.keys(analytics.room_utilization).length > 0) {
     html += `
-      <div class="col-md-6">
-        <h6 class="fw-bold mb-3">🏢 Room Utilization</h6>
-        <div class="card">
-          <div class="card-body">
-            <canvas id="roomUtilizationChart" height="300"></canvas>
-          </div>
+      <div class="analytics-chart-container">
+        <div class="analytics-chart-title">🏢 Room Utilization</div>
+        <div class="analytics-chart">
+          <canvas id="roomUtilizationChart"></canvas>
         </div>
       </div>
     `;
@@ -2034,12 +2013,10 @@ function displayAnalytics(analytics) {
   // Faculty Workload Chart
   if (analytics.faculty_workload && Object.keys(analytics.faculty_workload).length > 0) {
     html += `
-      <div class="col-md-6">
-        <h6 class="fw-bold mb-3">👨‍🏫 Faculty Contact Hours</h6>
-        <div class="card">
-          <div class="card-body">
-            <canvas id="facultyWorkloadChart" height="300"></canvas>
-          </div>
+      <div class="analytics-chart-container">
+        <div class="analytics-chart-title">👨‍🏫 Faculty Contact Hours</div>
+        <div class="analytics-chart">
+          <canvas id="facultyWorkloadChart"></canvas>
         </div>
       </div>
     `;
@@ -2048,18 +2025,14 @@ function displayAnalytics(analytics) {
   // Weekly Occupancy Chart
   if (analytics.weekly_occupancy && Object.keys(analytics.weekly_occupancy).length > 0) {
     html += `
-      <div class="col-12">
-        <h6 class="fw-bold mb-3">📅 Weekly Occupancy Rates</h6>
-        <div class="card">
-          <div class="card-body">
-            <canvas id="weeklyOccupancyChart" height="200"></canvas>
-          </div>
+      <div class="analytics-chart-container">
+        <div class="analytics-chart-title">📅 Weekly Occupancy Rates</div>
+        <div class="analytics-chart">
+          <canvas id="weeklyOccupancyChart"></canvas>
         </div>
       </div>
     `;
   }
-  
-  html += '</div>';
   analyticsContent.innerHTML = html;
   
   // Create charts after DOM is updated
@@ -2093,20 +2066,45 @@ function createRoomUtilizationChart(roomData) {
         label: 'Utilization %',
         data: utilizationData,
         backgroundColor: utilizationData.map(val => 
-          val > 80 ? '#dc3545' : val > 60 ? '#ffc107' : '#28a745'
+          val > 80 ? 'rgba(255, 59, 48, 0.8)' : val > 60 ? 'rgba(255, 149, 0, 0.8)' : 'rgba(52, 199, 89, 0.8)'
         ),
-        borderColor: '#333',
-        borderWidth: 1
+        borderColor: utilizationData.map(val => 
+          val > 80 ? '#FF3B30' : val > 60 ? '#FF9500' : '#34C759'
+        ),
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            }
+          }
+        },
         y: {
           beginAtZero: true,
           max: 100,
+          grid: {
+            color: 'rgba(142, 142, 147, 0.2)',
+            drawBorder: false
+          },
           ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            },
             callback: function(value) {
               return value + '%';
             }
@@ -2137,9 +2135,11 @@ function createFacultyWorkloadChart(facultyData) {
       datasets: [{
         data: workloadData,
         backgroundColor: [
-          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-          '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
-        ]
+          '#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE',
+          '#FF2D92', '#5AC8FA', '#FFCC00', '#FF6B6B', '#4ECDC4'
+        ],
+        borderWidth: 0,
+        cutout: '60%'
       }]
     },
     options: {
@@ -2150,7 +2150,12 @@ function createFacultyWorkloadChart(facultyData) {
           position: 'bottom',
           labels: {
             usePointStyle: true,
-            padding: 20
+            padding: 20,
+            color: '#1D1D1F',
+            font: {
+              size: 12,
+              weight: '500'
+            }
           }
         }
       }
@@ -2172,20 +2177,47 @@ function createWeeklyOccupancyChart(occupancyData) {
       datasets: [{
         label: 'Occupancy Rate %',
         data: occupancyRates,
-        borderColor: '#007bff',
-        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+        borderColor: '#007AFF',
+        backgroundColor: 'rgba(0, 122, 255, 0.1)',
         tension: 0.4,
-        fill: true
+        fill: true,
+        borderWidth: 3,
+        pointBackgroundColor: '#007AFF',
+        pointBorderColor: '#FFFFFF',
+        pointBorderWidth: 2,
+        pointRadius: 6,
+        pointHoverRadius: 8
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            }
+          }
+        },
         y: {
           beginAtZero: true,
           max: 100,
+          grid: {
+            color: 'rgba(142, 142, 147, 0.2)',
+            drawBorder: false
+          },
           ticks: {
+            color: '#8E8E93',
+            font: {
+              size: 12,
+              weight: '500'
+            },
             callback: function(value) {
               return value + '%';
             }

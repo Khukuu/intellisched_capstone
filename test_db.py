@@ -39,7 +39,7 @@ def test_database():
         
     except Exception as e:
         print(f"❌ Database test failed: {e}")
-        print("\n🔧 Check your PostgreSQL connection and database setup")
+        print("\nCheck your PostgreSQL connection and database setup")
 
 if __name__ == "__main__":
     test_database()

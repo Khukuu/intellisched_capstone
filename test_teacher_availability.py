@@ -21,7 +21,7 @@ def test_teacher_availability():
         print(f"🏫 Rooms: {len(rooms)}")
         
         # Test 1: Check if availability_days field exists in teacher data
-        print(f"\n🔍 Checking teacher data structure...")
+        print(f"\nChecking teacher data structure...")
         if teachers:
             sample_teacher = teachers[0]
             print(f"Sample teacher fields: {list(sample_teacher.keys())}")
@@ -32,7 +32,7 @@ def test_teacher_availability():
                 return
         
         # Test 2: Update a teacher to have limited availability
-        print(f"\n🔧 Testing teacher availability update...")
+        print(f"\nTesting teacher availability update...")
         test_teacher_id = teachers[0]['teacher_id']
         print(f"Updating teacher {test_teacher_id} ({teachers[0]['teacher_name']})")
         
@@ -46,7 +46,7 @@ def test_teacher_availability():
         print(f"✅ Updated teacher availability to: {limited_availability}")
         
         # Test 3: Test scheduler with availability constraints
-        print(f"\n🎯 Testing scheduler with availability constraints...")
+        print(f"\nTesting scheduler with availability constraints...")
         semester_filter = 1  # Use integer to match database
         # Fix the program_sections structure - it should be nested by program
         program_sections = {

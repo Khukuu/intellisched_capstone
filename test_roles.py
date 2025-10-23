@@ -105,7 +105,7 @@ def main():
         print(f"❌ Admin should not access scheduling endpoints: {status}")
     
     print("\n" + "=" * 50)
-    print("🎉 Role-based access control test completed!")
+    print("Role-based access control test completed!")
 
 if __name__ == "__main__":
     main()

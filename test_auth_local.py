@@ -56,7 +56,7 @@ def test_database_authentication():
 
 def test_app_import():
     """Test if the FastAPI app can be imported"""
-    print("\n🚀 Testing FastAPI App Import")
+    print("\nTesting FastAPI App Import")
     print("-" * 30)
     
     try:
@@ -91,13 +91,13 @@ def main():
     
     results = []
     for test_name, test_func in tests:
-        print(f"\n🔍 Running: {test_name}")
+        print(f"\nRunning: {test_name}")
         result = test_func()
         results.append((test_name, result))
     
     # Summary
     print("\n" + "=" * 50)
-    print("📊 Test Results Summary")
+    print("Test Results Summary")
     print("=" * 50)
     
     passed = 0
@@ -107,11 +107,11 @@ def main():
         if result:
             passed += 1
     
-    print(f"\n🎯 Overall: {passed}/{len(results)} tests passed")
+    print(f"\nOverall: {passed}/{len(results)} tests passed")
     
     if passed == len(results):
-        print("\n🎉 All tests passed! Your authentication system is ready!")
-        print("\n🚀 Next steps:")
+        print("\nAll tests passed! Your authentication system is ready!")
+        print("\nNext steps:")
         print("   1. Start the web app: python app.py")
         print("   2. Open: http://localhost:5000/login")
         print("   3. Login with: admin / admin123")

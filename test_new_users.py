@@ -46,8 +46,8 @@ def test_user_creation():
             print(f"  ❌ Authentication failed")
     
     print("\n" + "=" * 50)
-    print("🎉 User creation and authentication test completed!")
-    print("\n📝 Available user roles:")
+    print("User creation and authentication test completed!")
+    print("\nAvailable user roles:")
     print("  • admin - System administrator")
     print("  • chair - Department chair (can generate and save schedules)")
     print("  • dean - Dean (can view and approve schedules)")

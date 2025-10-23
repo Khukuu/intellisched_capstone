@@ -24,7 +24,7 @@ def test_frontend_availability():
             
             # Test updating a teacher with specific availability
             test_teacher_id = sample_teacher['teacher_id']
-            print(f"\n🔧 Testing teacher availability update...")
+            print(f"\nTesting teacher availability update...")
             
             # Set teacher to only be available on Tue, Thu, Sat
             limited_availability = ['Tue', 'Thu', 'Sat']

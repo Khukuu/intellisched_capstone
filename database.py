@@ -642,7 +642,7 @@ class ScheduleDatabase:
     def migrate_from_csv(self):
         """Legacy function - data is already in PostgreSQL"""
         print("✅ Data is already in PostgreSQL database")
-        print("📊 No CSV migration needed")
+        print("No CSV migration needed")
 
 # Global database instance
 db = ScheduleDatabase()

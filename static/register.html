@@ -13,12 +13,14 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
+      /* Apple-like background with LPU theme */
+      background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
       background-image: url('/static/lpu.png');
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
       background-attachment: fixed;
-      background-color: #f5f7fa;
+      background-blend-mode: overlay;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -35,11 +37,11 @@
     }
 
     .login-container {
-      background: #fff;
-      backdrop-filter: blur(6px);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      border: 1px solid rgba(184, 58, 63, 0.1);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
       padding: 1.2rem 2rem;
       width: 100%;

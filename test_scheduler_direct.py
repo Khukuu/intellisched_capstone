@@ -24,7 +24,7 @@ def test_scheduler_direct():
         semester_filter = 1
         desired_sections_per_year = {1: 1, 2: 1, 3: 1, 4: 0}
         
-        print(f"\n🎯 Testing with semester {semester_filter} and sections {desired_sections_per_year}")
+        print(f"\nTesting with semester {semester_filter} and sections {desired_sections_per_year}")
         
         # Test the scheduler directly
         result = generate_schedule(subjects, teachers, rooms, semester_filter, desired_sections_per_year)

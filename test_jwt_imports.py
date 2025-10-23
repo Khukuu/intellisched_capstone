@@ -5,7 +5,7 @@ Test script to identify JWT library conflicts
 
 def test_jwt_imports():
     """Test different JWT import methods"""
-    print("🔍 Testing JWT Library Imports")
+    print("Testing JWT Library Imports")
     print("=" * 40)
     
     # Test 1: Standard import

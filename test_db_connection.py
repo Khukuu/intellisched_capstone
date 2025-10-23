@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 def test_database_connection():
     """Test database connection and user creation"""
-    print("🔍 Testing database connection...")
+    print("Testing database connection...")
     
     try:
         from database import db
@@ -24,7 +24,7 @@ def test_database_connection():
             return False
             
         # Test user creation
-        print("\n🔍 Testing user creation...")
+        print("\nTesting user creation...")
         from database import create_user
         
         # Test creating a temporary user
@@ -57,6 +57,6 @@ def test_database_connection():
 
 if __name__ == "__main__":
     if test_database_connection():
-        print("\n🎉 Database connection test passed!")
+        print("\nDatabase connection test passed!")
     else:
-        print("\n💥 Database connection test failed!")
+        print("\nDatabase connection test failed!")

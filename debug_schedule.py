@@ -6,7 +6,7 @@ Debug script to understand schedule generation issues
 from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
 
 def debug_schedule_issue():
-    print("🔍 Debugging Schedule Generation Issue")
+    print("Debugging Schedule Generation Issue")
     print("=" * 50)
     
     # Load data
@@ -19,7 +19,7 @@ def debug_schedule_issue():
     print(f"🏫 Rooms loaded: {len(rooms)}")
     
     # Check semester data
-    print("\n📊 Semester Analysis:")
+    print("\nSemester Analysis:")
     semesters = {}
     year_levels = {}
     

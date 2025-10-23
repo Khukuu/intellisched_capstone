@@ -131,7 +131,7 @@ def test_user_approval_workflow():
     
     print("✅ No pending users remain")
     
-    print("\n🎉 All tests passed! User approval workflow is working correctly.")
+    print("\nAll tests passed! User approval workflow is working correctly.")
     return True
 
 if __name__ == "__main__":

@@ -30,8 +30,8 @@ def reset_users():
         print("\n🔄 Creating users with new passwords...")
         db.create_default_admin()
         
-        print("\n🎉 Users reset successfully!")
-        print("\n📝 New login credentials:")
+        print("\nUsers reset successfully!")
+        print("\nNew login credentials:")
         print("   Admin: admin / [password from environment variable]")
         print("   Chair: chair / [password from environment variable]")
         print("   Dean: dean / [password from environment variable]")
