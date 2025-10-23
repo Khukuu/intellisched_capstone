@@ -2381,13 +2381,19 @@ function createWeeklyOccupancyChart(occupancyData) {
   const days = Object.keys(occupancyData);
   if (days.length === 0) return;
   
-  // Use slot counts directly as data
-  const slotCounts = days.map(day => occupancyData[day]);
+  // Define proper day order
+  const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  
+  // Sort days in proper order and filter out days not in data
+  const sortedDays = dayOrder.filter(day => days.includes(day));
+  
+  // Use slot counts directly as data in proper order
+  const slotCounts = sortedDays.map(day => occupancyData[day]);
   
   new Chart(canvas, {
     type: 'line',
     data: {
-      labels: days,
+      labels: sortedDays,
       datasets: [{
         label: 'Slot Count',
         data: slotCounts,
