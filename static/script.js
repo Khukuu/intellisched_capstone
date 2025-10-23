@@ -628,7 +628,13 @@ document.getElementById('generateBtn').onclick = async function() {
     });
     const data = await response.json();
     const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
-    const analytics = data.analytics || null;
+    let analytics = data.analytics || null;
+    
+    // Calculate analytics if not provided by backend
+    if (!analytics && scheduleArray.length > 0) {
+      analytics = calculateScheduleAnalytics(scheduleArray);
+    }
+    
     lastGeneratedSchedule = scheduleArray;
     lastAnalytics = analytics;
     lastSavedId = '';
@@ -1063,9 +1069,17 @@ function renderScheduleAndTimetable(data, analytics = null) {
   }
   // View toggle handling removed - now using tabs
   
-  // Display analytics if available
+  // Display analytics if available, or calculate from schedule data
   if (analytics) {
     displayAnalytics(analytics, false); // Don't switch tabs when filtering
+  } else if (data && data.length > 0) {
+    // Calculate analytics from schedule data if not provided by backend
+    const calculatedAnalytics = calculateScheduleAnalytics(data);
+    if (calculatedAnalytics) {
+      displayAnalytics(calculatedAnalytics, false);
+    } else {
+      hideAnalytics();
+    }
   } else {
     hideAnalytics();
   }
@@ -2077,6 +2091,67 @@ async function clearAllNotifications() {
 setInterval(loadNotifications, 30000);
 
 // Analytics Functions
+function calculateScheduleAnalytics(scheduleData) {
+  if (!scheduleData || !Array.isArray(scheduleData) || scheduleData.length === 0) {
+    return null;
+  }
+
+  // Calculate analytics from schedule data
+  const analytics = {
+    summary: {
+      total_events: scheduleData.length,
+      rooms_used: new Set(scheduleData.map(item => item.room_id).filter(Boolean)).size,
+      teachers_used: new Set(scheduleData.map(item => item.teacher_name).filter(Boolean)).size,
+      total_contact_hours: scheduleData.reduce((total, item) => {
+        const duration = parseInt(item.duration_slots) || 1;
+        return total + duration * 0.5; // 0.5 hours per slot
+      }, 0)
+    },
+    room_utilization: {},
+    teacher_workload: {},
+    time_distribution: {},
+    subject_distribution: {}
+  };
+
+  // Room utilization
+  scheduleData.forEach(item => {
+    const room = item.room_id || 'Unknown';
+    if (!analytics.room_utilization[room]) {
+      analytics.room_utilization[room] = 0;
+    }
+    analytics.room_utilization[room] += parseInt(item.duration_slots) || 1;
+  });
+
+  // Teacher workload
+  scheduleData.forEach(item => {
+    const teacher = item.teacher_name || 'Unknown';
+    if (!analytics.teacher_workload[teacher]) {
+      analytics.teacher_workload[teacher] = 0;
+    }
+    analytics.teacher_workload[teacher] += parseInt(item.duration_slots) || 1;
+  });
+
+  // Time distribution (by day)
+  scheduleData.forEach(item => {
+    const day = item.day || 'Unknown';
+    if (!analytics.time_distribution[day]) {
+      analytics.time_distribution[day] = 0;
+    }
+    analytics.time_distribution[day] += parseInt(item.duration_slots) || 1;
+  });
+
+  // Subject distribution
+  scheduleData.forEach(item => {
+    const subject = item.subject_name || 'Unknown';
+    if (!analytics.subject_distribution[subject]) {
+      analytics.subject_distribution[subject] = 0;
+    }
+    analytics.subject_distribution[subject] += parseInt(item.duration_slots) || 1;
+  });
+
+  return analytics;
+}
+
 function displayAnalytics(analytics, switchToTab = true) {
   const analyticsContent = document.getElementById('analyticsContent');
   
