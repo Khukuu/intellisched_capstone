@@ -2205,11 +2205,11 @@ function displayAnalytics(analytics, switchToTab = true) {
     `;
   }
   
-  // Faculty Workload Chart
-  if (analytics.faculty_workload && Object.keys(analytics.faculty_workload).length > 0) {
+  // Teacher Workload Chart
+  if (analytics.teacher_workload && Object.keys(analytics.teacher_workload).length > 0) {
     html += `
       <div class="analytics-chart-container">
-        <div class="analytics-chart-title">👨‍🏫 Faculty Contact Hours</div>
+        <div class="analytics-chart-title">👨‍🏫 Teacher Contact Hours</div>
         <div class="analytics-chart">
           <canvas id="facultyWorkloadChart"></canvas>
         </div>
@@ -2217,11 +2217,11 @@ function displayAnalytics(analytics, switchToTab = true) {
     `;
   }
   
-  // Weekly Occupancy Chart
-  if (analytics.weekly_occupancy && Object.keys(analytics.weekly_occupancy).length > 0) {
+  // Time Distribution Chart
+  if (analytics.time_distribution && Object.keys(analytics.time_distribution).length > 0) {
     html += `
       <div class="analytics-chart-container">
-        <div class="analytics-chart-title">📅 Weekly Occupancy Rates</div>
+        <div class="analytics-chart-title">📅 Time Distribution by Day</div>
         <div class="analytics-chart">
           <canvas id="weeklyOccupancyChart"></canvas>
         </div>
@@ -2233,8 +2233,8 @@ function displayAnalytics(analytics, switchToTab = true) {
   // Create charts after DOM is updated
   setTimeout(() => {
     createRoomUtilizationChart(analytics.room_utilization);
-    createFacultyWorkloadChart(analytics.faculty_workload);
-    createWeeklyOccupancyChart(analytics.weekly_occupancy);
+    createFacultyWorkloadChart(analytics.teacher_workload);
+    createWeeklyOccupancyChart(analytics.time_distribution);
   }, 100);
 }
 
@@ -2256,8 +2256,15 @@ function createRoomUtilizationChart(roomData) {
   if (!canvas || !roomData) return;
   
   const rooms = Object.keys(roomData);
-  const utilizationData = rooms.map(roomId => roomData[roomId].utilization_percentage);
-  const roomNames = rooms.map(roomId => roomData[roomId].room_name);
+  if (rooms.length === 0) return;
+  
+  // Calculate utilization percentages based on slot counts
+  const maxSlots = Math.max(...Object.values(roomData));
+  const utilizationData = rooms.map(roomId => {
+    const slots = roomData[roomId];
+    return maxSlots > 0 ? Math.round((slots / maxSlots) * 100) : 0;
+  });
+  const roomNames = rooms;
   
   new Chart(canvas, {
     type: 'bar',
@@ -2326,8 +2333,11 @@ function createFacultyWorkloadChart(facultyData) {
   if (!canvas || !facultyData) return;
   
   const teachers = Object.keys(facultyData);
-  const workloadData = teachers.map(teacher => facultyData[teacher].total_hours);
-  const teacherNames = teachers.map(teacher => facultyData[teacher].teacher_name);
+  if (teachers.length === 0) return;
+  
+  // Convert slot counts to hours (0.5 hours per slot)
+  const workloadData = teachers.map(teacher => facultyData[teacher] * 0.5);
+  const teacherNames = teachers;
   
   new Chart(canvas, {
     type: 'doughnut',
@@ -2369,15 +2379,18 @@ function createWeeklyOccupancyChart(occupancyData) {
   if (!canvas || !occupancyData) return;
   
   const days = Object.keys(occupancyData);
-  const occupancyRates = days.map(day => occupancyData[day].occupancy_rate);
+  if (days.length === 0) return;
+  
+  // Use slot counts directly as data
+  const slotCounts = days.map(day => occupancyData[day]);
   
   new Chart(canvas, {
     type: 'line',
     data: {
       labels: days,
       datasets: [{
-        label: 'Occupancy Rate %',
-        data: occupancyRates,
+        label: 'Slot Count',
+        data: slotCounts,
         borderColor: '#007AFF',
         backgroundColor: 'rgba(0, 122, 255, 0.1)',
         tension: 0.4,
@@ -2408,7 +2421,6 @@ function createWeeklyOccupancyChart(occupancyData) {
         },
         y: {
           beginAtZero: true,
-          max: 100,
           grid: {
             color: 'rgba(142, 142, 147, 0.2)',
             drawBorder: false
@@ -2418,9 +2430,6 @@ function createWeeklyOccupancyChart(occupancyData) {
             font: {
               size: 12,
               weight: '500'
-            },
-            callback: function(value) {
-              return value + '%';
             }
           }
         }
