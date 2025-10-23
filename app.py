@@ -436,7 +436,7 @@ async def robots_txt():
     else:
         # Return a basic robots.txt if file doesn't exist
         return Response(
-            content="User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\nDisallow: /chair\nDisallow: /dean\nDisallow: /secretary\nDisallow: /saved-schedules\nDisallow: /login\nDisallow: /register\n\nAllow: /\nAllow: /health\nAllow: /status",
+            content="User-agent: *\nAllow: /\n\n# Block sensitive/private areas\nDisallow: /api/\nDisallow: /admin\nDisallow: /chair\nDisallow: /dean\nDisallow: /secretary\nDisallow: /saved-schedules\nDisallow: /login\nDisallow: /register\nDisallow: /auth/\n\n# Allow public pages\nAllow: /health\nAllow: /status\nAllow: /maintenance",
             media_type='text/plain'
         )
 

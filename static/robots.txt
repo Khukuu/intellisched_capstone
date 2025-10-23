@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+
+# Block sensitive/private areas
 Disallow: /api/
 Disallow: /admin
 Disallow: /chair
@@ -8,11 +10,12 @@ Disallow: /secretary
 Disallow: /saved-schedules
 Disallow: /login
 Disallow: /register
+Disallow: /auth/
 
 # Allow public pages
-Allow: /
 Allow: /health
 Allow: /status
+Allow: /maintenance
 
 # Sitemap (if you have one)
 # Sitemap: https://your-domain.com/sitemap.xml
