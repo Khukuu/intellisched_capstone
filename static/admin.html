@@ -1141,7 +1141,7 @@
             li.className = 'notification-item';
             
             const typeClass = getNotificationTypeClass(notification.type);
-            const timeAgo = getTimeAgo(notification.created_at);
+            // Timestamp removed for simplicity
             
             li.innerHTML = `
                 <div class="dropdown-item ${notification.is_read ? '' : 'bg-light'}">
@@ -1152,7 +1152,6 @@
                                 <strong class="text-dark">${notification.title}</strong>
                             </div>
                             <p class="mb-1 text-muted small">${notification.message}</p>
-                            <small class="text-muted">${timeAgo}</small>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             ${!notification.is_read ? '<span class="badge bg-primary rounded-pill">New</span>' : ''}
@@ -1200,15 +1199,8 @@
         }
 
         function getTimeAgo(dateString) {
-            const now = new Date();
-            const date = new Date(dateString);
-            const diffInSeconds = Math.floor((now - date) / 1000);
-            
-            if (diffInSeconds < 60) return 'Just now';
-            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-            if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-            return date.toLocaleDateString();
+            // Timestamp removed for simplicity
+            return 'New';
         }
 
         function updateNotificationBadge(notifications) {
@@ -1219,7 +1211,23 @@
             
             if (unreadCount > 0) {
                 badge.textContent = unreadCount;
-                badge.style.display = 'inline-block';
+                // Force show with inline styles
+                badge.style.display = 'flex';
+                badge.style.visibility = 'visible';
+                badge.style.opacity = '1';
+                badge.style.zIndex = '99999';
+                badge.style.position = 'absolute';
+                badge.style.top = '-8px';
+                badge.style.right = '-8px';
+                badge.style.backgroundColor = '#dc3545';
+                badge.style.color = 'white';
+                badge.style.borderRadius = '50%';
+                badge.style.minWidth = '18px';
+                badge.style.height = '18px';
+                badge.style.fontSize = '0.7rem';
+                badge.style.fontWeight = 'bold';
+                badge.style.textAlign = 'center';
+                badge.style.lineHeight = '18px';
             } else {
                 badge.style.display = 'none';
             }
