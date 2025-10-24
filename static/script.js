@@ -279,9 +279,7 @@ setTimeout(() => {
   const badge = document.getElementById('notificationBadge');
   if (badge) {
     badge.textContent = '1';
-    badge.style.display = 'inline-block';
-    badge.style.visibility = 'visible';
-    badge.style.opacity = '1';
+    badge.classList.add('show');
     console.log('Badge test: showing badge with count 1');
   } else {
     console.log('Badge test: badge element not found');
@@ -293,22 +291,7 @@ window.testNotificationBadge = function(count = 1) {
   const badge = document.getElementById('notificationBadge');
   if (badge) {
     badge.textContent = count;
-    badge.style.display = 'inline-block';
-    badge.style.visibility = 'visible';
-    badge.style.opacity = '1';
-    badge.style.zIndex = '9999';
-    badge.style.position = 'absolute';
-    badge.style.top = '-8px';
-    badge.style.right = '-8px';
-    badge.style.backgroundColor = '#dc3545';
-    badge.style.color = 'white';
-    badge.style.borderRadius = '50%';
-    badge.style.minWidth = '18px';
-    badge.style.height = '18px';
-    badge.style.fontSize = '0.7rem';
-    badge.style.fontWeight = 'bold';
-    badge.style.textAlign = 'center';
-    badge.style.lineHeight = '18px';
+    badge.classList.add('show');
     console.log(`Badge test: showing badge with count ${count}`);
   } else {
     console.log('Badge test: badge element not found');
@@ -319,7 +302,7 @@ window.testNotificationBadge = function(count = 1) {
 window.hideNotificationBadge = function() {
   const badge = document.getElementById('notificationBadge');
   if (badge) {
-    badge.style.display = 'none';
+    badge.classList.remove('show');
     console.log('Badge test: badge hidden');
   }
 };
@@ -2088,10 +2071,10 @@ function updateNotificationBadge(notifications) {
   
   if (unreadCount > 0) {
     badge.textContent = unreadCount;
-    badge.style.display = 'inline-block';
+    badge.classList.add('show');
     console.log('Badge shown with count:', unreadCount);
   } else {
-    badge.style.display = 'none';
+    badge.classList.remove('show');
     console.log('Badge hidden - no unread notifications');
   }
 }
