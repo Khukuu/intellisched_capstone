@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from starlette.middleware.base import BaseHTTPMiddleware
 import logging
+import os
 from scheduler import generate_schedule
 from database import (
     db,
@@ -396,10 +397,22 @@ async def register(payload: dict):
 async def health_check():
     """Health check endpoint to test database connectivity"""
     try:
-        # Simple health check first
-        return {"status": "healthy", "message": "Application is running"}
+        # Test imports
+        from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+        from scheduler import generate_schedule
+        
+        return {
+            "status": "healthy", 
+            "message": "Application is running",
+            "imports": "working",
+            "environment": os.getenv('RAILWAY_ENVIRONMENT', 'local')
+        }
     except Exception as e:
-        return {"status": "unhealthy", "message": f"Application error: {str(e)}"}
+        return {
+            "status": "unhealthy", 
+            "message": f"Application error: {str(e)}",
+            "environment": os.getenv('RAILWAY_ENVIRONMENT', 'local')
+        }
 
 @app.get('/health/database')
 async def health_check_database():
