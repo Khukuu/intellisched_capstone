@@ -280,6 +280,8 @@ setTimeout(() => {
   if (badge) {
     badge.textContent = '1';
     badge.style.display = 'inline-block';
+    badge.style.visibility = 'visible';
+    badge.style.opacity = '1';
     console.log('Badge test: showing badge with count 1');
   } else {
     console.log('Badge test: badge element not found');
@@ -292,6 +294,21 @@ window.testNotificationBadge = function(count = 1) {
   if (badge) {
     badge.textContent = count;
     badge.style.display = 'inline-block';
+    badge.style.visibility = 'visible';
+    badge.style.opacity = '1';
+    badge.style.zIndex = '9999';
+    badge.style.position = 'absolute';
+    badge.style.top = '-8px';
+    badge.style.right = '-8px';
+    badge.style.backgroundColor = '#dc3545';
+    badge.style.color = 'white';
+    badge.style.borderRadius = '50%';
+    badge.style.minWidth = '18px';
+    badge.style.height = '18px';
+    badge.style.fontSize = '0.7rem';
+    badge.style.fontWeight = 'bold';
+    badge.style.textAlign = 'center';
+    badge.style.lineHeight = '18px';
     console.log(`Badge test: showing badge with count ${count}`);
   } else {
     console.log('Badge test: badge element not found');
@@ -2044,6 +2061,13 @@ function getTimeAgo(dateString) {
   const now = new Date();
   const date = new Date(dateString);
   const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  console.log('Timestamp debug:', {
+    dateString: dateString,
+    now: now.toISOString(),
+    date: date.toISOString(),
+    diffInSeconds: diffInSeconds
+  });
   
   if (diffInSeconds < 60) return 'Just now';
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
