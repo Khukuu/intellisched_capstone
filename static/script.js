@@ -920,7 +920,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
   // Schedule Table (side-by-side column)
   let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
   for (const row of filtered) {
-    const subj = row.subject_name || row.subject_code || '';
+    const subj = row.course_name || row.course_code || '';
     const timeRange = computeEventTimeRange(row);
     html += `<tr>
       <td>${row.section_id}</td>
@@ -990,7 +990,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
         const uniqueEvents = [];
         const seenEvents = new Set();
         eventsStartingHere.forEach(event => {
-          const key = `${event.section_id}-${event.subject_code}-${event.day}-${event.start_time_slot}`;
+          const key = `${event.section_id}-${event.course_code}-${event.day}-${event.start_time_slot}`;
           if (!seenEvents.has(key)) {
             uniqueEvents.push(event);
             seenEvents.add(key);
@@ -1006,9 +1006,9 @@ function renderScheduleAndTimetable(data, analytics = null) {
             // Single event - apply background directly to td like dean interface
             const event = uniqueEvents[0];
             const eventDuration = parseInt(event.duration_slots, 10) || 1;
-            const subj = event.subject_name || event.subject_code || '';
+            const subj = event.course_name || event.course_code || '';
             const range = computeEventTimeRange(event);
-            const bg = getSubjectColor(event.subject_code, event.type);
+            const bg = getCourseColor(event.course_code, event.type);
             const fg = getTextColorForBackground(bg);
             
             // Mark cells below as occupied by this specific event's rowspan
@@ -1033,9 +1033,9 @@ function renderScheduleAndTimetable(data, analytics = null) {
             tthtml += `<td rowspan="${maxDuration}" style="vertical-align: top; padding: 1px;">`;
             
             uniqueEvents.forEach((event, index) => {
-              const subj = event.subject_name || event.subject_code || '';
+              const subj = event.course_name || event.course_code || '';
               const range = computeEventTimeRange(event);
-              const eventBg = getSubjectColor(event.subject_code, event.type);
+              const eventBg = getCourseColor(event.course_code, event.type);
               const eventFg = getTextColorForBackground(eventBg);
               
               tthtml += `<div style="background:${eventBg}; color:${eventFg}; padding:3px 5px; border-radius:3px; margin:2px 0; font-size:9px; line-height:1.2; border-left: 3px solid ${eventBg};">
@@ -1269,14 +1269,14 @@ function filterTable(elementId, data, searchableFields) {
   const q = (input && input.value || '').trim().toLowerCase();
   if (!q) {
   // show full
-  if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  if (elementId === 'coursesData' || elementId === 'csCoursesData' || elementId === 'itCoursesData') renderTable(data, elementId, ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
   return;
 }
 const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
 // reuse renderTable but with filtered data
-if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+if (elementId === 'coursesData' || elementId === 'csCoursesData' || elementId === 'itCoursesData') renderTable(filtered, elementId, ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
 else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
 }
@@ -1573,8 +1573,8 @@ function promptForData(fields, initial = {}) {
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
-    'subject_code': 'Subject Code',
-    'subject_name': 'Subject Name',
+    'course_code': 'Course Code',
+    'course_name': 'Course Name',
     'lecture_hours_per_week': 'Lecture Hours per Week',
     'lab_hours_per_week': 'Lab Hours per Week',
     'units': 'Units',
@@ -1607,7 +1607,7 @@ function setupCrudButtons() {
   const csSubEdit = document.getElementById('csSubjectsEdit');
   const csSubDel = document.getElementById('csSubjectsDelete');
   if (csSubAdd) csSubAdd.onclick = async () => {
-    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const data = promptForData(fields);
     if (!data) return;
     data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
@@ -1619,18 +1619,18 @@ function setupCrudButtons() {
     loadCSSubjectsTable();
   };
   if (csSubEdit) csSubEdit.onclick = async () => {
-    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     openBulkEditModal('subjects', fields, selected);
   };
   if (csSubDel) csSubDel.onclick = async () => {
-    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     if (!confirm(`Delete ${selected.length} CS subject(s)?`)) return;
     for (const item of selected) {
-      await fetch(`/api/subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+      await fetch(`/api/courses/${encodeURIComponent(item.course_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
     loadCSSubjectsTable();
   };
@@ -1640,7 +1640,7 @@ function setupCrudButtons() {
   const itSubEdit = document.getElementById('itSubjectsEdit');
   const itSubDel = document.getElementById('itSubjectsDelete');
   if (itSubAdd) itSubAdd.onclick = async () => {
-    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const data = promptForData(fields);
     if (!data) return;
     data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
@@ -1652,18 +1652,18 @@ function setupCrudButtons() {
     loadITSubjectsTable();
   };
   if (itSubEdit) itSubEdit.onclick = async () => {
-    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('itSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     openBulkEditModal('it-subjects', fields, selected);
   };
   if (itSubDel) itSubDel.onclick = async () => {
-    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('itSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     if (!confirm(`Delete ${selected.length} IT subject(s)?`)) return;
     for (const item of selected) {
-      await fetch(`/api/it-subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+      await fetch(`/api/it-courses/${encodeURIComponent(item.course_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
     loadITSubjectsTable();
   };
@@ -1746,8 +1746,8 @@ function openBulkEditModal(kind, fields, selectedRows) {
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
-    'subject_code': 'Subject Code',
-    'subject_name': 'Subject Name',
+    'course_code': 'Course Code',
+    'course_name': 'Course Name',
     'lecture_hours_per_week': 'Lecture Hours per Week',
     'lab_hours_per_week': 'Lab Hours per Week',
     'units': 'Units',
@@ -1833,7 +1833,7 @@ function openBulkEditModal(kind, fields, selectedRows) {
 
     // Perform PUT per selected row
     for (const row of selectedRows) {
-      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'subject_code';
+      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'course_code';
       const idVal = row[idField];
       const body = { ...row, ...toApply };
       const url = `/api/${kind}/${encodeURIComponent(idVal)}`;
@@ -2142,11 +2142,11 @@ function calculateScheduleAnalytics(scheduleData) {
 
   // Subject distribution
   scheduleData.forEach(item => {
-    const subject = item.subject_name || 'Unknown';
-    if (!analytics.subject_distribution[subject]) {
-      analytics.subject_distribution[subject] = 0;
+    const course = item.course_name || 'Unknown';
+    if (!analytics.subject_distribution[course]) {
+      analytics.subject_distribution[course] = 0;
     }
-    analytics.subject_distribution[subject] += parseInt(item.duration_slots) || 1;
+    analytics.subject_distribution[course] += parseInt(item.duration_slots) || 1;
   });
 
   return analytics;
