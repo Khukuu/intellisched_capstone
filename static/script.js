@@ -1017,7 +1017,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
             }
             
             tthtml += `<td rowspan="${eventDuration}" style="background:${bg}; color:${fg}; padding:6px 8px; vertical-align: top;">
-              <b>${subj}</b><br>
+              <b>${course}</b><br>
               <small style="opacity:.85;">(${range})</small><br>
               <small>${event.section_id}</small><br>
               <small>${event.teacher_name}</small><br>
