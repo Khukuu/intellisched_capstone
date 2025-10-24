@@ -2039,7 +2039,6 @@ function createNotificationItem(notification) {
   li.className = 'notification-item';
   
   const typeClass = getNotificationTypeClass(notification.type);
-  const timeAgo = getTimeAgo(notification.created_at);
   
   li.innerHTML = `
     <div class="dropdown-item ${notification.is_read ? '' : 'bg-light'}">
@@ -2050,7 +2049,6 @@ function createNotificationItem(notification) {
             <strong class="text-dark">${notification.title}</strong>
           </div>
           <p class="mb-1 text-muted small">${notification.message}</p>
-          <small class="text-muted">${timeAgo}</small>
         </div>
         <div class="d-flex align-items-center gap-2">
           ${!notification.is_read ? '<span class="badge bg-primary rounded-pill">New</span>' : ''}
@@ -2098,44 +2096,8 @@ function getNotificationIcon(type) {
 }
 
 function getTimeAgo(dateString) {
-  const now = new Date();
-  let date;
-  
-  // Handle different date formats
-  if (typeof dateString === 'string') {
-    // If it's already a proper ISO string, use it directly
-    if (dateString.includes('T') && dateString.includes('Z')) {
-      date = new Date(dateString);
-    } else {
-      // If it's a database timestamp, try to parse it
-      date = new Date(dateString);
-    }
-  } else {
-    date = new Date(dateString);
-  }
-  
-  // Check if date is valid
-  if (isNaN(date.getTime())) {
-    console.log('Invalid date:', dateString);
-    return 'Just now';
-  }
-  
-  const diffInSeconds = Math.floor((now - date) / 1000);
-  
-  console.log('Timestamp debug:', {
-    dateString: dateString,
-    now: now.toISOString(),
-    date: date.toISOString(),
-    diffInSeconds: diffInSeconds,
-    diffInMinutes: Math.floor(diffInSeconds / 60),
-    diffInHours: Math.floor(diffInSeconds / 3600)
-  });
-  
-  if (diffInSeconds < 60) return 'Just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-  return date.toLocaleDateString();
+  // Just return a simple "New" indicator instead of timestamp
+  return 'New';
 }
 
 function updateNotificationBadge(notifications) {
@@ -2150,10 +2112,26 @@ function updateNotificationBadge(notifications) {
   
   if (unreadCount > 0) {
     badge.textContent = unreadCount;
-    badge.classList.add('show');
+    // Force show with inline styles
+    badge.style.display = 'flex';
+    badge.style.visibility = 'visible';
+    badge.style.opacity = '1';
+    badge.style.zIndex = '99999';
+    badge.style.position = 'absolute';
+    badge.style.top = '-8px';
+    badge.style.right = '-8px';
+    badge.style.backgroundColor = '#dc3545';
+    badge.style.color = 'white';
+    badge.style.borderRadius = '50%';
+    badge.style.minWidth = '18px';
+    badge.style.height = '18px';
+    badge.style.fontSize = '0.7rem';
+    badge.style.fontWeight = 'bold';
+    badge.style.textAlign = 'center';
+    badge.style.lineHeight = '18px';
     console.log('Badge shown with count:', unreadCount);
   } else {
-    badge.classList.remove('show');
+    badge.style.display = 'none';
     console.log('Badge hidden - no unread notifications');
   }
 }
