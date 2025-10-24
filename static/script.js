@@ -7,7 +7,7 @@ const dataManagementSection = document.getElementById('data-management-section')
 const scheduleNavLink = document.getElementById('scheduleNavLink');
 const dataNavLink = document.getElementById('dataNavLink');
 
-const uploadCoursesForm = document.getElementById('uploadCoursesForm');
+const uploadSubjectsForm = document.getElementById('uploadSubjectsForm');
 const uploadTeachersForm = document.getElementById('uploadTeachersForm');
 const uploadRoomsForm = document.getElementById('uploadRoomsForm');
 const uploadSectionsForm = document.getElementById('uploadSectionsForm');
@@ -29,9 +29,9 @@ let currentRoomFilter = 'all';
 let availableRooms = [];
 
 // Cached data for tabs so searches/filtering work reliably
-let coursesCache = []; // Legacy - kept for compatibility
-let csCoursesCache = [];
-let itCoursesCache = [];
+let subjectsCache = []; // Legacy - kept for compatibility
+let csSubjectsCache = [];
+let itSubjectsCache = [];
 let teachersCache = [];
 let roomsCache = [];
 
@@ -284,19 +284,19 @@ dataNavLink.addEventListener('click', (e) => {
 });
 
 // Handle CSV file uploads (each reloads only its active table)
-if (uploadCoursesForm) uploadCoursesForm.addEventListener('submit', async (e) => {
+if (uploadSubjectsForm) uploadSubjectsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('csCurriculumFile');
   await uploadFile(fileInput.files[0], 'cs_curriculum');
-  await loadCSCoursesTable(); // Reload CS courses after upload
+  await loadCSSubjectsTable(); // Reload CS subjects after upload
 });
 
-const uploadITCoursesForm = document.getElementById('uploadITCoursesForm');
-if (uploadITCoursesForm) uploadITCoursesForm.addEventListener('submit', async (e) => {
+const uploadITSubjectsForm = document.getElementById('uploadITSubjectsForm');
+if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('itCurriculumFile');
   await uploadFile(fileInput.files[0], 'it_curriculum');
-  await loadITCoursesTable(); // Reload IT courses after upload
+  await loadITSubjectsTable(); // Reload IT subjects after upload
 });
 
 // Handle program selection to show/hide section controls
@@ -395,8 +395,8 @@ const timeSlotLabels = [
   "17:00-17:30", "17:30-18:00"
 ];
 
-// Timetable course color mapping helpers
-const COURSE_COLOR_PALETTE = [
+// Timetable subject color mapping helpers
+const SUBJECT_COLOR_PALETTE = [
   '#AEC6CF', /* pastel blue */
   '#FFB3BA', /* pastel pink */
   '#FFDFBA', /* pastel peach */
@@ -417,7 +417,7 @@ const COURSE_COLOR_PALETTE = [
   '#BFD1FF'  /* soft blue */
 ];
 
-// Special colors for laboratory courses - more vibrant and prominent
+// Special colors for laboratory subjects - more vibrant and prominent
 const LAB_COLOR_PALETTE = [
   '#FF6B6B', /* vibrant red */
   '#4ECDC4', /* teal */
@@ -436,7 +436,7 @@ const LAB_COLOR_PALETTE = [
   '#D7BDE2'  /* light purple */
 ];
 
-const courseColorCache = {};
+const subjectColorCache = {};
 function hashStringToInt(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -445,16 +445,16 @@ function hashStringToInt(str) {
   }
   return Math.abs(hash);
 }
-function getCourseColor(courseCode, courseType = null) {
-  const key = String(courseCode || '');
-  const cacheKey = `${key}_${courseType || 'default'}`;
-  if (courseColorCache[cacheKey]) return courseColorCache[cacheKey];
+function getSubjectColor(subjectCode, subjectType = null) {
+  const key = String(subjectCode || '');
+  const cacheKey = `${key}_${subjectType || 'default'}`;
+  if (subjectColorCache[cacheKey]) return subjectColorCache[cacheKey];
 
-  // Use lab colors for laboratory courses, regular colors for others
-  const palette = (courseType === 'lab') ? LAB_COLOR_PALETTE : COURSE_COLOR_PALETTE;
+  // Use lab colors for laboratory subjects, regular colors for others
+  const palette = (subjectType === 'lab') ? LAB_COLOR_PALETTE : SUBJECT_COLOR_PALETTE;
   const idx = hashStringToInt(key) % palette.length;
   const color = palette[idx];
-  courseColorCache[cacheKey] = color;
+  subjectColorCache[cacheKey] = color;
   return color;
 }
 function getTextColorForBackground(hex) {
@@ -553,29 +553,29 @@ document.getElementById('generateBtn').onclick = async function() {
 
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
-    // Load courses from all selected programs
-    const allCourses = [];
+    // Load subjects from all selected programs
+    const allSubjects = [];
     for (const program of selectedPrograms) {
       const curriculumEndpoint = program.toUpperCase() === 'IT' ? '/data/it_curriculum' : '/data/cs_curriculum';
-      const coursesResponse = await fetch(curriculumEndpoint, {
+      const subjectsResponse = await fetch(curriculumEndpoint, {
         headers: getAuthHeaders()
       });
     
-      if (!coursesResponse.ok) {
-        console.error(`Failed to load courses for ${program}:`, coursesResponse.status);
-        throw new Error(`Failed to load courses for ${program}: ${coursesResponse.status}`);
+      if (!subjectsResponse.ok) {
+        console.error(`Failed to load subjects for ${program}:`, subjectsResponse.status);
+        throw new Error(`Failed to load subjects for ${program}: ${subjectsResponse.status}`);
       }
       
-      const coursesData = await coursesResponse.json();
+      const subjectsData = await subjectsResponse.json();
       
-      if (!Array.isArray(coursesData)) {
-        throw new Error(`Courses data for ${program} is not an array`);
+      if (!Array.isArray(subjectsData)) {
+        throw new Error(`Subjects data for ${program} is not an array`);
       }
       
-      allCourses.push(...coursesData);
+      allSubjects.push(...subjectsData);
     }
     
-    const yearsList = allCourses
+    const yearsList = allSubjects
       .filter(s => String(s.semester) === String(selectedSemester))
       .map(s => parseInt(s.year_level))
       .filter(n => !isNaN(n));
@@ -593,13 +593,13 @@ document.getElementById('generateBtn').onclick = async function() {
     });
 
     if (changedYears.length === 4) {
-      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No courses exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
+      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No subjects exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
       if (downloadBtn) downloadBtn.disabled = true;
       return;
     }
 
     if (changedYears.length > 0) {
-      const msg = `Adjusted sections for Year(s) ${changedYears.join(', ')} because no courses exist for Semester ${selectedSemester}.`;
+      const msg = `Adjusted sections for Year(s) ${changedYears.join(', ')} because no subjects exist for Semester ${selectedSemester}.`;
       document.getElementById('result').innerHTML = `<div class="alert alert-warning">${msg}</div>`;
     }
   } catch (err) {
@@ -920,7 +920,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
   // Schedule Table (side-by-side column)
   let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
   for (const row of filtered) {
-    const subj = row.course_name || row.course_code || '';
+    const subj = row.subject_name || row.subject_code || '';
     const timeRange = computeEventTimeRange(row);
     html += `<tr>
       <td>${row.section_id}</td>
@@ -990,7 +990,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
         const uniqueEvents = [];
         const seenEvents = new Set();
         eventsStartingHere.forEach(event => {
-          const key = `${event.section_id}-${event.course_code}-${event.day}-${event.start_time_slot}`;
+          const key = `${event.section_id}-${event.subject_code}-${event.day}-${event.start_time_slot}`;
           if (!seenEvents.has(key)) {
             uniqueEvents.push(event);
             seenEvents.add(key);
@@ -1006,9 +1006,9 @@ function renderScheduleAndTimetable(data, analytics = null) {
             // Single event - apply background directly to td like dean interface
             const event = uniqueEvents[0];
             const eventDuration = parseInt(event.duration_slots, 10) || 1;
-            const subj = event.course_name || event.course_code || '';
+            const subj = event.subject_name || event.subject_code || '';
             const range = computeEventTimeRange(event);
-            const bg = getCourseColor(event.course_code, event.type);
+            const bg = getSubjectColor(event.subject_code, event.type);
             const fg = getTextColorForBackground(bg);
             
             // Mark cells below as occupied by this specific event's rowspan
@@ -1033,9 +1033,9 @@ function renderScheduleAndTimetable(data, analytics = null) {
             tthtml += `<td rowspan="${maxDuration}" style="vertical-align: top; padding: 1px;">`;
             
             uniqueEvents.forEach((event, index) => {
-              const subj = event.course_name || event.course_code || '';
+              const subj = event.subject_name || event.subject_code || '';
               const range = computeEventTimeRange(event);
-              const eventBg = getCourseColor(event.course_code, event.type);
+              const eventBg = getSubjectColor(event.subject_code, event.type);
               const eventFg = getTextColorForBackground(eventBg);
               
               tthtml += `<div style="background:${eventBg}; color:${eventFg}; padding:3px 5px; border-radius:3px; margin:2px 0; font-size:9px; line-height:1.2; border-left: 3px solid ${eventBg};">
@@ -1161,60 +1161,60 @@ if (teacherFilter) {
 
 
 // Lazy-load per-tab data loaders
-async function loadCoursesTable() {
-  // Check if the course elements exist before loading
-  const csElement = document.getElementById('csCoursesData');
-  const itElement = document.getElementById('itCoursesData');
+async function loadSubjectsTable() {
+  // Check if the subject elements exist before loading
+  const csElement = document.getElementById('csSubjectsData');
+  const itElement = document.getElementById('itSubjectsData');
   
   if (csElement) {
-    await loadCSCoursesTable();
+    await loadCSSubjectsTable();
   }
   if (itElement) {
-    await loadITCoursesTable();
+    await loadITSubjectsTable();
   }
 }
 
-async function loadCSCoursesTable() {
+async function loadCSSubjectsTable() {
   try {
-    const coursesResponse = await fetch('/data/cs_curriculum', {
+    const subjectsResponse = await fetch('/data/cs_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!coursesResponse.ok) throw new Error('Failed to load CS courses');
-    csCoursesCache = await coursesResponse.json();
-    renderTable(csCoursesCache, 'csCoursesData', ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    if (!subjectsResponse.ok) throw new Error('Failed to load CS subjects');
+    csSubjectsCache = await subjectsResponse.json();
+    renderTable(csSubjectsCache, 'csSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load CS courses:', e);
-    const element = document.getElementById('csCoursesData');
+    console.warn('Could not load CS subjects:', e);
+    const element = document.getElementById('csSubjectsData');
     if (element) {
       element.innerHTML = '<p>No CS data available.</p>';
     }
   }
   // Attach client-side search handler
-  const sInput = document.getElementById('csCoursesSearch');
+  const sInput = document.getElementById('csSubjectsSearch');
   if (sInput) {
-    sInput.oninput = () => filterTable('csCoursesData', csCoursesCache, ['course_code', 'course_name']);
+    sInput.oninput = () => filterTable('csSubjectsData', csSubjectsCache, ['subject_code', 'subject_name']);
   }
 }
 
-async function loadITCoursesTable() {
+async function loadITSubjectsTable() {
   try {
-    const coursesResponse = await fetch('/data/it_curriculum', {
+    const subjectsResponse = await fetch('/data/it_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!coursesResponse.ok) throw new Error('Failed to load IT courses');
-    itCoursesCache = await coursesResponse.json();
-    renderTable(itCoursesCache, 'itCoursesData', ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    if (!subjectsResponse.ok) throw new Error('Failed to load IT subjects');
+    itSubjectsCache = await subjectsResponse.json();
+    renderTable(itSubjectsCache, 'itSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load IT courses:', e);
-    const element = document.getElementById('itCoursesData');
+    console.warn('Could not load IT subjects:', e);
+    const element = document.getElementById('itSubjectsData');
     if (element) {
       element.innerHTML = '<p>No IT data available.</p>';
     }
   }
   // Attach client-side search handler
-  const sInput = document.getElementById('itCoursesSearch');
+  const sInput = document.getElementById('itSubjectsSearch');
   if (sInput) {
-    sInput.oninput = () => filterTable('itCoursesData', itCoursesCache, ['course_code', 'course_name']);
+    sInput.oninput = () => filterTable('itSubjectsData', itSubjectsCache, ['subject_code', 'subject_name']);
   }
 }
 
@@ -1269,14 +1269,14 @@ function filterTable(elementId, data, searchableFields) {
   const q = (input && input.value || '').trim().toLowerCase();
   if (!q) {
   // show full
-  if (elementId === 'coursesData' || elementId === 'csCoursesData' || elementId === 'itCoursesData') renderTable(data, elementId, ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+  if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(data, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   else if (elementId === 'teachersData') renderTable(data, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(data, elementId, ['room_id', 'room_name', 'is_laboratory']);
   return;
 }
 const filtered = data.filter(row => searchableFields.some(field => String(row[field] || '').toLowerCase().includes(q)));
 // reuse renderTable but with filtered data
-if (elementId === 'coursesData' || elementId === 'csCoursesData' || elementId === 'itCoursesData') renderTable(filtered, elementId, ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+if (elementId === 'subjectsData' || elementId === 'csSubjectsData' || elementId === 'itSubjectsData') renderTable(filtered, elementId, ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
 else if (elementId === 'teachersData') renderTable(filtered, elementId, ['teacher_id', 'teacher_name', 'can_teach']);
   else if (elementId === 'roomsData') renderTable(filtered, elementId, ['room_id', 'room_name', 'is_laboratory']);
 }
@@ -1573,8 +1573,8 @@ function promptForData(fields, initial = {}) {
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
-    'course_code': 'Course Code',
-    'course_name': 'Course Name',
+    'subject_code': 'Subject Code',
+    'subject_name': 'Subject Name',
     'lecture_hours_per_week': 'Lecture Hours per Week',
     'lab_hours_per_week': 'Lab Hours per Week',
     'units': 'Units',
@@ -1607,7 +1607,7 @@ function setupCrudButtons() {
   const csSubEdit = document.getElementById('csSubjectsEdit');
   const csSubDel = document.getElementById('csSubjectsDelete');
   if (csSubAdd) csSubAdd.onclick = async () => {
-    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const data = promptForData(fields);
     if (!data) return;
     data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
@@ -1619,18 +1619,18 @@ function setupCrudButtons() {
     loadCSSubjectsTable();
   };
   if (csSubEdit) csSubEdit.onclick = async () => {
-    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     openBulkEditModal('subjects', fields, selected);
   };
   if (csSubDel) csSubDel.onclick = async () => {
-    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     if (!confirm(`Delete ${selected.length} CS subject(s)?`)) return;
     for (const item of selected) {
-      await fetch(`/api/courses/${encodeURIComponent(item.course_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+      await fetch(`/api/subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
     loadCSSubjectsTable();
   };
@@ -1640,7 +1640,7 @@ function setupCrudButtons() {
   const itSubEdit = document.getElementById('itSubjectsEdit');
   const itSubDel = document.getElementById('itSubjectsDelete');
   if (itSubAdd) itSubAdd.onclick = async () => {
-    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const data = promptForData(fields);
     if (!data) return;
     data.lecture_hours_per_week = data.lecture_hours_per_week ? parseInt(data.lecture_hours_per_week, 10) : 0;
@@ -1652,18 +1652,18 @@ function setupCrudButtons() {
     loadITSubjectsTable();
   };
   if (itSubEdit) itSubEdit.onclick = async () => {
-    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('itSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     openBulkEditModal('it-subjects', fields, selected);
   };
   if (itSubDel) itSubDel.onclick = async () => {
-    const fields = ['course_code','course_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
+    const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('itSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
     if (!confirm(`Delete ${selected.length} IT subject(s)?`)) return;
     for (const item of selected) {
-      await fetch(`/api/it-courses/${encodeURIComponent(item.course_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
+      await fetch(`/api/it-subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
     loadITSubjectsTable();
   };
@@ -1746,8 +1746,8 @@ function openBulkEditModal(kind, fields, selectedRows) {
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
-    'course_code': 'Course Code',
-    'course_name': 'Course Name',
+    'subject_code': 'Subject Code',
+    'subject_name': 'Subject Name',
     'lecture_hours_per_week': 'Lecture Hours per Week',
     'lab_hours_per_week': 'Lab Hours per Week',
     'units': 'Units',
@@ -1833,7 +1833,7 @@ function openBulkEditModal(kind, fields, selectedRows) {
 
     // Perform PUT per selected row
     for (const row of selectedRows) {
-      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'course_code';
+      let idField = (kind === 'teachers') ? 'teacher_id' : (kind === 'rooms') ? 'room_id' : 'subject_code';
       const idVal = row[idField];
       const body = { ...row, ...toApply };
       const url = `/api/${kind}/${encodeURIComponent(idVal)}`;
@@ -2142,11 +2142,11 @@ function calculateScheduleAnalytics(scheduleData) {
 
   // Subject distribution
   scheduleData.forEach(item => {
-    const course = item.course_name || 'Unknown';
-    if (!analytics.subject_distribution[course]) {
-      analytics.subject_distribution[course] = 0;
+    const subject = item.subject_name || 'Unknown';
+    if (!analytics.subject_distribution[subject]) {
+      analytics.subject_distribution[subject] = 0;
     }
-    analytics.subject_distribution[course] += parseInt(item.duration_slots) || 1;
+    analytics.subject_distribution[subject] += parseInt(item.duration_slots) || 1;
   });
 
   return analytics;
