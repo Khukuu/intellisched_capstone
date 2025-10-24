@@ -60,8 +60,8 @@ class ScheduleDatabase:
         create_tables_sql = """
         CREATE TABLE IF NOT EXISTS cs_curriculum (
             id SERIAL PRIMARY KEY,
-            subject_code VARCHAR(50) UNIQUE NOT NULL,
-            subject_name VARCHAR(255) NOT NULL,
+            course_code VARCHAR(50) UNIQUE NOT NULL,
+            course_name VARCHAR(255) NOT NULL,
             lecture_hours_per_week INTEGER DEFAULT 0,
             lab_hours_per_week INTEGER DEFAULT 0,
             units INTEGER DEFAULT 0,
@@ -73,8 +73,8 @@ class ScheduleDatabase:
         -- IT curriculum table (mirrors CS curriculum)
         CREATE TABLE IF NOT EXISTS it_curriculum (
             id SERIAL PRIMARY KEY,
-            subject_code VARCHAR(50) UNIQUE NOT NULL,
-            subject_name VARCHAR(255) NOT NULL,
+            course_code VARCHAR(50) UNIQUE NOT NULL,
+            course_name VARCHAR(255) NOT NULL,
             lecture_hours_per_week INTEGER DEFAULT 0,
             lab_hours_per_week INTEGER DEFAULT 0,
             units INTEGER DEFAULT 0,
@@ -101,7 +101,7 @@ class ScheduleDatabase:
         CREATE TABLE IF NOT EXISTS sections (
             id SERIAL PRIMARY KEY,
             section_id VARCHAR(50) UNIQUE NOT NULL,
-            subject_code VARCHAR(50),
+            course_code VARCHAR(50),
             year_level INTEGER,
             num_meetings_non_lab INTEGER DEFAULT 0
         );
@@ -406,13 +406,13 @@ class ScheduleDatabase:
             print(f"Error updating password: {e}")
             return False
     
-    def load_subjects(self, programs: List[str] = None) -> List[Dict[str, Any]]:
-        """Load all subjects from database for specified programs"""
+    def load_courses(self, programs: List[str] = None) -> List[Dict[str, Any]]:
+        """Load all courses from database for specified programs"""
         if programs is None:
             programs = ['CS']
         
-        all_subjects = []
-        seen_subjects = set()  # Track seen subject codes to avoid duplicates
+        all_courses = []
+        seen_courses = set()  # Track seen course codes to avoid duplicates
         
         for program in programs:
             if program.upper() == 'IT':
@@ -422,8 +422,8 @@ class ScheduleDatabase:
                 
             query = f"""
             SELECT 
-                subject_code,
-                subject_name,
+                course_code,
+                course_name,
                 lecture_hours_per_week,
                 lab_hours_per_week,
                 units,
@@ -432,34 +432,34 @@ class ScheduleDatabase:
                 year_level,
                 '{program.upper()}' as program
             FROM {table_name}
-            ORDER BY year_level, semester, subject_code
+            ORDER BY year_level, semester, course_code
             """
-            subjects = self.db.execute_query(query)
+            courses = self.db.execute_query(query)
             
-            # Add subjects, but skip duplicates (same subject_code, year_level, semester)
-            for subject in subjects:
+            # Add courses, but skip duplicates (same course_code, year_level, semester)
+            for course in courses:
                 # Create a unique key for deduplication
-                dedup_key = (subject['subject_code'], subject['year_level'], subject['semester'])
-                if dedup_key not in seen_subjects:
-                    seen_subjects.add(dedup_key)
-                    all_subjects.append(subject)
+                dedup_key = (course['course_code'], course['year_level'], course['semester'])
+                if dedup_key not in seen_courses:
+                    seen_courses.add(dedup_key)
+                    all_courses.append(course)
                 else:
-                    # For general education subjects that exist in both programs, 
+                    # For general education courses that exist in both programs, 
                     # we need to make them available to both programs
-                    # Find the existing subject and update its program info
-                    for existing_subject in all_subjects:
-                        if (existing_subject['subject_code'] == subject['subject_code'] and
-                            existing_subject['year_level'] == subject['year_level'] and
-                            existing_subject['semester'] == subject['semester']):
-                            # Mark this subject as available to both programs
-                            if 'available_programs' not in existing_subject:
-                                existing_subject['available_programs'] = [existing_subject.get('program', 'CS')]
-                            if program.upper() not in existing_subject['available_programs']:
-                                existing_subject['available_programs'].append(program.upper())
-                            print(f"Debug: Subject {subject['subject_code']} is available to programs: {existing_subject['available_programs']}")
+                    # Find the existing course and update its program info
+                    for existing_course in all_courses:
+                        if (existing_course['course_code'] == course['course_code'] and
+                            existing_course['year_level'] == course['year_level'] and
+                            existing_course['semester'] == course['semester']):
+                            # Mark this course as available to both programs
+                            if 'available_programs' not in existing_course:
+                                existing_course['available_programs'] = [existing_course.get('program', 'CS')]
+                            if program.upper() not in existing_course['available_programs']:
+                                existing_course['available_programs'].append(program.upper())
+                            print(f"Debug: Course {course['course_code']} is available to programs: {existing_course['available_programs']}")
                             break
         
-        return all_subjects
+        return all_courses
     
     def load_teachers(self) -> List[Dict[str, Any]]:
         """Load all teachers from database"""
@@ -516,14 +516,14 @@ class ScheduleDatabase:
         """
         return self.db.execute_query(query)
     
-    def insert_subject(self, subject_data: Dict[str, Any]) -> None:
-        """Insert a single subject"""
+    def insert_course(self, course_data: Dict[str, Any]) -> None:
+        """Insert a single course"""
         query = """
-        INSERT INTO cs_curriculum (subject_code, subject_name, lecture_hours_per_week, 
+        INSERT INTO cs_curriculum (course_code, course_name, lecture_hours_per_week, 
                              lab_hours_per_week, units, semester, program_specialization, year_level)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (subject_code) DO UPDATE SET
-            subject_name = EXCLUDED.subject_name,
+        ON CONFLICT (course_code) DO UPDATE SET
+            course_name = EXCLUDED.course_name,
             lecture_hours_per_week = EXCLUDED.lecture_hours_per_week,
             lab_hours_per_week = EXCLUDED.lab_hours_per_week,
             units = EXCLUDED.units,
@@ -532,25 +532,25 @@ class ScheduleDatabase:
             year_level = EXCLUDED.year_level
         """
         params = (
-            subject_data['subject_code'],
-            subject_data['subject_name'],
-            subject_data.get('lecture_hours_per_week', 0),
-            subject_data.get('lab_hours_per_week', 0),
-            subject_data['units'],
-            subject_data.get('semester'),
-            subject_data.get('program_specialization'),
-            subject_data.get('year_level')
+            course_data['course_code'],
+            course_data['course_name'],
+            course_data.get('lecture_hours_per_week', 0),
+            course_data.get('lab_hours_per_week', 0),
+            course_data['units'],
+            course_data.get('semester'),
+            course_data.get('program_specialization'),
+            course_data.get('year_level')
         )
         self.db.execute_single(query, params)
         
-    def insert_it_subject(self, subject_data: Dict[str, Any]) -> None:
-        """Insert a single IT subject"""
+    def insert_it_course(self, course_data: Dict[str, Any]) -> None:
+        """Insert a single IT course"""
         query = """
-        INSERT INTO it_curriculum (subject_code, subject_name, lecture_hours_per_week, 
+        INSERT INTO it_curriculum (course_code, course_name, lecture_hours_per_week, 
                              lab_hours_per_week, units, semester, program_specialization, year_level)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (subject_code) DO UPDATE SET
-            subject_name = EXCLUDED.subject_name,
+        ON CONFLICT (course_code) DO UPDATE SET
+            course_name = EXCLUDED.course_name,
             lecture_hours_per_week = EXCLUDED.lecture_hours_per_week,
             lab_hours_per_week = EXCLUDED.lab_hours_per_week,
             units = EXCLUDED.units,
@@ -559,14 +559,14 @@ class ScheduleDatabase:
             year_level = EXCLUDED.year_level
         """
         params = (
-            subject_data['subject_code'],
-            subject_data['subject_name'],
-            subject_data.get('lecture_hours_per_week', 0),
-            subject_data.get('lab_hours_per_week', 0),
-            subject_data['units'],
-            subject_data.get('semester'),
-            subject_data.get('program_specialization'),
-            subject_data.get('year_level')
+            course_data['course_code'],
+            course_data['course_name'],
+            course_data.get('lecture_hours_per_week', 0),
+            course_data.get('lab_hours_per_week', 0),
+            course_data['units'],
+            course_data.get('semester'),
+            course_data.get('program_specialization'),
+            course_data.get('year_level')
         )
         self.db.execute_single(query, params)
         
@@ -647,9 +647,9 @@ class ScheduleDatabase:
 # Global database instance
 db = ScheduleDatabase()
 
-def load_subjects_from_db(programs: List[str] = None):
-    """Load subjects from database for specified programs (replaces CSV loading)"""
-    return db.load_subjects(programs)
+def load_courses_from_db(programs: List[str] = None):
+    """Load courses from database for specified programs (replaces CSV loading)"""
+    return db.load_courses(programs)
 
 def load_teachers_from_db():
     """Load teachers from database (replaces CSV loading)"""
@@ -663,21 +663,21 @@ def load_sections_from_db():
     """Load sections from database (replaces CSV loading)"""
     return db.load_sections()
 
-def add_subject(subject_data: Dict[str, Any]) -> None:
-    """Add a new subject to the CS curriculum database"""
-    db.insert_subject(subject_data)
+def add_course(course_data: Dict[str, Any]) -> None:
+    """Add a new course to the CS curriculum database"""
+    db.insert_course(course_data)
 
-def add_it_subject(subject_data: Dict[str, Any]) -> None:
-    """Add a new subject to the IT curriculum database"""
-    db.insert_it_subject(subject_data)
+def add_it_course(course_data: Dict[str, Any]) -> None:
+    """Add a new course to the IT curriculum database"""
+    db.insert_it_course(course_data)
 
-def update_it_subject(subject_code: str, subject_data: Dict[str, Any]) -> None:
-    """Update an existing IT subject in the database"""
-    db.insert_it_subject(subject_data)  # Uses ON CONFLICT DO UPDATE
+def update_it_course(course_code: str, course_data: Dict[str, Any]) -> None:
+    """Update an existing IT course in the database"""
+    db.insert_it_course(course_data)  # Uses ON CONFLICT DO UPDATE
 
-def delete_it_subject(subject_code: str) -> None:
-    """Delete an IT subject from the database"""
-    db.delete_it_subject(subject_code)
+def delete_it_course(course_code: str) -> None:
+    """Delete an IT course from the database"""
+    db.delete_it_course(course_code)
 
 def add_teacher(teacher_data: Dict[str, Any]) -> int:
     """Add a new teacher to the database and return the generated ID"""
@@ -691,9 +691,9 @@ def add_section(section_data: Dict[str, Any]) -> None:
     """Add a new section to the database"""
     db.insert_section(section_data)
 
-def update_subject(subject_code: str, subject_data: Dict[str, Any]) -> None:
-    """Update an existing subject in the database"""
-    db.insert_subject(subject_data)  # Uses ON CONFLICT DO UPDATE
+def update_course(course_code: str, course_data: Dict[str, Any]) -> None:
+    """Update an existing course in the database"""
+    db.insert_course(course_data)  # Uses ON CONFLICT DO UPDATE
 
 def update_teacher(teacher_id: str, teacher_data: Dict[str, Any]) -> None:
     """Update an existing teacher in the database"""
@@ -751,15 +751,15 @@ def update_section(section_id: str, section_data: Dict[str, Any]) -> None:
     """Update an existing section in the database"""
     db.insert_section(section_data)  # Uses ON CONFLICT DO UPDATE
 
-def delete_subject(subject_code: str) -> None:
-    """Delete a subject from the CS curriculum database"""
-    query = "DELETE FROM cs_curriculum WHERE subject_code = %s"
-    db.db.execute_single(query, (subject_code,))
+def delete_course(course_code: str) -> None:
+    """Delete a course from the CS curriculum database"""
+    query = "DELETE FROM cs_curriculum WHERE course_code = %s"
+    db.db.execute_single(query, (course_code,))
 
-def delete_it_subject(subject_code: str) -> None:
-    """Delete a subject from the IT curriculum database"""
-    query = "DELETE FROM it_curriculum WHERE subject_code = %s"
-    db.db.execute_single(query, (subject_code,))
+def delete_it_course(course_code: str) -> None:
+    """Delete a course from the IT curriculum database"""
+    query = "DELETE FROM it_curriculum WHERE course_code = %s"
+    db.db.execute_single(query, (course_code,))
 
 def delete_teacher(teacher_id: str) -> None:
     """Delete a teacher from the database"""
@@ -776,10 +776,10 @@ def delete_section(section_id: str) -> None:
     query = "DELETE FROM sections WHERE section_id = %s"
     db.db.execute_single(query, (section_id,))
 
-def get_subject_by_code(subject_code: str) -> Dict[str, Any]:
-    """Get a specific subject by code"""
-    query = "SELECT * FROM cs_curriculum WHERE subject_code = %s"
-    results = db.db.execute_query(query, (subject_code,))
+def get_course_by_code(course_code: str) -> Dict[str, Any]:
+    """Get a specific course by code"""
+    query = "SELECT * FROM cs_curriculum WHERE course_code = %s"
+    results = db.db.execute_query(query, (course_code,))
     return results[0] if results else None
 
 def get_teacher_by_id(teacher_id: str) -> Dict[str, Any]:

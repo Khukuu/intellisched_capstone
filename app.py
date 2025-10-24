@@ -1139,7 +1139,7 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
         # Ensure both start and end times have proper formatting
         return f"{start_time}-{end_time}"
     
-    fieldnames = ['section_id', 'subject_code', 'subject_name', 'type', 'teacher_name', 'room_id', 'day', 'time_range', 'duration_hours']
+    fieldnames = ['section_id', 'course_code', 'course_name', 'type', 'teacher_name', 'room_id', 'day', 'time_range', 'duration_hours']
     output = io.StringIO()
     writer = csv.DictWriter(output, fieldnames=fieldnames)
     writer.writeheader()
@@ -1152,8 +1152,8 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
         # Create the CSV row with proper formatting
         csv_row = {
             'section_id': row.get('section_id', ''),
-            'subject_code': row.get('subject_code', ''),
-            'subject_name': row.get('subject_name', ''),
+            'course_code': row.get('course_code', ''),
+            'course_name': row.get('course_name', ''),
             'type': row.get('type', ''),
             'teacher_name': row.get('teacher_name', ''),
             'room_id': row.get('room_id', ''),
@@ -1216,12 +1216,12 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
             except Exception:
                 return 0
 
-        if filename in ['cs_curriculum', 'subjects']:
-            from database import add_subject
+        if filename in ['cs_curriculum', 'courses']:
+            from database import add_course
             for r in rows:
-                subject = {
-                    'subject_code': r.get('subject_code') or r.get('code') or '',
-                    'subject_name': r.get('subject_name') or r.get('name') or '',
+                course = {
+                    'course_code': r.get('course_code') or r.get('code') or '',
+                    'course_name': r.get('course_name') or r.get('name') or '',
                     'lecture_hours_per_week': safe_int(r.get('lecture_hours_per_week') or r.get('lec_hours')),
                     'lab_hours_per_week': safe_int(r.get('lab_hours_per_week') or r.get('lab_hours')),
                     'units': safe_int(r.get('units')),
@@ -1229,16 +1229,16 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
                     'program_specialization': (r.get('program_specialization') or r.get('program') or None),
                     'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
                 }
-                if not subject['subject_code']:
+                if not course['course_code']:
                     continue
-                add_subject(subject)
+                add_course(course)
             return JSONResponse(content={'message': 'CS Curriculum CSV uploaded successfully'})
         elif filename == 'it_curriculum':
-            from database import add_it_subject
+            from database import add_it_course
             for r in rows:
-                subject = {
-                    'subject_code': r.get('subject_code') or r.get('code') or '',
-                    'subject_name': r.get('subject_name') or r.get('name') or '',
+                course = {
+                    'course_code': r.get('course_code') or r.get('code') or '',
+                    'course_name': r.get('course_name') or r.get('name') or '',
                     'lecture_hours_per_week': safe_int(r.get('lecture_hours_per_week') or r.get('lec_hours')),
                     'lab_hours_per_week': safe_int(r.get('lab_hours_per_week') or r.get('lab_hours')),
                     'units': safe_int(r.get('units')),
@@ -1246,9 +1246,9 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
                     'program_specialization': (r.get('program_specialization') or r.get('program') or None),
                     'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
                 }
-                if not subject['subject_code']:
+                if not course['course_code']:
                     continue
-                add_it_subject(subject)
+                add_it_course(course)
             return JSONResponse(content={'message': 'IT Curriculum CSV uploaded successfully'})
         elif filename == 'teachers':
             from database import add_teacher
@@ -1285,7 +1285,7 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
             for r in rows:
                 section = {
                     'section_id': r.get('section_id') or r.get('id') or '',
-                    'subject_code': (r.get('subject_code') or '') or None,
+                    'course_code': (r.get('course_code') or '') or None,
                     'year_level': (lambda x: (safe_int(x) or None))(r.get('year_level') or r.get('year')),
                     'num_meetings_non_lab': safe_int(r.get('num_meetings_non_lab') or r.get('meetings')),
                 }
@@ -1301,66 +1301,66 @@ async def upload_file(filename: str, file: UploadFile = File(...), username: str
         raise HTTPException(status_code=500, detail=str(e))
 
 # Database management endpoints (Chair role required)
-@app.post('/api/subjects')
-async def add_subject_endpoint(subject_data: dict, username: str = Depends(require_chair_role)):
-    """Add a new subject to the database"""
+@app.post('/api/courses')
+async def add_course_endpoint(course_data: dict, username: str = Depends(require_chair_role)):
+    """Add a new course to the database"""
     try:
-        from database import add_subject
-        add_subject(subject_data)
-        return JSONResponse(content={'message': 'Subject added successfully'})
+        from database import add_course
+        add_course(course_data)
+        return JSONResponse(content={'message': 'Course added successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.put('/api/subjects/{subject_code}')
-async def update_subject_endpoint(subject_code: str, subject_data: dict, username: str = Depends(require_chair_role)):
-    """Update an existing subject in the database"""
+@app.put('/api/courses/{course_code}')
+async def update_course_endpoint(course_code: str, course_data: dict, username: str = Depends(require_chair_role)):
+    """Update an existing course in the database"""
     try:
-        from database import update_subject
-        subject_data['subject_code'] = subject_code
-        update_subject(subject_code, subject_data)
-        return JSONResponse(content={'message': 'Subject updated successfully'})
+        from database import update_course
+        course_data['course_code'] = course_code
+        update_course(course_code, course_data)
+        return JSONResponse(content={'message': 'Course updated successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete('/api/subjects/{subject_code}')
-async def delete_subject_endpoint(subject_code: str, username: str = Depends(require_chair_role)):
-    """Delete a subject from the database"""
+@app.delete('/api/courses/{course_code}')
+async def delete_course_endpoint(course_code: str, username: str = Depends(require_chair_role)):
+    """Delete a course from the database"""
     try:
-        from database import delete_subject
-        delete_subject(subject_code)
-        return JSONResponse(content={'message': 'Subject deleted successfully'})
+        from database import delete_course
+        delete_course(course_code)
+        return JSONResponse(content={'message': 'Course deleted successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# IT Subjects API endpoints
-@app.post('/api/it-subjects')
-async def add_it_subject_endpoint(subject_data: dict, username: str = Depends(require_chair_role)):
-    """Add a new IT subject to the database"""
+# IT Courses API endpoints
+@app.post('/api/it-courses')
+async def add_it_course_endpoint(course_data: dict, username: str = Depends(require_chair_role)):
+    """Add a new IT course to the database"""
     try:
-        from database import add_it_subject
-        add_it_subject(subject_data)
-        return JSONResponse(content={'message': 'IT Subject added successfully'})
+        from database import add_it_course
+        add_it_course(course_data)
+        return JSONResponse(content={'message': 'IT Course added successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.put('/api/it-subjects/{subject_code}')
-async def update_it_subject_endpoint(subject_code: str, subject_data: dict, username: str = Depends(require_chair_role)):
-    """Update an existing IT subject in the database"""
+@app.put('/api/it-courses/{course_code}')
+async def update_it_course_endpoint(course_code: str, course_data: dict, username: str = Depends(require_chair_role)):
+    """Update an existing IT course in the database"""
     try:
-        from database import update_it_subject
-        subject_data['subject_code'] = subject_code
-        update_it_subject(subject_code, subject_data)
-        return JSONResponse(content={'message': 'IT Subject updated successfully'})
+        from database import update_it_course
+        course_data['course_code'] = course_code
+        update_it_course(course_code, course_data)
+        return JSONResponse(content={'message': 'IT Course updated successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete('/api/it-subjects/{subject_code}')
-async def delete_it_subject_endpoint(subject_code: str, username: str = Depends(require_chair_role)):
-    """Delete an IT subject from the database"""
+@app.delete('/api/it-courses/{course_code}')
+async def delete_it_course_endpoint(course_code: str, username: str = Depends(require_chair_role)):
+    """Delete an IT course from the database"""
     try:
-        from database import delete_it_subject
-        delete_it_subject(subject_code)
-        return JSONResponse(content={'message': 'IT Subject deleted successfully'})
+        from database import delete_it_course
+        delete_it_course(course_code)
+        return JSONResponse(content={'message': 'IT Course deleted successfully'})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

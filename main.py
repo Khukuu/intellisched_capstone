@@ -1,26 +1,26 @@
 from ortools.sat.python import cp_model
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
 
 model = cp_model.CpModel()
 
-# Load subjects from database
-subjects_data = load_subjects_from_db()
-subjects = []
+# Load courses from database
+courses_data = load_courses_from_db()
+courses = []
 seen_codes = set()
-for row in subjects_data:
-    code = row['subject_code']
+for row in courses_data:
+    code = row['course_code']
     if code in seen_codes:
         continue
     seen_codes.add(code)
     # Convert database format to expected format
     is_lab = row.get('lab_hours_per_week', 0) > 0
-    subjects.append({
+    courses.append({
         'code': code,
-        'name': row['subject_name'],
+        'name': row['course_name'],
         'units': int(row['units']),
         'is_lab': is_lab
     })
-print("📦 Loaded Subjects:", [s['code'] for s in subjects])
+print("📦 Loaded Courses:", [c['code'] for c in courses])
 
 # Load teachers from database
 teachers_data = load_teachers_from_db()
@@ -42,12 +42,12 @@ for row in rooms_data:
         'is_lab': row['is_laboratory']
     })
 
-#MAPPING SUBJECTS TO TEACHERS AND ROOMS
+#MAPPING COURSES TO TEACHERS AND ROOMS
 
-#Subject code and mapping
-subject_codes = [s['code'] for s in subjects]
-subject_map = {scode: i for i, scode in enumerate(subject_codes)}
-subject_code_from_index = {i: scode for scode, i in subject_map.items()}
+#Course code and mapping
+course_codes = [c['code'] for c in courses]
+course_map = {ccode: i for i, ccode in enumerate(course_codes)}
+course_code_from_index = {i: ccode for ccode, i in course_map.items()}
 
 #Teacher ID and mapping
 teacher_ids = [t['id'] for t in teachers]
@@ -62,33 +62,33 @@ room_id_from_index = {i: rid for rid, i in room_map.items()}
 #DEBUGGING OUTPUT
 print("✅ Teacher Map:", teacher_map)
 print("✅ Room Map:", room_map)
-print("✅ Subject Map:", subject_map)
+print("✅ Course Map:", course_map)
 
 
-# Build subject options
-subject_options = []
+# Build course options
+course_options = []
 
-for s in subjects:
-    subject_index = subject_map[s['code']]
+for c in courses:
+    course_index = course_map[c['code']]
     
     valid_teachers = [
-        teacher_map[t['id']] for t in teachers if s['code'] in t['can_teach']
+        teacher_map[t['id']] for t in teachers if c['code'] in t['can_teach']
     ]
     
     valid_rooms = [
-        room_map[r['id']] for r in rooms if r['is_lab'] == s['is_lab']
+        room_map[r['id']] for r in rooms if r['is_lab'] == c['is_lab']
     ]
     
-    subject_options.append({
-        'subject_index': subject_index,
+    course_options.append({
+        'course_index': course_index,
         'valid_teachers': valid_teachers,
         'valid_rooms': valid_rooms
     })
 
-print("🔢 Total Subject Options:", len(subject_options))
-for options in subject_options:
-    code = subject_code_from_index[options['subject_index']]
-    print(f"Subject {code} - Valid Teachers: {options['valid_teachers']}, Valid Rooms: {options['valid_rooms']}")
+print("🔢 Total Course Options:", len(course_options))
+for options in course_options:
+    code = course_code_from_index[options['course_index']]
+    print(f"Course {code} - Valid Teachers: {options['valid_teachers']}, Valid Rooms: {options['valid_rooms']}")
 
 
 day_groups = [0,1,2] # 0 MW, 1 TTh, 2 F
@@ -124,12 +124,12 @@ for option in subject_options:
     
 # DEBUG CODE
 print("\n📋 Assigned Variables Summary:")
-for i, option in enumerate(subject_options):
-    code = subject_code_from_index[option['subject_index']]
-    print(f"\n🔧 Subject {code}:")
+for i, option in enumerate(course_options):
+    code = course_code_from_index[option['course_index']]
+    print(f"\n🔧 Course {code}:")
     print(f"  ➤ Valid Teachers (IDs): {option['valid_teachers']}")
     print(f"  ➤ Valid Rooms (IDs): {option['valid_rooms']}")
-    print(f"  ➤ Variable Names: teacher_s{i}, room_s{i}, day_s{i}, time_s{i}")
+    print(f"  ➤ Variable Names: teacher_c{i}, room_c{i}, day_c{i}, time_c{i}")
 
-print(f"\n🧮 Total Subjects: {len(subject_options)}")
+print(f"\n🧮 Total Courses: {len(course_options)}")
 print(f"🧠 Total Variables Created: {len(assigned_teachers)} teachers, {len(assigned_rooms)} rooms")

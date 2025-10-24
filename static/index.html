@@ -818,8 +818,8 @@
       <div class="d-flex justify-content-between align-items-center mb-4">
         <ul class="nav nav-tabs" id="dataTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="tab-subjects" data-tab="subjects" data-bs-toggle="tab" data-bs-target="#pane-subjects" type="button" role="tab" aria-controls="pane-subjects" aria-selected="true">
-            <i class="bi bi-book me-2"></i>Subjects
+          <button class="nav-link active" id="tab-courses" data-tab="courses" data-bs-toggle="tab" data-bs-target="#pane-courses" type="button" role="tab" aria-controls="pane-courses" aria-selected="true">
+            <i class="bi bi-book me-2"></i>Courses
           </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -838,8 +838,8 @@
         <div class="d-flex gap-2">
           <div class="d-flex align-items-center bg-danger text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
             <i class="bi bi-book-fill me-1"></i>
-            <span class="fw-semibold" id="totalSubjects">0</span>
-            <span class="ms-1 small">Subjects</span>
+            <span class="fw-semibold" id="totalCourses">0</span>
+            <span class="ms-1 small">Courses</span>
           </div>
           <div class="d-flex align-items-center bg-primary text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
             <i class="bi bi-people-fill me-1"></i>
@@ -854,38 +854,38 @@
         </div>
       </div>
       <div class="tab-content">
-        <div class="tab-pane fade show active" id="pane-subjects" role="tabpanel" aria-labelledby="tab-subjects">
-          <h2>Subjects</h2>
+        <div class="tab-pane fade show active" id="pane-courses" role="tabpanel" aria-labelledby="tab-courses">
+          <h2>Courses</h2>
           
-          <!-- Subject Program Tabs -->
-          <ul class="nav nav-tabs mb-3" id="subjectProgramTabs" role="tablist">
+          <!-- Course Program Tabs -->
+          <ul class="nav nav-tabs mb-3" id="courseProgramTabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="cs-subjects-tab" data-bs-toggle="tab" data-bs-target="#cs-subjects-pane" type="button" role="tab" aria-controls="cs-subjects-pane" aria-selected="true">
-                <i class="bi bi-laptop"></i> CS Subjects
+              <button class="nav-link active" id="cs-courses-tab" data-bs-toggle="tab" data-bs-target="#cs-courses-pane" type="button" role="tab" aria-controls="cs-courses-pane" aria-selected="true">
+                <i class="bi bi-laptop"></i> CS Courses
               </button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="it-subjects-tab" data-bs-toggle="tab" data-bs-target="#it-subjects-pane" type="button" role="tab" aria-controls="it-subjects-pane" aria-selected="false">
-                <i class="bi bi-gear"></i> IT Subjects
+              <button class="nav-link" id="it-courses-tab" data-bs-toggle="tab" data-bs-target="#it-courses-pane" type="button" role="tab" aria-controls="it-courses-pane" aria-selected="false">
+                <i class="bi bi-gear"></i> IT Courses
               </button>
             </li>
           </ul>
           
           <!-- Tab Content -->
-          <div class="tab-content" id="subjectProgramTabsContent">
-            <!-- CS Subjects Tab -->
-            <div class="tab-pane fade show active" id="cs-subjects-pane" role="tabpanel" aria-labelledby="cs-subjects-tab">
+          <div class="tab-content" id="courseProgramTabsContent">
+            <!-- CS Courses Tab -->
+            <div class="tab-pane fade show active" id="cs-courses-pane" role="tabpanel" aria-labelledby="cs-courses-tab">
               <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                <input id="csSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search CS subjects (code, name)…" />
-                <button id="csSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                <input id="csCoursesSearch" class="form-control form-control-sm me-2" placeholder="Search CS courses (code, name)…" />
+                <button id="csCoursesRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
                 <div class="ms-auto d-flex align-items-center gap-2">
-                  <button id="csSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
-                  <button id="csSubjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
-                  <button id="csSubjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                  <button id="csCoursesAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
+                  <button id="csCoursesEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
+                  <button id="csCoursesDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
                 </div>
               </div>
-              <div id="csSubjectsData" class="table-responsive mb-4"></div>
-              <form id="uploadSubjectsForm" enctype="multipart/form-data" class="mb-4">
+              <div id="csCoursesData" class="table-responsive mb-4"></div>
+              <form id="uploadCoursesForm" enctype="multipart/form-data" class="mb-4">
                 <div class="input-group">
                   <input type="file" class="form-control" id="csCurriculumFile" accept=".csv">
                   <button class="btn btn-outline-secondary" type="submit">Upload CS Curriculum CSV</button>
@@ -893,19 +893,19 @@
               </form>
             </div>
             
-            <!-- IT Subjects Tab -->
-            <div class="tab-pane fade" id="it-subjects-pane" role="tabpanel" aria-labelledby="it-subjects-tab">
+            <!-- IT Courses Tab -->
+            <div class="tab-pane fade" id="it-courses-pane" role="tabpanel" aria-labelledby="it-courses-tab">
               <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                <input id="itSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search IT subjects (code, name)…" />
-                <button id="itSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+                <input id="itCoursesSearch" class="form-control form-control-sm me-2" placeholder="Search IT courses (code, name)…" />
+                <button id="itCoursesRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
                 <div class="ms-auto d-flex align-items-center gap-2">
-                  <button id="itSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
-                  <button id="itSubjectsEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
-                  <button id="itSubjectsDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
+                  <button id="itCoursesAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
+                  <button id="itCoursesEdit" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</button>
+                  <button id="itCoursesDelete" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i> Delete</button>
                 </div>
               </div>
-              <div id="itSubjectsData" class="table-responsive mb-4"></div>
-              <form id="uploadITSubjectsForm" enctype="multipart/form-data" class="mb-4">
+              <div id="itCoursesData" class="table-responsive mb-4"></div>
+              <form id="uploadITCoursesForm" enctype="multipart/form-data" class="mb-4">
                 <div class="input-group">
                   <input type="file" class="form-control" id="itCurriculumFile" accept=".csv">
                   <button class="btn btn-outline-info" type="submit">Upload IT Curriculum CSV</button>

@@ -7,7 +7,7 @@ const dataManagementSection = document.getElementById('data-management-section')
 const scheduleNavLink = document.getElementById('scheduleNavLink');
 const dataNavLink = document.getElementById('dataNavLink');
 
-const uploadSubjectsForm = document.getElementById('uploadSubjectsForm');
+const uploadCoursesForm = document.getElementById('uploadCoursesForm');
 const uploadTeachersForm = document.getElementById('uploadTeachersForm');
 const uploadRoomsForm = document.getElementById('uploadRoomsForm');
 const uploadSectionsForm = document.getElementById('uploadSectionsForm');
@@ -29,9 +29,9 @@ let currentRoomFilter = 'all';
 let availableRooms = [];
 
 // Cached data for tabs so searches/filtering work reliably
-let subjectsCache = []; // Legacy - kept for compatibility
-let csSubjectsCache = [];
-let itSubjectsCache = [];
+let coursesCache = []; // Legacy - kept for compatibility
+let csCoursesCache = [];
+let itCoursesCache = [];
 let teachersCache = [];
 let roomsCache = [];
 
@@ -284,19 +284,19 @@ dataNavLink.addEventListener('click', (e) => {
 });
 
 // Handle CSV file uploads (each reloads only its active table)
-if (uploadSubjectsForm) uploadSubjectsForm.addEventListener('submit', async (e) => {
+if (uploadCoursesForm) uploadCoursesForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('csCurriculumFile');
   await uploadFile(fileInput.files[0], 'cs_curriculum');
-  await loadCSSubjectsTable(); // Reload CS subjects after upload
+  await loadCSCoursesTable(); // Reload CS courses after upload
 });
 
-const uploadITSubjectsForm = document.getElementById('uploadITSubjectsForm');
-if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async (e) => {
+const uploadITCoursesForm = document.getElementById('uploadITCoursesForm');
+if (uploadITCoursesForm) uploadITCoursesForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fileInput = document.getElementById('itCurriculumFile');
   await uploadFile(fileInput.files[0], 'it_curriculum');
-  await loadITSubjectsTable(); // Reload IT subjects after upload
+  await loadITCoursesTable(); // Reload IT courses after upload
 });
 
 // Handle program selection to show/hide section controls
@@ -395,8 +395,8 @@ const timeSlotLabels = [
   "17:00-17:30", "17:30-18:00"
 ];
 
-// Timetable subject color mapping helpers
-const SUBJECT_COLOR_PALETTE = [
+// Timetable course color mapping helpers
+const COURSE_COLOR_PALETTE = [
   '#AEC6CF', /* pastel blue */
   '#FFB3BA', /* pastel pink */
   '#FFDFBA', /* pastel peach */
@@ -417,7 +417,7 @@ const SUBJECT_COLOR_PALETTE = [
   '#BFD1FF'  /* soft blue */
 ];
 
-// Special colors for laboratory subjects - more vibrant and prominent
+// Special colors for laboratory courses - more vibrant and prominent
 const LAB_COLOR_PALETTE = [
   '#FF6B6B', /* vibrant red */
   '#4ECDC4', /* teal */
@@ -436,7 +436,7 @@ const LAB_COLOR_PALETTE = [
   '#D7BDE2'  /* light purple */
 ];
 
-const subjectColorCache = {};
+const courseColorCache = {};
 function hashStringToInt(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -445,16 +445,16 @@ function hashStringToInt(str) {
   }
   return Math.abs(hash);
 }
-function getSubjectColor(subjectCode, subjectType = null) {
-  const key = String(subjectCode || '');
-  const cacheKey = `${key}_${subjectType || 'default'}`;
-  if (subjectColorCache[cacheKey]) return subjectColorCache[cacheKey];
-  
-  // Use lab colors for laboratory subjects, regular colors for others
-  const palette = (subjectType === 'lab') ? LAB_COLOR_PALETTE : SUBJECT_COLOR_PALETTE;
+function getCourseColor(courseCode, courseType = null) {
+  const key = String(courseCode || '');
+  const cacheKey = `${key}_${courseType || 'default'}`;
+  if (courseColorCache[cacheKey]) return courseColorCache[cacheKey];
+
+  // Use lab colors for laboratory courses, regular colors for others
+  const palette = (courseType === 'lab') ? LAB_COLOR_PALETTE : COURSE_COLOR_PALETTE;
   const idx = hashStringToInt(key) % palette.length;
   const color = palette[idx];
-  subjectColorCache[cacheKey] = color;
+  courseColorCache[cacheKey] = color;
   return color;
 }
 function getTextColorForBackground(hex) {
@@ -553,29 +553,29 @@ document.getElementById('generateBtn').onclick = async function() {
 
   // Pre-validate against curriculum: zero-out years that have no subjects in selected semester
   try {
-    // Load subjects from all selected programs
-    const allSubjects = [];
+    // Load courses from all selected programs
+    const allCourses = [];
     for (const program of selectedPrograms) {
       const curriculumEndpoint = program.toUpperCase() === 'IT' ? '/data/it_curriculum' : '/data/cs_curriculum';
-      const subjectsResponse = await fetch(curriculumEndpoint, {
+      const coursesResponse = await fetch(curriculumEndpoint, {
         headers: getAuthHeaders()
       });
     
-      if (!subjectsResponse.ok) {
-        console.error(`Failed to load subjects for ${program}:`, subjectsResponse.status);
-        throw new Error(`Failed to load subjects for ${program}: ${subjectsResponse.status}`);
+      if (!coursesResponse.ok) {
+        console.error(`Failed to load courses for ${program}:`, coursesResponse.status);
+        throw new Error(`Failed to load courses for ${program}: ${coursesResponse.status}`);
       }
       
-      const subjectsData = await subjectsResponse.json();
+      const coursesData = await coursesResponse.json();
       
-      if (!Array.isArray(subjectsData)) {
-        throw new Error(`Subjects data for ${program} is not an array`);
+      if (!Array.isArray(coursesData)) {
+        throw new Error(`Courses data for ${program} is not an array`);
       }
       
-      allSubjects.push(...subjectsData);
+      allCourses.push(...coursesData);
     }
     
-    const yearsList = allSubjects
+    const yearsList = allCourses
       .filter(s => String(s.semester) === String(selectedSemester))
       .map(s => parseInt(s.year_level))
       .filter(n => !isNaN(n));
@@ -593,13 +593,13 @@ document.getElementById('generateBtn').onclick = async function() {
     });
 
     if (changedYears.length === 4) {
-      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No subjects exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
+      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No courses exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
       if (downloadBtn) downloadBtn.disabled = true;
       return;
     }
 
     if (changedYears.length > 0) {
-      const msg = `Adjusted sections for Year(s) ${changedYears.join(', ')} because no subjects exist for Semester ${selectedSemester}.`;
+      const msg = `Adjusted sections for Year(s) ${changedYears.join(', ')} because no courses exist for Semester ${selectedSemester}.`;
       document.getElementById('result').innerHTML = `<div class="alert alert-warning">${msg}</div>`;
     }
   } catch (err) {
@@ -1161,60 +1161,60 @@ if (teacherFilter) {
 
 
 // Lazy-load per-tab data loaders
-async function loadSubjectsTable() {
-  // Check if the subject elements exist before loading
-  const csElement = document.getElementById('csSubjectsData');
-  const itElement = document.getElementById('itSubjectsData');
+async function loadCoursesTable() {
+  // Check if the course elements exist before loading
+  const csElement = document.getElementById('csCoursesData');
+  const itElement = document.getElementById('itCoursesData');
   
   if (csElement) {
-    await loadCSSubjectsTable();
+    await loadCSCoursesTable();
   }
   if (itElement) {
-    await loadITSubjectsTable();
+    await loadITCoursesTable();
   }
 }
 
-async function loadCSSubjectsTable() {
+async function loadCSCoursesTable() {
   try {
-    const subjectsResponse = await fetch('/data/cs_curriculum', {
+    const coursesResponse = await fetch('/data/cs_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!subjectsResponse.ok) throw new Error('Failed to load CS subjects');
-    csSubjectsCache = await subjectsResponse.json();
-    renderTable(csSubjectsCache, 'csSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    if (!coursesResponse.ok) throw new Error('Failed to load CS courses');
+    csCoursesCache = await coursesResponse.json();
+    renderTable(csCoursesCache, 'csCoursesData', ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load CS subjects:', e);
-    const element = document.getElementById('csSubjectsData');
+    console.warn('Could not load CS courses:', e);
+    const element = document.getElementById('csCoursesData');
     if (element) {
       element.innerHTML = '<p>No CS data available.</p>';
     }
   }
   // Attach client-side search handler
-  const sInput = document.getElementById('csSubjectsSearch');
+  const sInput = document.getElementById('csCoursesSearch');
   if (sInput) {
-    sInput.oninput = () => filterTable('csSubjectsData', csSubjectsCache, ['subject_code', 'subject_name']);
+    sInput.oninput = () => filterTable('csCoursesData', csCoursesCache, ['course_code', 'course_name']);
   }
 }
 
-async function loadITSubjectsTable() {
+async function loadITCoursesTable() {
   try {
-    const subjectsResponse = await fetch('/data/it_curriculum', {
+    const coursesResponse = await fetch('/data/it_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!subjectsResponse.ok) throw new Error('Failed to load IT subjects');
-    itSubjectsCache = await subjectsResponse.json();
-    renderTable(itSubjectsCache, 'itSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
+    if (!coursesResponse.ok) throw new Error('Failed to load IT courses');
+    itCoursesCache = await coursesResponse.json();
+    renderTable(itCoursesCache, 'itCoursesData', ['course_code', 'course_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load IT subjects:', e);
-    const element = document.getElementById('itSubjectsData');
+    console.warn('Could not load IT courses:', e);
+    const element = document.getElementById('itCoursesData');
     if (element) {
       element.innerHTML = '<p>No IT data available.</p>';
     }
   }
   // Attach client-side search handler
-  const sInput = document.getElementById('itSubjectsSearch');
+  const sInput = document.getElementById('itCoursesSearch');
   if (sInput) {
-    sInput.oninput = () => filterTable('itSubjectsData', itSubjectsCache, ['subject_code', 'subject_name']);
+    sInput.oninput = () => filterTable('itCoursesData', itCoursesCache, ['course_code', 'course_name']);
   }
 }
 
