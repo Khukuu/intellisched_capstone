@@ -288,7 +288,7 @@ if (uploadSubjectsForm) uploadSubjectsForm.addEventListener('submit', async (e) 
   e.preventDefault();
   const fileInput = document.getElementById('csCurriculumFile');
   await uploadFile(fileInput.files[0], 'cs_curriculum');
-  await loadCSSubjectsTable(); // Reload CS subjects after upload
+  await loadCSSubjectsTable(); // Reload CS courses after upload
 });
 
 const uploadITSubjectsForm = document.getElementById('uploadITSubjectsForm');
@@ -296,7 +296,7 @@ if (uploadITSubjectsForm) uploadITSubjectsForm.addEventListener('submit', async 
   e.preventDefault();
   const fileInput = document.getElementById('itCurriculumFile');
   await uploadFile(fileInput.files[0], 'it_curriculum');
-  await loadITSubjectsTable(); // Reload IT subjects after upload
+  await loadITSubjectsTable(); // Reload IT courses after upload
 });
 
 // Handle program selection to show/hide section controls
@@ -593,7 +593,7 @@ document.getElementById('generateBtn').onclick = async function() {
     });
 
     if (changedYears.length === 4) {
-      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No subjects exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
+      document.getElementById('result').innerHTML = '<div class="alert alert-warning">No courses exist for the selected semester across all year levels. Please change the semester or upload curriculum data.</div>';
       if (downloadBtn) downloadBtn.disabled = true;
       return;
     }
@@ -1179,11 +1179,11 @@ async function loadCSSubjectsTable() {
     const subjectsResponse = await fetch('/data/cs_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!subjectsResponse.ok) throw new Error('Failed to load CS subjects');
+    if (!subjectsResponse.ok) throw new Error('Failed to load CS courses');
     csSubjectsCache = await subjectsResponse.json();
     renderTable(csSubjectsCache, 'csSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load CS subjects:', e);
+    console.warn('Could not load CS courses:', e);
     const element = document.getElementById('csSubjectsData');
     if (element) {
       element.innerHTML = '<p>No CS data available.</p>';
@@ -1201,11 +1201,11 @@ async function loadITSubjectsTable() {
     const subjectsResponse = await fetch('/data/it_curriculum', {
       headers: getAuthHeaders()
     });
-    if (!subjectsResponse.ok) throw new Error('Failed to load IT subjects');
+    if (!subjectsResponse.ok) throw new Error('Failed to load IT courses');
     itSubjectsCache = await subjectsResponse.json();
     renderTable(itSubjectsCache, 'itSubjectsData', ['subject_code', 'subject_name', 'lecture_hours_per_week', 'lab_hours_per_week', 'units', 'semester', 'program_specialization', 'year_level']);
   } catch (e) {
-    console.warn('Could not load IT subjects:', e);
+    console.warn('Could not load IT courses:', e);
     const element = document.getElementById('itSubjectsData');
     if (element) {
       element.innerHTML = '<p>No IT data available.</p>';
@@ -1628,7 +1628,7 @@ function setupCrudButtons() {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('csSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    if (!confirm(`Delete ${selected.length} CS subject(s)?`)) return;
+    if (!confirm(`Delete ${selected.length} CS course(s)?`)) return;
     for (const item of selected) {
       await fetch(`/api/subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
@@ -1661,7 +1661,7 @@ function setupCrudButtons() {
     const fields = ['subject_code','subject_name','lecture_hours_per_week','lab_hours_per_week','units','semester','program_specialization','year_level'];
     const selected = getSelectedRowData('itSubjectsData', fields);
     if (!selected || selected.length === 0) return alert('Select at least one row.');
-    if (!confirm(`Delete ${selected.length} IT subject(s)?`)) return;
+    if (!confirm(`Delete ${selected.length} IT course(s)?`)) return;
     for (const item of selected) {
       await fetch(`/api/it-subjects/${encodeURIComponent(item.subject_code)}`, { method: 'DELETE', headers: getAuthHeaders() });
     }
@@ -2110,7 +2110,7 @@ function calculateScheduleAnalytics(scheduleData) {
     room_utilization: {},
     teacher_workload: {},
     time_distribution: {},
-    subject_distribution: {}
+    course_distribution: {}
   };
 
   // Room utilization
@@ -2140,13 +2140,13 @@ function calculateScheduleAnalytics(scheduleData) {
     analytics.time_distribution[day] += parseInt(item.duration_slots) || 1;
   });
 
-  // Subject distribution
+  // Course distribution
   scheduleData.forEach(item => {
     const course = item.subject_name || 'Unknown';
-    if (!analytics.subject_distribution[course]) {
-      analytics.subject_distribution[course] = 0;
+    if (!analytics.course_distribution[course]) {
+      analytics.course_distribution[course] = 0;
     }
-    analytics.subject_distribution[course] += parseInt(item.duration_slots) || 1;
+    analytics.course_distribution[course] += parseInt(item.duration_slots) || 1;
   });
 
   return analytics;
