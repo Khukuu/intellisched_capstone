@@ -280,6 +280,23 @@ setTimeout(() => {
   if (badge) {
     badge.textContent = '1';
     badge.classList.add('show');
+    // Force visibility with inline styles
+    badge.style.display = 'flex';
+    badge.style.visibility = 'visible';
+    badge.style.opacity = '1';
+    badge.style.zIndex = '99999';
+    badge.style.position = 'absolute';
+    badge.style.top = '-8px';
+    badge.style.right = '-8px';
+    badge.style.backgroundColor = '#dc3545';
+    badge.style.color = 'white';
+    badge.style.borderRadius = '50%';
+    badge.style.minWidth = '18px';
+    badge.style.height = '18px';
+    badge.style.fontSize = '0.7rem';
+    badge.style.fontWeight = 'bold';
+    badge.style.textAlign = 'center';
+    badge.style.lineHeight = '18px';
     console.log('Badge test: showing badge with count 1');
   } else {
     console.log('Badge test: badge element not found');
@@ -292,6 +309,23 @@ window.testNotificationBadge = function(count = 1) {
   if (badge) {
     badge.textContent = count;
     badge.classList.add('show');
+    // Force visibility with inline styles
+    badge.style.display = 'flex';
+    badge.style.visibility = 'visible';
+    badge.style.opacity = '1';
+    badge.style.zIndex = '99999';
+    badge.style.position = 'absolute';
+    badge.style.top = '-8px';
+    badge.style.right = '-8px';
+    badge.style.backgroundColor = '#dc3545';
+    badge.style.color = 'white';
+    badge.style.borderRadius = '50%';
+    badge.style.minWidth = '18px';
+    badge.style.height = '18px';
+    badge.style.fontSize = '0.7rem';
+    badge.style.fontWeight = 'bold';
+    badge.style.textAlign = 'center';
+    badge.style.lineHeight = '18px';
     console.log(`Badge test: showing badge with count ${count}`);
   } else {
     console.log('Badge test: badge element not found');
@@ -303,7 +337,30 @@ window.hideNotificationBadge = function() {
   const badge = document.getElementById('notificationBadge');
   if (badge) {
     badge.classList.remove('show');
+    badge.style.display = 'none';
     console.log('Badge test: badge hidden');
+  }
+};
+
+// Function to check badge status
+window.checkBadgeStatus = function() {
+  const badge = document.getElementById('notificationBadge');
+  if (badge) {
+    console.log('Badge element found:', {
+      textContent: badge.textContent,
+      display: badge.style.display,
+      visibility: badge.style.visibility,
+      opacity: badge.style.opacity,
+      zIndex: badge.style.zIndex,
+      position: badge.style.position,
+      top: badge.style.top,
+      right: badge.style.right,
+      backgroundColor: badge.style.backgroundColor,
+      classList: Array.from(badge.classList),
+      computedStyle: window.getComputedStyle(badge)
+    });
+  } else {
+    console.log('Badge element not found');
   }
 };
 
@@ -2042,14 +2099,36 @@ function getNotificationIcon(type) {
 
 function getTimeAgo(dateString) {
   const now = new Date();
-  const date = new Date(dateString);
+  let date;
+  
+  // Handle different date formats
+  if (typeof dateString === 'string') {
+    // If it's already a proper ISO string, use it directly
+    if (dateString.includes('T') && dateString.includes('Z')) {
+      date = new Date(dateString);
+    } else {
+      // If it's a database timestamp, try to parse it
+      date = new Date(dateString);
+    }
+  } else {
+    date = new Date(dateString);
+  }
+  
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    console.log('Invalid date:', dateString);
+    return 'Just now';
+  }
+  
   const diffInSeconds = Math.floor((now - date) / 1000);
   
   console.log('Timestamp debug:', {
     dateString: dateString,
     now: now.toISOString(),
     date: date.toISOString(),
-    diffInSeconds: diffInSeconds
+    diffInSeconds: diffInSeconds,
+    diffInMinutes: Math.floor(diffInSeconds / 60),
+    diffInHours: Math.floor(diffInSeconds / 3600)
   });
   
   if (diffInSeconds < 60) return 'Just now';
