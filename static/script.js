@@ -273,6 +273,67 @@ showSection('schedule-section');
 // Load notifications on page load
 loadNotifications();
 
+// Test notification badge (temporary - remove after testing)
+setTimeout(() => {
+  console.log('Testing notification badge...');
+  const badge = document.getElementById('notificationBadge');
+  if (badge) {
+    badge.textContent = '1';
+    badge.style.display = 'inline-block';
+    console.log('Badge test: showing badge with count 1');
+  } else {
+    console.log('Badge test: badge element not found');
+  }
+}, 2000);
+
+// Function to manually test notification badge
+window.testNotificationBadge = function(count = 1) {
+  const badge = document.getElementById('notificationBadge');
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = 'inline-block';
+    console.log(`Badge test: showing badge with count ${count}`);
+  } else {
+    console.log('Badge test: badge element not found');
+  }
+};
+
+// Function to hide notification badge
+window.hideNotificationBadge = function() {
+  const badge = document.getElementById('notificationBadge');
+  if (badge) {
+    badge.style.display = 'none';
+    console.log('Badge test: badge hidden');
+  }
+};
+
+// Function to create a test notification
+window.createTestNotification = async function() {
+  try {
+    const response = await fetch('/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      },
+      body: JSON.stringify({
+        title: 'Test Notification',
+        message: 'This is a test notification to check the badge functionality.',
+        type: 'info'
+      })
+    });
+    
+    if (response.ok) {
+      console.log('Test notification created successfully');
+      await loadNotifications(); // Reload notifications
+    } else {
+      console.log('Failed to create test notification:', response.status);
+    }
+  } catch (error) {
+    console.error('Error creating test notification:', error);
+  }
+};
+
 scheduleNavLink.addEventListener('click', (e) => {
   e.preventDefault();
   showSection('schedule-section');
@@ -1858,14 +1919,19 @@ function openBulkEditModal(kind, fields, selectedRows) {
 // Notification functions
 async function loadNotifications() {
   try {
+    console.log('Loading notifications...');
     const response = await fetch('/api/notifications', {
       headers: getAuthHeaders()
     });
+    console.log('Notifications response:', response.status);
     
     if (response.ok) {
       const notifications = await response.json();
+      console.log('Notifications loaded:', notifications);
       displayNotifications(notifications);
       updateNotificationBadge(notifications);
+    } else {
+      console.log('Failed to load notifications:', response.status);
     }
   } catch (error) {
     console.error('Error loading notifications:', error);
@@ -1988,15 +2054,21 @@ function getTimeAgo(dateString) {
 
 function updateNotificationBadge(notifications) {
   const badge = document.getElementById('notificationBadge');
-  if (!badge) return;
+  if (!badge) {
+    console.log('Notification badge element not found');
+    return;
+  }
   
   const unreadCount = notifications.filter(n => !n.is_read).length;
+  console.log('Unread notifications count:', unreadCount);
   
   if (unreadCount > 0) {
     badge.textContent = unreadCount;
     badge.style.display = 'inline-block';
+    console.log('Badge shown with count:', unreadCount);
   } else {
     badge.style.display = 'none';
+    console.log('Badge hidden - no unread notifications');
   }
 }
 
