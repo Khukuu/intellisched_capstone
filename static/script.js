@@ -918,13 +918,13 @@ function renderScheduleAndTimetable(data, analytics = null) {
   const filtered = applyFilters(Array.isArray(data) ? data : []);
 
   // Schedule Table (side-by-side column)
-  let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Subject</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
+  let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Course</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
   for (const row of filtered) {
-    const subj = row.subject_name || row.subject_code || '';
+    const course = row.subject_name || row.subject_code || '';
     const timeRange = computeEventTimeRange(row);
     html += `<tr>
       <td>${row.section_id}</td>
-      <td>${subj}</td>
+      <td>${course}</td>
       <td>${row.type}</td>
       <td>${row.teacher_name}</td>
       <td>${getRoomName(row.room_id)}</td>
@@ -1006,7 +1006,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
             // Single event - apply background directly to td like dean interface
             const event = uniqueEvents[0];
             const eventDuration = parseInt(event.duration_slots, 10) || 1;
-            const subj = event.subject_name || event.subject_code || '';
+            const course = event.subject_name || event.subject_code || '';
             const range = computeEventTimeRange(event);
             const bg = getSubjectColor(event.subject_code, event.type);
             const fg = getTextColorForBackground(bg);
@@ -1033,13 +1033,13 @@ function renderScheduleAndTimetable(data, analytics = null) {
             tthtml += `<td rowspan="${maxDuration}" style="vertical-align: top; padding: 1px;">`;
             
             uniqueEvents.forEach((event, index) => {
-              const subj = event.subject_name || event.subject_code || '';
+              const course = event.subject_name || event.subject_code || '';
               const range = computeEventTimeRange(event);
               const eventBg = getSubjectColor(event.subject_code, event.type);
               const eventFg = getTextColorForBackground(eventBg);
               
               tthtml += `<div style="background:${eventBg}; color:${eventFg}; padding:3px 5px; border-radius:3px; margin:2px 0; font-size:9px; line-height:1.2; border-left: 3px solid ${eventBg};">
-                <b>${subj}</b><br>
+                <b>${course}</b><br>
                 <small style="opacity:.85;">(${range})</small><br>
                 <small>${event.section_id} • ${event.teacher_name}</small><br>
                 <small>${getRoomName(event.room_id)}</small>
@@ -1573,8 +1573,8 @@ function promptForData(fields, initial = {}) {
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
-    'subject_code': 'Subject Code',
-    'subject_name': 'Subject Name',
+    'subject_code': 'Course Code',
+    'subject_name': 'Course Name',
     'lecture_hours_per_week': 'Lecture Hours per Week',
     'lab_hours_per_week': 'Lab Hours per Week',
     'units': 'Units',
@@ -1746,8 +1746,8 @@ function openBulkEditModal(kind, fields, selectedRows) {
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
-    'subject_code': 'Subject Code',
-    'subject_name': 'Subject Name',
+    'subject_code': 'Course Code',
+    'subject_name': 'Course Name',
     'lecture_hours_per_week': 'Lecture Hours per Week',
     'lab_hours_per_week': 'Lab Hours per Week',
     'units': 'Units',
@@ -2142,11 +2142,11 @@ function calculateScheduleAnalytics(scheduleData) {
 
   // Subject distribution
   scheduleData.forEach(item => {
-    const subject = item.subject_name || 'Unknown';
-    if (!analytics.subject_distribution[subject]) {
-      analytics.subject_distribution[subject] = 0;
+    const course = item.subject_name || 'Unknown';
+    if (!analytics.subject_distribution[course]) {
+      analytics.subject_distribution[course] = 0;
     }
-    analytics.subject_distribution[subject] += parseInt(item.duration_slots) || 1;
+    analytics.subject_distribution[course] += parseInt(item.duration_slots) || 1;
   });
 
   return analytics;

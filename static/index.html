@@ -839,7 +839,7 @@
           <div class="d-flex align-items-center bg-danger text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
             <i class="bi bi-book-fill me-1"></i>
             <span class="fw-semibold" id="totalSubjects">0</span>
-            <span class="ms-1 small">Courses</span>
+              <span class="ms-1 small">Subjects</span>
           </div>
           <div class="d-flex align-items-center bg-primary text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
             <i class="bi bi-people-fill me-1"></i>
@@ -855,28 +855,28 @@
       </div>
       <div class="tab-content">
         <div class="tab-pane fade show active" id="pane-courses" role="tabpanel" aria-labelledby="tab-courses">
-          <h2>Subjects</h2>
+            <h2>Courses</h2>
           
           <!-- Subject Program Tabs -->
           <ul class="nav nav-tabs mb-3" id="subjectProgramTabs" role="tablist">
             <li class="nav-item" role="presentation">
               <button class="nav-link active" id="cs-subjects-tab" data-bs-toggle="tab" data-bs-target="#cs-subjects-pane" type="button" role="tab" aria-controls="cs-subjects-pane" aria-selected="true">
-                <i class="bi bi-laptop"></i> CS Subjects
+                <i class="bi bi-laptop"></i> CS Courses
               </button>
             </li>
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="it-subjects-tab" data-bs-toggle="tab" data-bs-target="#it-subjects-pane" type="button" role="tab" aria-controls="it-subjects-pane" aria-selected="false">
-                <i class="bi bi-gear"></i> IT Subjects
+                <i class="bi bi-gear"></i> IT Courses
               </button>
             </li>
           </ul>
           
           <!-- Tab Content -->
           <div class="tab-content" id="subjectProgramTabsContent">
-            <!-- CS Subjects Tab -->
+            <!-- CS Courses Tab -->
             <div class="tab-pane fade show active" id="cs-subjects-pane" role="tabpanel" aria-labelledby="cs-subjects-tab">
               <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                <input id="csSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search CS subjects (code, name)…" />
+                <input id="csSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search CS courses (code, name)…" />
                 <button id="csSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
                 <div class="ms-auto d-flex align-items-center gap-2">
                   <button id="csSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
@@ -893,10 +893,10 @@
               </form>
             </div>
             
-            <!-- IT Subjects Tab -->
+            <!-- IT Courses Tab -->
             <div class="tab-pane fade" id="it-subjects-pane" role="tabpanel" aria-labelledby="it-subjects-tab">
               <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-                <input id="itSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search IT subjects (code, name)…" />
+                <input id="itSubjectsSearch" class="form-control form-control-sm me-2" placeholder="Search IT courses (code, name)…" />
                 <button id="itSubjectsRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
                 <div class="ms-auto d-flex align-items-center gap-2">
                   <button id="itSubjectsAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
