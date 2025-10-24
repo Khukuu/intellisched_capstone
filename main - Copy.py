@@ -1,10 +1,10 @@
 from ortools.sat.python import cp_model
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
 
 model = cp_model.CpModel()
 
 # Load subjects from database
-subjects_data = load_subjects_from_db()
+subjects_data = load_courses_from_db()
 subjects = []
 for row in subjects_data:
     # Convert database format to expected format

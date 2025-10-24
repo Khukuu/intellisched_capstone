@@ -3,7 +3,7 @@
 Test script to verify PostgreSQL connection and data loading
 """
 
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
 
 def test_database():
     print("🧪 Testing PostgreSQL Database Connection")
@@ -12,7 +12,7 @@ def test_database():
     try:
         # Test subjects
         print("📚 Loading subjects...")
-        subjects = load_subjects_from_db()
+        subjects = load_courses_from_db()
         print(f"   Found {len(subjects)} subjects")
         if subjects:
             print(f"   Sample: {subjects[0]['subject_code']} - {subjects[0]['subject_name']}")

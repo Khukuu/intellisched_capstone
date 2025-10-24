@@ -1,5 +1,5 @@
 from ortools.sat.python import cp_model
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
 import gc
 import sys
 

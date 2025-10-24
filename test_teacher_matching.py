@@ -3,14 +3,14 @@
 Test teacher-subject matching logic
 """
 
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
 
 def test_teacher_matching():
     print("🧪 Testing Teacher-Subject Matching")
     print("=" * 40)
     
     # Load data
-    subjects = load_subjects_from_db()
+    subjects = load_courses_from_db()
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
     

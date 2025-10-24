@@ -7,7 +7,7 @@ import logging
 from scheduler import generate_schedule
 from database import (
     db,
-    load_subjects_from_db,
+    load_courses_from_db,
     load_teachers_from_db,
     load_rooms_from_db,
     load_sections_from_db,
@@ -531,7 +531,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         programs = [programs]  # Handle single program as string
     logger.info(f'Scheduling for programs: {programs}')
     
-    subjects = load_subjects_from_db(programs)
+    subjects = load_courses_from_db(programs)
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
 
@@ -722,7 +722,7 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
     programs = payload.get('programs', ['CS'])
     if isinstance(programs, str):
         programs = [programs]  # Handle single program as string
-    subjects = load_subjects_from_db(programs)
+    subjects = load_courses_from_db(programs)
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
     semester_filter = payload.get('semester')
@@ -1170,11 +1170,11 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
 async def get_data(filename: str, username: str = Depends(require_chair_role)):
     try:
         if filename in ['cs_curriculum', 'subjects']:
-            data = load_subjects_from_db(['CS'])
+            data = load_courses_from_db(['CS'])
         elif filename == 'it_curriculum':
-            data = load_subjects_from_db(['IT'])
+            data = load_courses_from_db(['IT'])
         elif filename == 'all_curriculum':
-            data = load_subjects_from_db(['CS', 'IT'])
+            data = load_courses_from_db(['CS', 'IT'])
         elif filename == 'teachers':
             data = load_teachers_from_db()
         elif filename == 'rooms':

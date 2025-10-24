@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse, FileResponse, Response, RedirectResp
 from fastapi.staticfiles import StaticFiles
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from scheduler import generate_schedule
-from database import db, load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db
+from database import db, load_courses_from_db, load_teachers_from_db, load_rooms_from_db, load_sections_from_db
 import os
 import io
 import json
@@ -1243,7 +1243,7 @@ async def secretary_dashboard():
 @app.post('/schedule')
 async def schedule(payload: dict, username: str = Depends(require_chair_role)):
     print('Received request for /schedule')
-    subjects = load_subjects_from_db()
+    subjects = load_courses_from_db()
     teachers = load_teachers_from_db()
     rooms = load_rooms_from_db()
 
@@ -1414,7 +1414,7 @@ async def download_schedule(id: str | None = None, semester: str | None = None, 
 async def get_data(filename: str, username: str = Depends(require_chair_role)):
     try:
         if filename in ['cs_curriculum', 'subjects']:
-            data = load_subjects_from_db()
+            data = load_courses_from_db()
         elif filename == 'teachers':
             data = load_teachers_from_db()
         elif filename == 'rooms':

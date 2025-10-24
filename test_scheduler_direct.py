@@ -3,7 +3,7 @@
 Direct test of the scheduler to identify issues
 """
 
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
 from scheduler import generate_schedule
 
 def test_scheduler_direct():
@@ -12,7 +12,7 @@ def test_scheduler_direct():
     
     try:
         # Load data
-        subjects = load_subjects_from_db()
+        subjects = load_courses_from_db()
         teachers = load_teachers_from_db()
         rooms = load_rooms_from_db()
         

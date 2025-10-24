@@ -3,7 +3,7 @@
 Test script for teacher availability days feature
 """
 
-from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db, update_teacher
+from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db, update_teacher
 from scheduler import generate_schedule
 
 def test_teacher_availability():
@@ -12,7 +12,7 @@ def test_teacher_availability():
     
     try:
         # Load data
-        subjects = load_subjects_from_db()
+        subjects = load_courses_from_db()
         teachers = load_teachers_from_db()
         rooms = load_rooms_from_db()
         

@@ -9,7 +9,7 @@ def test_basic_imports():
     
     try:
         print("1. Testing database imports...")
-        from database import load_subjects_from_db, load_teachers_from_db, load_rooms_from_db
+        from database import load_courses_from_db, load_teachers_from_db, load_rooms_from_db
         print("   ✅ Database imports successful")
         
         print("2. Testing OR-Tools import...")
@@ -17,7 +17,7 @@ def test_basic_imports():
         print("   ✅ OR-Tools import successful")
         
         print("3. Testing data loading...")
-        subjects = load_subjects_from_db()
+        subjects = load_courses_from_db()
         teachers = load_teachers_from_db()
         rooms = load_rooms_from_db()
         print(f"   ✅ Data loaded: {len(subjects)} subjects, {len(teachers)} teachers, {len(rooms)} rooms")
