@@ -2197,7 +2197,7 @@ function displayAnalytics(analytics, switchToTab = true) {
   if (analytics.room_utilization && Object.keys(analytics.room_utilization).length > 0) {
     html += `
       <div class="analytics-chart-container">
-        <div class="analytics-chart-title">🏢 Room Utilization</div>
+        <div class="analytics-chart-title"> Room Utilization</div>
         <div class="analytics-chart">
           <canvas id="roomUtilizationChart"></canvas>
         </div>
@@ -2209,7 +2209,7 @@ function displayAnalytics(analytics, switchToTab = true) {
   if (analytics.teacher_workload && Object.keys(analytics.teacher_workload).length > 0) {
     html += `
       <div class="analytics-chart-container">
-        <div class="analytics-chart-title">👨‍🏫 Teacher Contact Hours</div>
+        <div class="analytics-chart-title"> Teacher Contact Hours</div>
         <div class="analytics-chart">
           <canvas id="facultyWorkloadChart"></canvas>
         </div>
@@ -2221,7 +2221,7 @@ function displayAnalytics(analytics, switchToTab = true) {
   if (analytics.time_distribution && Object.keys(analytics.time_distribution).length > 0) {
     html += `
       <div class="analytics-chart-container">
-        <div class="analytics-chart-title">📅 Time Distribution by Day</div>
+        <div class="analytics-chart-title"> Time Distribution by Day</div>
         <div class="analytics-chart">
           <canvas id="weeklyOccupancyChart"></canvas>
         </div>
