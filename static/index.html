@@ -824,7 +824,7 @@
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="tab-teachers" data-tab="teachers" data-bs-toggle="tab" data-bs-target="#pane-teachers" type="button" role="tab" aria-controls="pane-teachers" aria-selected="false">
-            <i class="bi bi-people me-2"></i>Teachers
+            <i class="bi bi-people me-2"></i>Professors
           </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -844,7 +844,7 @@
           <div class="d-flex align-items-center bg-primary text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
             <i class="bi bi-people-fill me-1"></i>
             <span class="fw-semibold" id="totalTeachers">0</span>
-            <span class="ms-1 small">Teachers</span>
+            <span class="ms-1 small">Professors</span>
           </div>
           <div class="d-flex align-items-center bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.85rem;">
             <i class="bi bi-building me-1"></i>
@@ -915,9 +915,9 @@
           </div>
         </div>
         <div class="tab-pane fade" id="pane-teachers" role="tabpanel" aria-labelledby="tab-teachers">
-          <h2>Teachers</h2>
+          <h2>Professors</h2>
           <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-            <input id="teachersSearch" class="form-control form-control-sm me-2" placeholder="Search teachers (id, name, subjects)…" />
+            <input id="teachersSearch" class="form-control form-control-sm me-2" placeholder="Search professors (id, name, subjects)…" />
             <button id="teachersRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
             <div class="ms-auto d-flex align-items-center gap-2">
               <button id="teachersAdd" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add</button>
@@ -929,7 +929,7 @@
           <form id="uploadTeachersForm" enctype="multipart/form-data" class="mb-4">
             <div class="input-group">
               <input type="file" class="form-control" id="teachersFile" accept=".csv">
-              <button class="btn btn-outline-secondary" type="submit">Upload Teachers CSV</button>
+              <button class="btn btn-outline-secondary" type="submit">Upload Professors CSV</button>
             </div>
           </form>
         </div>
@@ -1030,7 +1030,7 @@
                 <i class="bi bi-person-badge me-1"></i>Teacher
               </label>
               <select id="teacherFilter" class="form-select" disabled>
-                <option value="all" selected>All Teachers</option>
+                <option value="all" selected>All Professors</option>
               </select>
             </div>
           </div>

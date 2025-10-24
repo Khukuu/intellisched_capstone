@@ -918,7 +918,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
   const filtered = applyFilters(Array.isArray(data) ? data : []);
 
   // Schedule Table (side-by-side column)
-  let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Course</th><th>Type</th><th>Teacher</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
+  let html = '<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Section ID</th><th>Course</th><th>Type</th><th>Professor</th><th>Room</th><th>Day</th><th>Time</th></tr></thead><tbody>';
   for (const row of filtered) {
     const course = row.subject_name || row.subject_code || '';
     const timeRange = computeEventTimeRange(row);
@@ -1136,7 +1136,7 @@ function populateTeacherFilter(scheduleData) {
   const teachers = [...new Set(scheduleData.map(item => item.teacher_name).filter(name => name))];
   
   // Clear existing options except "All Teachers"
-  teacherFilter.innerHTML = '<option value="all" selected>All Teachers</option>';
+  teacherFilter.innerHTML = '<option value="all" selected>All Professors</option>';
   
   // Add teacher options
   teachers.sort().forEach(teacher => {
@@ -1568,8 +1568,8 @@ function promptForData(fields, initial = {}) {
   
   // Field labels for better user experience
   const fieldLabels = {
-    'teacher_name': 'Teacher Name',
-    'can_teach': 'Subjects (comma-separated)',
+    'teacher_name': 'Professor Name',
+    'can_teach': 'Courses (comma-separated)',
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
@@ -1741,8 +1741,8 @@ function openBulkEditModal(kind, fields, selectedRows) {
 
   // Field labels for better user experience
   const fieldLabels = {
-    'teacher_name': 'Teacher Name',
-    'can_teach': 'Subjects (comma-separated)',
+    'teacher_name': 'Professor Name',
+    'can_teach': 'Courses (comma-separated)',
     'availability_days': 'Available Days (comma-separated: Mon,Tue,Wed,Thu,Fri,Sat)',
     'room_name': 'Room Name',
     'is_laboratory': 'Is Laboratory? (yes/no)',
@@ -2183,7 +2183,7 @@ function displayAnalytics(analytics, switchToTab = true) {
         </div>
         <div class="analytics-summary-card">
           <div class="analytics-summary-value">${analytics.summary.teachers_used || 0}</div>
-          <div class="analytics-summary-label">Teachers Used</div>
+          <div class="analytics-summary-label">Professors Used</div>
         </div>
         <div class="analytics-summary-card">
           <div class="analytics-summary-value">${analytics.summary.total_contact_hours || 0}</div>
