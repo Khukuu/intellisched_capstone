@@ -2345,7 +2345,7 @@ function displayAnalytics(analytics, switchToTab = true) {
   if (analytics.teacher_workload && Object.keys(analytics.teacher_workload).length > 0) {
     html += `
       <div class="analytics-chart-container">
-        <div class="analytics-chart-title"> Teacher Contact Hours</div>
+        <div class="analytics-chart-title"> Faculty Workload Distribution</div>
         <div class="analytics-chart">
           <canvas id="facultyWorkloadChart"></canvas>
         </div>
