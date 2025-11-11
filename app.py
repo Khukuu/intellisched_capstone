@@ -574,6 +574,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         if program not in program_sections:
             program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
+    allow_fallback = bool(payload.get('allowFallback', False))
     logger.info(f"Filtering for semester: {semester_filter}. Program sections: {program_sections}")
 
     try:
@@ -594,6 +595,7 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
 
     logger.info(f"Available years: {available_years}")
     logger.info(f"Program sections: {program_sections}")
+    logger.info(f"Allow fallback solver: {allow_fallback}")
     
     # Filter program sections to only include years with available curriculum
     # But don't reject if some years don't have curriculum - just warn and adjust
@@ -627,7 +629,15 @@ async def schedule(payload: dict, username: str = Depends(require_chair_role)):
         return JSONResponse(content=[])
 
     try:
-        result = generate_schedule(subjects, teachers, rooms, semester_filter, filtered_program_sections, programs)
+        result = generate_schedule(
+            subjects,
+            teachers,
+            rooms,
+            semester_filter,
+            filtered_program_sections,
+            programs,
+            allow_fallback=allow_fallback
+        )
     except Exception as e:
         logger.error(f"Error in schedule generation: {e}", exc_info=True)
         return JSONResponse(content={'error': f'Schedule generation failed: {str(e)}'}, status_code=500)
@@ -764,7 +774,16 @@ async def generate_and_submit_schedule(payload: dict, username: str = Depends(re
         if program not in program_sections:
             program_sections[program] = {1: 1, 2: 1, 3: 1, 4: 1}  # Default to 1 section per year
 
-    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(subjects, teachers, rooms, semester_filter, program_sections, programs)
+    allow_fallback = bool(payload.get('allowFallback', True))
+    result = client_schedule if isinstance(client_schedule, list) and len(client_schedule) > 0 else generate_schedule(
+        subjects,
+        teachers,
+        rooms,
+        semester_filter,
+        program_sections,
+        programs,
+        allow_fallback=allow_fallback
+    )
     name = (payload.get('name') or 'Generated Schedule')
     semester_int = int(semester_filter) if semester_filter else None
     uid = datetime.utcnow().strftime('%Y%m%d%H%M%S')

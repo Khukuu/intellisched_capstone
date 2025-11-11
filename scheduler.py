@@ -3,8 +3,9 @@ from database import load_subjects_from_db, load_teachers_from_db, load_rooms_fr
 import gc
 import sys
 
-def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, program_sections, programs=['CS']):
+def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter, program_sections, programs=['CS'], allow_fallback=True):
     logs = []
+    missing_teacher_assignments = []
     print('Scheduler: Initializing model...')
     model = cp_model.CpModel()
 
@@ -223,6 +224,11 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             # Skip unschedulable subjects
             if not valid_teachers_for_subj:
                 print(f"Warning: Skipping {subject_code} for {cohort_section_id} due to no qualified teachers.")
+                missing_teacher_assignments.append({
+                    'program': cohort_section.get('program'),
+                    'section_id': cohort_section_id,
+                    'subject_code': subject_code
+                })
                 continue
             # For room feasibility, ensure at least one relevant room exists for any component that will be added
             if is_lab_subject:
@@ -787,11 +793,35 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         validate_schedule(result, logs)
         # Memory cleanup
         gc.collect()
-        return { 'schedule': result, 'logs': logs }
+        return {
+            'schedule': result,
+            'logs': logs,
+            'solver': 'primary',
+            'needs_fallback': False,
+            'metadata': {
+                'missing_teachers': missing_teacher_assignments
+            }
+        }
 
     # Fallback: retry without any overlap constraints to always produce a schedule
     print('Scheduler: No feasible solution found. Retrying without overlap constraints...')
     logs.append('Scheduler: No feasible solution found. Retrying without overlap constraints...')
+
+    if not allow_fallback:
+        logs.append('Scheduler: Fallback solver available but not executed (allow_fallback=False).')
+        gc.collect()
+        return {
+            'schedule': [],
+            'logs': logs,
+            'solver': 'primary_unresolved',
+            'needs_fallback': True,
+            'message': 'Primary solver could not find a feasible schedule with the current constraints.',
+            'fallback_hint': 'Fallback solver relaxes certain room overlap constraints and may require manual review of the generated schedule.',
+            'metadata': {
+                'missing_teachers': missing_teacher_assignments
+            }
+        }
+
     model2 = cp_model.CpModel()
     fb_assigned_starts = []
     fb_assigned_days = []
@@ -875,14 +905,30 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
         validate_schedule(result, logs)
         # Memory cleanup
         gc.collect()
-        return { 'schedule': result, 'logs': logs }
+        return {
+            'schedule': result,
+            'logs': logs,
+            'solver': 'fallback',
+            'needs_fallback': False,
+            'metadata': {
+                'missing_teachers': missing_teacher_assignments
+            }
+        }
 
     print('Scheduler: No feasible solution found even after fallback.')
     logs.append('Scheduler: No feasible solution found even after fallback.')
     
     # Memory cleanup
     gc.collect()
-    return { 'schedule': [], 'logs': logs }
+    return {
+        'schedule': [],
+        'logs': logs,
+        'solver': 'fallback_failed',
+        'needs_fallback': False,
+        'metadata': {
+            'missing_teachers': missing_teacher_assignments
+        }
+    }
 
 def validate_schedule(schedule, logs):
     """Validate the generated schedule for conflicts"""

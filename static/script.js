@@ -27,6 +27,8 @@ let lastAnalytics = null;
 let lastSavedId = '';
 let currentRoomFilter = 'all';
 let availableRooms = [];
+let pendingFallbackPayload = null;
+let lastFallbackLogs = [];
 
 // Cached data for tabs so searches/filtering work reliably
 let subjectsCache = []; // Legacy - kept for compatibility
@@ -107,6 +109,112 @@ function getIconForType(type) {
     'info': 'info-circle'
   };
   return icons[type] || 'info-circle';
+}
+
+function escapeHtml(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function getEventKey(event) {
+  return [
+    event.section_id || '',
+    event.subject_code || '',
+    event.type || '',
+    event.day || '',
+    event.start_time_slot || ''
+  ].join('|');
+}
+
+function showPrimarySolverFailureMessage(message, type = 'warning') {
+  const iconMap = {
+    'warning': 'bi-exclamation-octagon',
+    'danger': 'bi-x-octagon',
+    'info': 'bi-info-circle'
+  };
+  const titleMap = {
+    'warning': 'Action required',
+    'danger': 'Generation failed',
+    'info': 'Status update'
+  };
+  const iconClassMap = {
+    'warning': 'status-icon-warning',
+    'danger': 'status-icon-danger',
+    'info': 'status-icon-info'
+  };
+
+  const safeType = iconMap[type] ? type : 'warning';
+  const statusHtml = `
+    <div class="schedule-status-card card-mac-style text-center">
+      <div class="status-icon ${iconClassMap[safeType]}">
+        <i class="bi ${iconMap[safeType]}"></i>
+      </div>
+      <h5 class="fw-semibold mb-2">${titleMap[safeType]}</h5>
+      <p class="text-muted small mb-0">${escapeHtml(message)}</p>
+    </div>
+  `;
+  const resultDiv = document.getElementById('result');
+  const timetableDiv = document.getElementById('timetable');
+  const hybridResultDiv = document.getElementById('hybridResult');
+  const hybridTimetableDiv = document.getElementById('hybridTimetable');
+
+  if (resultDiv) resultDiv.innerHTML = statusHtml;
+  if (hybridResultDiv) hybridResultDiv.innerHTML = statusHtml;
+  if (timetableDiv) timetableDiv.innerHTML = '';
+  if (hybridTimetableDiv) hybridTimetableDiv.innerHTML = '';
+
+  if (downloadBtn) downloadBtn.disabled = true;
+  lastGeneratedSchedule = [];
+  lastAnalytics = null;
+  lastSavedId = '';
+  hideAnalytics();
+
+  // Show a toast with details, including courses missing setup if provided in message
+  if (message && message.includes('Missing teachers')) {
+    showNotification('Some subjects have no qualified teacher configured. Check the warning banner above for details.', 'warning', 8000);
+  }
+}
+
+function showFallbackPrompt(message, logs = []) {
+  const modalEl = document.getElementById('fallbackModal');
+  if (!modalEl) {
+    console.warn('Fallback modal element not found.');
+    return;
+  }
+
+  const messageEl = document.getElementById('fallbackModalMessage');
+  if (messageEl) {
+    messageEl.textContent = message || 'Primary solver could not find a feasible schedule.';
+  }
+
+  const logsWrapper = document.getElementById('fallbackModalLogsWrapper');
+  const logsEl = document.getElementById('fallbackModalLogs');
+  lastFallbackLogs = Array.isArray(logs) ? logs : [];
+  if (logsWrapper && logsEl) {
+    if (lastFallbackLogs.length > 0) {
+      const recentLogs = lastFallbackLogs.slice(-5).map(log => `
+        <div class="fallback-log-line">
+          <span class="fallback-log-dot"></span>
+          <span class="fallback-log-text">${escapeHtml(log)}</span>
+        </div>
+      `).join('');
+      logsEl.innerHTML = recentLogs || '<div class="text-muted small fst-italic">No logs available.</div>';
+      logsWrapper.classList.remove('d-none');
+    } else {
+      logsEl.innerHTML = '';
+      logsWrapper.classList.add('d-none');
+    }
+  }
+
+  const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+  modalInstance.show();
 }
 
 // Fix notification dropdown responsive positioning
@@ -587,6 +695,67 @@ function getTextColorForBackground(hex) {
   return lum > 0.6 ? '#000' : '#fff';
 }
 
+function renderScheduleResponse(data) {
+  const scheduleArray = Array.isArray(data)
+    ? data
+    : Array.isArray(data && data.schedule)
+      ? data.schedule
+      : [];
+
+  let analytics = data && data.analytics ? data.analytics : null;
+  if (!analytics && Array.isArray(scheduleArray) && scheduleArray.length > 0) {
+    analytics = calculateScheduleAnalytics(scheduleArray);
+  }
+
+  // Highlight missing teacher assignments if backend provided metadata
+  if (data && data.metadata && Array.isArray(data.metadata.missing_teachers) && data.metadata.missing_teachers.length > 0) {
+    const items = data.metadata.missing_teachers
+      .map(entry => {
+        const subject = escapeHtml(entry.subject_code || '');
+        const section = escapeHtml(entry.section_id || '');
+        const program = escapeHtml(entry.program || '');
+        return `<li class="mb-1"><code>${subject}</code> &mdash; ${section}${program ? ` (${program})` : ''}</li>`;
+      })
+      .join('');
+    const warningHtml = `
+      <div class="schedule-status-card card-mac-style text-center mb-3">
+        <div class="status-icon status-icon-warning">
+          <i class="bi bi-person-exclamation"></i>
+        </div>
+        <h5 class="fw-semibold mb-2">Some classes lack assigned professors</h5>
+        <p class="text-muted small mb-3">Add qualified instructors in the faculty data so these subjects can be scheduled.</p>
+        <ul class="list-unstyled small text-start mx-auto" style="max-width:420px;">${items}</ul>
+      </div>
+    `;
+    const resultDiv = document.getElementById('result');
+    const hybridResultDiv = document.getElementById('hybridResult');
+    if (resultDiv) {
+      resultDiv.innerHTML = warningHtml + (resultDiv.innerHTML || '');
+    }
+    if (hybridResultDiv) {
+      hybridResultDiv.innerHTML = warningHtml + (hybridResultDiv.innerHTML || '');
+    }
+  }
+
+  lastGeneratedSchedule = scheduleArray;
+  lastAnalytics = analytics;
+  lastSavedId = '';
+
+  if (!Array.isArray(scheduleArray) || scheduleArray.length === 0) {
+    showPrimarySolverFailureMessage('No schedule generated.', 'info');
+    return;
+  }
+
+  populateFilters(lastGeneratedSchedule);
+  populateTeacherFilter(lastGeneratedSchedule);
+  renderScheduleAndTimetable(lastGeneratedSchedule, analytics);
+  if (analytics) {
+    displayAnalytics(analytics, false);
+  } else {
+    hideAnalytics();
+  }
+}
+
 
 // Generate schedule directly using inline inputs
 document.getElementById('generateBtn').onclick = async function() {
@@ -738,43 +907,44 @@ document.getElementById('generateBtn').onclick = async function() {
   try {
     // Load rooms data first to populate room mapping
     await loadRoomsTable();
-    
+
+    const basePayload = { ...requestBody };
+    pendingFallbackPayload = null;
+
     const response = await fetch('/schedule', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify({ ...basePayload, allowFallback: false })
     });
-    const data = await response.json();
-    const scheduleArray = Array.isArray(data) ? data : Array.isArray(data.schedule) ? data.schedule : [];
-    let analytics = data.analytics || null;
-    
-    // Calculate analytics if not provided by backend
-    if (!analytics && scheduleArray.length > 0) {
-      analytics = calculateScheduleAnalytics(scheduleArray);
-    }
-    
-    lastGeneratedSchedule = scheduleArray;
-    lastAnalytics = analytics;
-    lastSavedId = '';
 
-    if (!Array.isArray(scheduleArray) || scheduleArray.length === 0) {
-      const noScheduleMsg = "<b>No schedule generated.</b>";
-      document.getElementById('result').innerHTML = noScheduleMsg;
-      document.getElementById('timetable').innerHTML = "";
-      document.getElementById('hybridResult').innerHTML = noScheduleMsg;
-      document.getElementById('hybridTimetable').innerHTML = "";
-      if (downloadBtn) downloadBtn.disabled = true;
-      hideAnalytics();
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `Schedule generation failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data && data.needs_fallback) {
+      const fallbackMessage = data.message || 'Primary solver could not find a feasible schedule with the current constraints.';
+      const fallbackDetails = data.fallback_hint ? ` ${data.fallback_hint}` : '';
+      const combinedMessage = `${fallbackMessage}${fallbackDetails}`;
+      pendingFallbackPayload = { ...basePayload, allowFallback: true };
+      showPrimarySolverFailureMessage(combinedMessage, 'warning');
+      showFallbackPrompt(combinedMessage, data.logs || []);
+      showNotification('Primary solver could not find a feasible schedule. Review the details and decide whether to run the fallback solver.', 'warning');
       return;
     }
 
-    populateFilters(lastGeneratedSchedule);
-    populateTeacherFilter(lastGeneratedSchedule);
-    renderScheduleAndTimetable(lastGeneratedSchedule, analytics);
+    renderScheduleResponse(data);
+
+    if (data && data.solver === 'fallback') {
+      showNotification('Fallback solver generated this schedule. Please review for potential room conflicts.', 'warning');
+    }
       // Saved schedule list refresh moved to separate page
   } catch (e) {
     console.error('Error generating schedule', e);
-    document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error generating schedule. See console.</div>';
+    showPrimarySolverFailureMessage('Error generating schedule. Check the console for details.', 'danger');
+    showNotification('Error generating schedule. Check the console for details.', 'danger');
   } finally {
     hideLoadingState('generateBtn');
   }
@@ -784,6 +954,68 @@ document.getElementById('generateBtn').onclick = async function() {
     hideLoadingState('generateBtn');
   }
 };
+
+async function runFallbackGeneration() {
+  if (!pendingFallbackPayload) {
+    showNotification('No fallback configuration available. Please generate the schedule again.', 'warning');
+    return;
+  }
+
+  const confirmBtn = document.getElementById('fallbackConfirmBtn');
+  if (confirmBtn) {
+    confirmBtn.disabled = true;
+  }
+
+  try {
+    const modalEl = document.getElementById('fallbackModal');
+    if (modalEl) {
+      const modalInstance = bootstrap.Modal.getInstance(modalEl);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
+
+    showLoadingState('generateBtn', '<i class="bi bi-arrow-clockwise me-2"></i>Running fallback...');
+    showPrimarySolverFailureMessage('Running fallback solver. Please wait...', 'info');
+
+    const response = await fetch('/schedule', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(pendingFallbackPayload)
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const message = data && data.detail ? data.detail : 'Fallback solver request failed.';
+      throw new Error(message);
+    }
+
+    if (data && data.needs_fallback) {
+      showPrimarySolverFailureMessage('Fallback solver still cannot generate a schedule. Please adjust your configuration.', 'danger');
+      showNotification('Fallback solver did not produce a schedule. Review your inputs or adjust constraints.', 'danger');
+      return;
+    }
+
+    renderScheduleResponse(data);
+
+    if (data && data.solver === 'fallback') {
+      showNotification('Fallback solver generated this schedule. Please review for potential conflicts.', 'warning');
+    } else if (data && data.solver === 'fallback_failed') {
+      showNotification('Fallback solver could not generate a schedule. Please adjust your inputs or constraints.', 'danger');
+    }
+  } catch (error) {
+    console.error('Error running fallback solver:', error);
+    showPrimarySolverFailureMessage('An error occurred while running the fallback solver. Please try again or adjust your inputs.', 'danger');
+    showNotification('Error running fallback solver. Check the console for details.', 'danger');
+  } finally {
+    pendingFallbackPayload = null;
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+    }
+    hideLoadingState('generateBtn');
+  }
+}
 
 downloadBtn.onclick = async function() {
   if (!downloadBtn.disabled) {
@@ -833,6 +1065,21 @@ downloadBtn.onclick = async function() {
     }
   }
 };
+
+const fallbackConfirmBtn = document.getElementById('fallbackConfirmBtn');
+if (fallbackConfirmBtn) {
+  fallbackConfirmBtn.addEventListener('click', async () => {
+    await runFallbackGeneration();
+  });
+}
+
+const fallbackCancelBtn = document.getElementById('fallbackCancelBtn');
+if (fallbackCancelBtn) {
+  fallbackCancelBtn.addEventListener('click', () => {
+    pendingFallbackPayload = null;
+    showNotification('Fallback solver cancelled. Adjust your inputs to try again.', 'info');
+  });
+}
 
 // Save current generated schedule
 if (saveBtn) {
@@ -1081,6 +1328,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
   
   // Create a map to track which cells should be skipped (due to rowspan)
   const skipCells = new Set();
+  const renderedEventKeys = new Set();
   
   let tthtml = '<div class="table-responsive"><table class="table table-bordered"><thead><tr><th>Time Slot</th>';
   for (const day of dayLabels) tthtml += `<th>${day}</th>`;
@@ -1091,86 +1339,96 @@ function renderScheduleAndTimetable(data, analytics = null) {
     for (let d = 0; d < dayLabels.length; d++) {
       const cellKey = `${t}-${d}`;
       
-      // Skip this cell if it's already occupied by a rowspan from above
-      if (skipCells.has(cellKey)) {
-        continue;
-      }
-      
-      // Find ALL events that START at this time slot and day (including overlapping ones)
+      // Find events that start at this time slot/day and haven't been rendered yet
       const eventsStartingHere = filtered.filter(event => {
+        const eventKey = getEventKey(event);
+        if (renderedEventKeys.has(eventKey)) return false;
         const dayIdx = dayLabels.indexOf(event.day);
         const startSlotIdx = timeSlotLabels.indexOf(event.start_time_slot);
         return dayIdx === d && startSlotIdx === t;
       });
       
-      if (eventsStartingHere.length > 0) {
-        // Remove duplicates based on section + subject + day
-        const uniqueEvents = [];
-        const seenEvents = new Set();
-        eventsStartingHere.forEach(event => {
-          const key = `${event.section_id}-${event.subject_code}-${event.day}-${event.start_time_slot}`;
-          if (!seenEvents.has(key)) {
-            uniqueEvents.push(event);
-            seenEvents.add(key);
-          }
-        });
-        
-        if (uniqueEvents.length > 0) {
-          // Calculate the maximum duration among all events in this slot
-          const maxDuration = Math.max(...uniqueEvents.map(e => parseInt(e.duration_slots, 10) || 1));
-          
-          // Handle different numbers of overlapping events differently
-          if (uniqueEvents.length === 1) {
-            // Single event - apply background directly to td like dean interface
-            const event = uniqueEvents[0];
-            const eventDuration = parseInt(event.duration_slots, 10) || 1;
-            const course = event.subject_name || event.subject_code || '';
-            const range = computeEventTimeRange(event);
-            const bg = getSubjectColor(event.subject_code, event.type);
-            const fg = getTextColorForBackground(bg);
-            
-            // Mark cells below as occupied by this specific event's rowspan
-            for (let i = 1; i < eventDuration && t + i < timeSlotLabels.length; i++) {
-              skipCells.add(`${t + i}-${d}`);
-            }
-            
-            tthtml += `<td rowspan="${eventDuration}" style="background:${bg}; color:${fg}; padding:6px 8px; vertical-align: top;">
-              <b>${course}</b><br>
-              <small style="opacity:.85;">(${range})</small><br>
-              <small>${event.section_id}</small><br>
-              <small>${event.teacher_name}</small><br>
-              <small>${getRoomName(event.room_id)}</small>
-            </td>`;
-          } else {
-            // 2+ events - use expandable summary for better readability
-            // Mark cells below as occupied by this rowspan
-            for (let i = 1; i < maxDuration && t + i < timeSlotLabels.length; i++) {
-              skipCells.add(`${t + i}-${d}`);
-            }
-            
-            tthtml += `<td rowspan="${maxDuration}" style="vertical-align: top; padding: 1px;">`;
-            
-            uniqueEvents.forEach((event, index) => {
-              const course = event.subject_name || event.subject_code || '';
-              const range = computeEventTimeRange(event);
-              const eventBg = getSubjectColor(event.subject_code, event.type);
-              const eventFg = getTextColorForBackground(eventBg);
-              
-              tthtml += `<div style="background:${eventBg}; color:${eventFg}; padding:3px 5px; border-radius:3px; margin:2px 0; font-size:9px; line-height:1.2; border-left: 3px solid ${eventBg};">
-                <b>${course}</b><br>
-                <small style="opacity:.85;">(${range})</small><br>
-                <small>${event.section_id} • ${event.teacher_name}</small><br>
-                <small>${getRoomName(event.room_id)}</small>
-              </div>`;
-            });
-            
-            tthtml += `</td>`;
-          }
-        } else {
-          tthtml += '<td></td>';
+      if (eventsStartingHere.length === 0) {
+        // If a previous rowspan covers this cell, skip emitting a td
+        if (skipCells.has(cellKey)) {
+          continue;
         }
-      } else {
         tthtml += '<td></td>';
+        continue;
+      }
+      
+      // Build a rendering group that includes overlapping events starting within the span
+      const renderGroup = [...eventsStartingHere];
+      const groupKeys = new Set(renderGroup.map(getEventKey));
+      
+      const getEndIdx = (event) => {
+        const startIdx = timeSlotLabels.indexOf(event.start_time_slot);
+        const dur = parseInt(event.duration_slots, 10) || 1;
+        return startIdx + dur;
+      };
+      
+      let maxEndIdx = Math.max(...renderGroup.map(getEndIdx));
+      let added = false;
+      do {
+        added = false;
+        filtered.forEach(event => {
+          const key = getEventKey(event);
+          if (renderedEventKeys.has(key) || groupKeys.has(key)) return;
+          if (dayLabels.indexOf(event.day) !== d) return;
+          const startIdx = timeSlotLabels.indexOf(event.start_time_slot);
+          if (startIdx < t || startIdx >= maxEndIdx) return;
+          renderGroup.push(event);
+          groupKeys.add(key);
+          const eventEnd = getEndIdx(event);
+          if (eventEnd > maxEndIdx) {
+            maxEndIdx = eventEnd;
+          }
+          added = true;
+        });
+      } while (added);
+      
+      const rowspan = Math.max(1, maxEndIdx - t);
+      for (let i = 1; i < rowspan && t + i < timeSlotLabels.length; i++) {
+        skipCells.add(`${t + i}-${d}`);
+      }
+      renderGroup.forEach(event => renderedEventKeys.add(getEventKey(event)));
+      renderGroup.sort((a, b) => {
+        const aIdx = timeSlotLabels.indexOf(a.start_time_slot);
+        const bIdx = timeSlotLabels.indexOf(b.start_time_slot);
+        if (aIdx !== bIdx) return aIdx - bIdx;
+        return (a.section_id || '').localeCompare(b.section_id || '');
+      });
+      
+      if (renderGroup.length === 1) {
+        const event = renderGroup[0];
+        const course = event.subject_name || event.subject_code || '';
+        const range = computeEventTimeRange(event);
+        const bg = getSubjectColor(event.subject_code, event.type);
+        const fg = getTextColorForBackground(bg);
+        tthtml += `<td rowspan="${rowspan}" style="padding:8px 10px; vertical-align: top;">
+          <div class="timetable-event-card" style="background:${bg}; color:${fg}; border-radius:10px; padding:8px 10px;">
+            <div class="fw-semibold">${course}</div>
+            <div class="small" style="opacity:.85;">${range}</div>
+            <div class="small">${event.section_id}</div>
+            <div class="small">${event.teacher_name}</div>
+            <div class="small">${getRoomName(event.room_id)}</div>
+          </div>
+        </td>`;
+      } else {
+        tthtml += `<td rowspan="${rowspan}" style="vertical-align: top; padding:6px;">`;
+        renderGroup.forEach(event => {
+          const course = event.subject_name || event.subject_code || '';
+          const range = computeEventTimeRange(event);
+          const eventBg = getSubjectColor(event.subject_code, event.type);
+          const eventFg = getTextColorForBackground(eventBg);
+          tthtml += `<div class="timetable-event-pill" style="background:${eventBg}; color:${eventFg}; border-radius:10px; padding:6px 8px; margin-bottom:4px;">
+            <div class="fw-semibold" style="font-size:0.85rem;">${course}</div>
+            <div class="small" style="opacity:.85;">${range}</div>
+            <div class="small">${event.section_id} • ${event.teacher_name}</div>
+            <div class="small">${getRoomName(event.room_id)}</div>
+          </div>`;
+        });
+        tthtml += `</td>`;
       }
     }
     tthtml += '</tr>';

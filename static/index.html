@@ -1174,6 +1174,56 @@
     </div>
   </div>
 
+  <!-- Fallback Solver Confirmation Modal -->
+  <div class="modal fade" id="fallbackModal" tabindex="-1" aria-labelledby="fallbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content card-mac-style">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-semibold d-flex align-items-center gap-2" id="fallbackModalLabel">
+            <span class="modal-title-accent">
+              <i class="bi bi-cpu"></i>
+            </span>
+            Fallback Solver Confirmation
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-callout modal-callout-warning d-flex align-items-start gap-3 mb-3">
+            <div class="modal-callout-icon">
+              <i class="bi bi-exclamation-octagon"></i>
+            </div>
+            <div>
+              <h6 class="fw-semibold mb-2 text-dark">Primary solver needs a hand</h6>
+              <p id="fallbackModalMessage" class="modal-callout-text text-muted small mb-0">
+                The current configuration prevented the primary solver from finishing.
+              </p>
+            </div>
+          </div>
+          <div class="modal-guidance text-muted small mb-4">
+            Running the fallback solver relaxes room overlap checks to produce a draft schedule. Review the results afterward for any conflicts before sharing.
+          </div>
+          <div id="fallbackModalLogsWrapper" class="fallback-log-wrapper d-none">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <span class="fw-semibold text-muted">Recent solver notes</span>
+              <span class="badge bg-light text-dark rounded-pill">Last 5</span>
+            </div>
+            <div id="fallbackModalLogs" class="fallback-log-surface small"></div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-outline-secondary px-4" id="fallbackCancelBtn" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i>
+            Cancel
+          </button>
+          <button type="button" class="btn btn-brand shadow-sm px-4" id="fallbackConfirmBtn">
+            <i class="bi bi-lightning-charge me-1"></i>
+            Run Fallback Solver
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Logout Confirmation Modal -->
   <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
