@@ -785,6 +785,47 @@ body {
   margin: 0 auto;
 }
 
+.timetable-cell {
+  position: relative;
+  padding: 0 !important;
+  vertical-align: top;
+}
+
+.timetable-cell .timetable-event-card,
+.timetable-cell .timetable-event-stack {
+  position: absolute;
+  inset: 6px;
+}
+
+.timetable-cell .timetable-event-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 6px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.timetable-cell-stack .timetable-event-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.timetable-cell-stack .timetable-event-pill {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
 .timetable-event-card,
 .timetable-event-pill {
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);

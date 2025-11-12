@@ -358,9 +358,13 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                 # Create a boolean variable for this teacher being selected
                 # The teacher_var represents the index in valid_teachers, teacher_idx is the current teacher's position
                 teacher_selected = model.NewBoolVar(f'teacher_selected_{i}_{teacher_idx}')
-                model.Add(teacher_var == teacher_idx).OnlyEnforceIf(teacher_selected)
-                model.Add(teacher_var != teacher_idx).OnlyEnforceIf(teacher_selected.Not())
+                teacher_domain_values = [teacher_ids.index(tid) for tid in event['valid_teachers']]
+                global_teacher_index = teacher_ids.index(teacher_id)
+                teacher_selected_value = teacher_domain_values[teacher_idx]
+                model.Add(teacher_var == teacher_selected_value).OnlyEnforceIf(teacher_selected)
+                model.Add(teacher_var != teacher_selected_value).OnlyEnforceIf(teacher_selected.Not())
                 
+                # For each day, if this teacher is selected, ensure the day is in their availability
                 # For each day, if this teacher is selected, ensure the day is in their availability
                 for day_idx, day_label in enumerate(day_labels):
                     if day_label not in teacher_available_days:
@@ -395,7 +399,7 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
 
     print('Scheduler: Adding constraints...')
     logs.append('Scheduler: Adding constraints...')
-    
+
     # Debug: Print room availability
     print(f"Total events to schedule: {len(meeting_events)}")
     print(f"Total rooms available: {len(rooms_data)}")
@@ -542,41 +546,18 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             lecture_event_idx = next(i for i in indices if meeting_events[i]['type'] == 'lecture')
             lab_event_idx = next(i for i in indices if meeting_events[i]['type'] == 'lab')
 
-            # Get the teacher assigned to this subject
             teacher_var = assigned_teachers_vars[lecture_event_idx]
-            teacher_id = meeting_events[lecture_event_idx]['valid_teachers'][0]  # Get first teacher as reference
-            teacher_data = teacher_map.get(teacher_id)
-            teacher_available_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) if teacher_data else ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-            
-            # Check if teacher has restricted availability (less than all 6 days)
-            is_restricted_teacher = len(teacher_available_days) < 6
-            
-            if is_restricted_teacher:
-                # For teachers with restricted availability, prioritize availability over day pairing
-                # Schedule both lecture and lab on the same available day
-                available_day_indices = [day_labels.index(day) for day in teacher_available_days if day in day_labels]
-                
-                if len(available_day_indices) > 0:
-                    # Force both lecture and lab to be on the same day from available days
-                    # Create boolean variables for each available day
-                    same_day_vars = {}
-                    for day_idx in available_day_indices:
-                        day_name = day_labels[day_idx]
-                        same_day_vars[day_name] = model.NewBoolVar(f'same_day_{day_name}_{section_id}_{subject_code}')
-                    
-                    # Exactly one available day must be selected for both lecture and lab
-                    model.Add(sum(same_day_vars.values()) == 1)
-                    
-                    # Enforce both lecture and lab on the same selected day
-                    for day_name, day_var in same_day_vars.items():
-                        day_idx = day_labels.index(day_name)
-                        model.Add(assigned_days[lecture_event_idx] == day_idx).OnlyEnforceIf(day_var)
-                        model.Add(assigned_days[lab_event_idx] == day_idx).OnlyEnforceIf(day_var)
-                
-                # Skip day pairing constraint entirely for restricted teachers
-                # Let individual teacher availability constraints handle the scheduling
-            else:
-                # For teachers with full availability, use standard day pairing
+            valid_teacher_ids = meeting_events[lecture_event_idx]['valid_teachers']
+            teacher_domain_values = [teacher_ids.index(tid) for tid in valid_teacher_ids]
+
+            for teacher_idx, teacher_id in enumerate(valid_teacher_ids):
+                teacher_selected = model.NewBoolVar(f'teacher_selected_pair_{section_id}_{subject_code}_{teacher_idx}')
+                teacher_value = teacher_domain_values[teacher_idx]
+                model.Add(teacher_var == teacher_value).OnlyEnforceIf(teacher_selected)
+                model.Add(teacher_var != teacher_value).OnlyEnforceIf(teacher_selected.Not())
+
+                teacher_data = teacher_map.get(teacher_id, {})
+                teacher_available_days = teacher_data.get('availability_days', day_labels)
                 available_day_pairs = []
                 if all(day in teacher_available_days for day in ['Mon', 'Wed']):
                     available_day_pairs.append('MW')
@@ -584,22 +565,23 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                     available_day_pairs.append('TTh')
                 if all(day in teacher_available_days for day in ['Fri', 'Sat']):
                     available_day_pairs.append('FS')
-                
-                # Create boolean variables only for available day pairs
-                day_pair_vars = {}
+
+                pair_vars = []
                 for pair in available_day_pairs:
-                    day_pair_vars[pair] = model.NewBoolVar(f'daypair_{pair}_{section_id}_{subject_code}')
-                
-                # Enforce lecture on first day and lab on second day of each available pair
-                for pair in available_day_pairs:
+                    pair_var = model.NewBoolVar(f'daypair_{pair}_{section_id}_{subject_code}_teacher_{teacher_id}')
+                    pair_vars.append(pair_var)
                     first_day_idx = day_group_pairs_indices[pair][0]
                     second_day_idx = day_group_pairs_indices[pair][1]
-                    
-                    model.Add(assigned_days[lecture_event_idx] == first_day_idx).OnlyEnforceIf(day_pair_vars[pair])
-                    model.Add(assigned_days[lab_event_idx] == second_day_idx).OnlyEnforceIf(day_pair_vars[pair])
-                
-                # Exactly one available day pair must be selected
-                model.Add(sum(day_pair_vars.values()) == 1)
+                    model.Add(assigned_days[lecture_event_idx] == first_day_idx).OnlyEnforceIf(pair_var)
+                    model.Add(assigned_days[lab_event_idx] == second_day_idx).OnlyEnforceIf(pair_var)
+
+                if pair_vars:
+                    model.Add(sum(pair_vars) == teacher_selected)
+                    model.AddHint(pair_vars[0], 1)
+                    for hint_var in pair_vars[1:]:
+                        model.AddHint(hint_var, 0)
+                else:
+                    model.Add(teacher_selected == 0)
 
         # Case 2: Two non-lab meetings should be on the two days of a selected day pair
         non_lab_indices = [i for i in indices if meeting_events[i]['type'] == 'non_lab']
@@ -608,40 +590,19 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
             idx0 = min(non_lab_indices, key=lambda i: meeting_events[i]['meeting_idx'])
             idx1 = max(non_lab_indices, key=lambda i: meeting_events[i]['meeting_idx'])
 
-            # Get the teacher assigned to this subject
-            teacher_id = meeting_events[idx0]['valid_teachers'][0]  # Get first teacher as reference
-            teacher_data = teacher_map.get(teacher_id)
-            teacher_available_days = teacher_data.get('availability_days', ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']) if teacher_data else ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-            
-            # Check if teacher has restricted availability (less than all 6 days)
-            is_restricted_teacher = len(teacher_available_days) < 6
-            
-            if is_restricted_teacher:
-                # For teachers with restricted availability, prioritize availability over day pairing
-                # Schedule both meetings on the same available day
-                available_day_indices = [day_labels.index(day) for day in teacher_available_days if day in day_labels]
-                
-                if len(available_day_indices) > 0:
-                    # Force both meetings to be on the same day from available days
-                    # Create boolean variables for each available day
-                    same_day_vars = {}
-                    for day_idx in available_day_indices:
-                        day_name = day_labels[day_idx]
-                        same_day_vars[day_name] = model.NewBoolVar(f'same_day_nonlab_{day_name}_{section_id}_{subject_code}')
-                    
-                    # Exactly one available day must be selected for both meetings
-                    model.Add(sum(same_day_vars.values()) == 1)
-                    
-                    # Enforce both meetings on the same selected day
-                    for day_name, day_var in same_day_vars.items():
-                        day_idx = day_labels.index(day_name)
-                        model.Add(assigned_days[idx0] == day_idx).OnlyEnforceIf(day_var)
-                        model.Add(assigned_days[idx1] == day_idx).OnlyEnforceIf(day_var)
-                
-                # Skip day pairing constraint entirely for restricted teachers
-                # Let individual teacher availability constraints handle the scheduling
-            else:
-                # For teachers with full availability, use standard day pairing
+            teacher_var = assigned_teachers_vars[idx0]
+            valid_teacher_ids = meeting_events[idx0]['valid_teachers']
+            teacher_domain_values = [teacher_ids.index(tid) for tid in valid_teacher_ids]
+
+            for teacher_idx, teacher_id in enumerate(valid_teacher_ids):
+                teacher_selected = model.NewBoolVar(f'teacher_selected_pair_nonlab_{section_id}_{subject_code}_{teacher_idx}')
+                teacher_value = teacher_domain_values[teacher_idx]
+                model.Add(teacher_var == teacher_value).OnlyEnforceIf(teacher_selected)
+                model.Add(teacher_var != teacher_value).OnlyEnforceIf(teacher_selected.Not())
+
+                teacher_data = teacher_map.get(teacher_id, {})
+                teacher_available_days = teacher_data.get('availability_days', day_labels)
+
                 available_day_pairs = []
                 if all(day in teacher_available_days for day in ['Mon', 'Wed']):
                     available_day_pairs.append('MW')
@@ -649,22 +610,25 @@ def generate_schedule(subjects_data, teachers_data, rooms_data, semester_filter,
                     available_day_pairs.append('TTh')
                 if all(day in teacher_available_days for day in ['Fri', 'Sat']):
                     available_day_pairs.append('FS')
-                
-                # Create boolean variables only for available day pairs
-                day_pair_vars = {}
+
+                day_pair_vars = []
                 for pair in available_day_pairs:
-                    day_pair_vars[pair] = model.NewBoolVar(f'daypair_{pair}_nonlab_{section_id}_{subject_code}')
-                
-                # Enforce first meeting on first day and second meeting on second day of each available pair
-                for pair in available_day_pairs:
+                    pair_var = model.NewBoolVar(f'daypair_{pair}_nonlab_{section_id}_{subject_code}_teacher_{teacher_id}')
+                    day_pair_vars.append(pair_var)
                     first_day_idx = day_group_pairs_indices[pair][0]
                     second_day_idx = day_group_pairs_indices[pair][1]
-                    
-                    model.Add(assigned_days[idx0] == first_day_idx).OnlyEnforceIf(day_pair_vars[pair])
-                    model.Add(assigned_days[idx1] == second_day_idx).OnlyEnforceIf(day_pair_vars[pair])
-                
-                # Exactly one available day pair must be selected
-                model.Add(sum(day_pair_vars.values()) == 1)
+
+                    model.Add(assigned_days[idx0] == first_day_idx).OnlyEnforceIf(pair_var)
+                    model.Add(assigned_days[idx1] == second_day_idx).OnlyEnforceIf(pair_var)
+
+                if day_pair_vars:
+                    model.Add(sum(day_pair_vars) == teacher_selected)
+                    preferred_pair_var = day_pair_vars[0]
+                    model.AddHint(preferred_pair_var, 1)
+                    for hint_var in day_pair_vars[1:]:
+                        model.AddHint(hint_var, 0)
+                else:
+                    model.Add(teacher_selected == 0)
 
     # Constraint 3: Same teacher and room for all meetings of a section
     # sections_meetings = {} # section_id: [list of event indices]

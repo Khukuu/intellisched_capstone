@@ -620,6 +620,7 @@ const timeSlotLabels = [
   "15:00-15:30", "15:30-16:00", "16:00-16:30", "16:30-17:00",
   "17:00-17:30", "17:30-18:00"
 ];
+const TIME_SLOT_HEIGHT_PX = 64;
 
 // Timetable subject color mapping helpers
 const SUBJECT_COLOR_PALETTE = [
@@ -1335,7 +1336,8 @@ function renderScheduleAndTimetable(data, analytics = null) {
   tthtml += '</tr></thead><tbody>';
   
   for (let t = 0; t < timeSlotLabels.length; t++) {
-    tthtml += `<tr><th>${timeSlotLabels[t]}</th>`;
+    const rowHeightStyle = `style="height:${TIME_SLOT_HEIGHT_PX}px; min-height:${TIME_SLOT_HEIGHT_PX}px;"`;
+    tthtml += `<tr ${rowHeightStyle}><th ${rowHeightStyle}>${timeSlotLabels[t]}</th>`;
     for (let d = 0; d < dayLabels.length; d++) {
       const cellKey = `${t}-${d}`;
       
@@ -1353,7 +1355,7 @@ function renderScheduleAndTimetable(data, analytics = null) {
         if (skipCells.has(cellKey)) {
           continue;
         }
-        tthtml += '<td></td>';
+        tthtml += `<td ${rowHeightStyle}></td>`;
         continue;
       }
       
@@ -1399,14 +1401,16 @@ function renderScheduleAndTimetable(data, analytics = null) {
         return (a.section_id || '').localeCompare(b.section_id || '');
       });
       
+      const cellHeight = TIME_SLOT_HEIGHT_PX * rowspan;
+      const cellHeightStyle = `style="height:${cellHeight}px; min-height:${cellHeight}px;"`;
       if (renderGroup.length === 1) {
         const event = renderGroup[0];
         const course = event.subject_name || event.subject_code || '';
         const range = computeEventTimeRange(event);
         const bg = getSubjectColor(event.subject_code, event.type);
         const fg = getTextColorForBackground(bg);
-        tthtml += `<td rowspan="${rowspan}" style="padding:8px 10px; vertical-align: top;">
-          <div class="timetable-event-card" style="background:${bg}; color:${fg}; border-radius:10px; padding:8px 10px;">
+        tthtml += `<td rowspan="${rowspan}" class="timetable-cell" ${cellHeightStyle}>
+          <div class="timetable-event-card" style="background:${bg}; color:${fg};">
             <div class="fw-semibold">${course}</div>
             <div class="small" style="opacity:.85;">${range}</div>
             <div class="small">${event.section_id}</div>
@@ -1415,20 +1419,21 @@ function renderScheduleAndTimetable(data, analytics = null) {
           </div>
         </td>`;
       } else {
-        tthtml += `<td rowspan="${rowspan}" style="vertical-align: top; padding:6px;">`;
+        tthtml += `<td rowspan="${rowspan}" class="timetable-cell timetable-cell-stack" ${cellHeightStyle}>
+          <div class="timetable-event-stack">`;
         renderGroup.forEach(event => {
           const course = event.subject_name || event.subject_code || '';
           const range = computeEventTimeRange(event);
           const eventBg = getSubjectColor(event.subject_code, event.type);
           const eventFg = getTextColorForBackground(eventBg);
-          tthtml += `<div class="timetable-event-pill" style="background:${eventBg}; color:${eventFg}; border-radius:10px; padding:6px 8px; margin-bottom:4px;">
+          tthtml += `<div class="timetable-event-pill" style="background:${eventBg}; color:${eventFg};">
             <div class="fw-semibold" style="font-size:0.85rem;">${course}</div>
             <div class="small" style="opacity:.85;">${range}</div>
             <div class="small">${event.section_id} • ${event.teacher_name}</div>
             <div class="small">${getRoomName(event.room_id)}</div>
           </div>`;
         });
-        tthtml += `</td>`;
+        tthtml += `</div></td>`;
       }
     }
     tthtml += '</tr>';
