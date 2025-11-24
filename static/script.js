@@ -2578,11 +2578,11 @@ function displayAnalytics(analytics, switchToTab = true) {
         </div>
         <div class="analytics-summary-card">
           <div class="analytics-summary-value">${analytics.summary.rooms_used || 0}</div>
-          <div class="analytics-summary-label">Rooms Used</div>
+          <div class="analytics-summary-label">Utilized Rooms</div>
         </div>
         <div class="analytics-summary-card">
           <div class="analytics-summary-value">${analytics.summary.teachers_used || 0}</div>
-          <div class="analytics-summary-label">Professors Used</div>
+          <div class="analytics-summary-label">Utilized Professors</div>
         </div>
         <div class="analytics-summary-card">
           <div class="analytics-summary-value">${analytics.summary.total_contact_hours || 0}</div>
