@@ -1,34 +1,23 @@
-# intellisched\_capstone
+Intellisched
+A web-based intelligent scheduling system that automatically generates conflict-free schedules for classes, rooms, and faculty members.
 
-Automatic Scheduling LPU\_B
+**Live Demo**: intellisched.app
 
-How to start
+#Problem Statement
+Manual class scheduling is time-consuming and prone to conflicts. IntelliSched automates the whole scheduling process to reduce errors and administrative workload.
 
-1. Open terminal
-2. Activate virtual environment ".venv\\Scripts\\activate"
-3. Run the app "uvicorn app:app --reload"
+#Key Features
+1. Automated schedule generation using constraints
+2. Conflict detection and prevention
+3. Interfaces for managing classes, rooms, and instructors
+4. Web-based interface with database persistence
 
+#Tech Stack
+1. Frontend: HTML, CSS, Bootstrap
+2. Backend: Python, FastAPI
+3. Database: Postgresql
+4. Algorithms: CP-Sat Solver (Google OR-Tools)
+5. Deployment: Railway
 
-
-
-
-Dependencies
-
-1. fastAPI
-2. uvicorn
-3. psycopg2-binary
-4. sqlalchemy
-5. ortools
-6. python-multipart
-
-
-
-
-
-Database setup
-
-1. Install PostgreSQL
-2. Run createDB\_script.sql (mysql -u root -p < intellisched.sql)
-
-
-
+#My Role
+Developed the whole projecct from the system architecture, implementation of the scheduling algorithm, developed the backend API, and the frontend aspect of the project, also handled the deployment.
